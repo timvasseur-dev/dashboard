@@ -40,7 +40,11 @@ aucun identifiant bancaire. Elle affiche, elle calcule, elle ne fait rien d'autr
 - **lightweight-charts** pour les graphiques financiers (léger, ~45 ko)
 - **PWA** : manifest + service worker, installable sur iOS et Android
 - `base: '/dashboard/'` dans `vite.config.js` (contrainte GitHub Pages)
-- Déploiement par GitHub Actions sur la branche `gh-pages`
+- Routing par **hash** (`/dashboard/#/comptes`), sans dépendance : le fragment n'est
+  jamais envoyé au serveur, donc aucune 404 possible sur Pages
+- Déploiement par GitHub Actions, avec les actions officielles Pages
+  (`upload-pages-artifact` + `deploy-pages`), sans branche `gh-pages`.
+  Le dépôt doit être réglé sur *Settings → Pages → Source = GitHub Actions*.
 
 Cible d'affichage : **téléphone d'abord**. Le desktop est secondaire.
 Toute vue est conçue en portrait, largeur 390 px, avant d'être élargie.
