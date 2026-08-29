@@ -1,0 +1,55 @@
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  background: var(--bg-bar);
+  border-top: 1px solid var(--border);
+  /* la barre d'accueil iOS mange le bas de l'écran */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.tabbar__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: var(--tab-height);
+  color: var(--text-faint);
+  font-size: 10px;
+  letter-spacing: 0.01em;
+  transition: color 120ms ease;
+}
+
+.tabbar__item:active {
+  background: var(--bg-press);
+}
+
+.tabbar__item--active {
+  color: var(--accent);
+}
+
+.tabbar__label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Au-delà du téléphone, la barre reste centrée sous la colonne de contenu. */
+@media (min-width: 700px) {
+  .tabbar {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: var(--content-max);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-top-left-radius: var(--radius-l);
+    border-top-right-radius: var(--radius-l);
+  }
+}

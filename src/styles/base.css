@@ -1,0 +1,51 @@
+/* Reset minimal et règles globales. Aucune couleur en dur : tout vient de theme.css. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 1.4;
+  /* pas de rebond élastique : on veut un ressenti d'application native */
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+#root {
+  min-height: 100dvh;
+}
+
+/* Chiffres alignés en colonne : à utiliser sur tout montant. */
+.num {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+}

@@ -1,0 +1,43 @@
+/*
+ * Le seul endroit où les couleurs sont définies.
+ * Changer une valeur ici change toute l'application.
+ */
+
+:root {
+  /* surfaces */
+  --bg: #0e1116;
+  --bg-elev: #161b22;
+  --bg-bar: #12171e;
+  --bg-press: #1c232d;
+
+  /* texte */
+  --text: #e6edf3;
+  --text-dim: #8b949e;
+  --text-faint: #59636e;
+
+  /* accents */
+  --accent: #4c8dff;
+  --positive: #3fb950;
+  --negative: #f85149;
+
+  /* structure */
+  --border: #232a33;
+
+  --radius-s: 6px;
+  --radius-m: 10px;
+  --radius-l: 16px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* chiffres : tabulaires, pour que les montants s'alignent en colonne */
+  --font-num: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+
+  /* gabarit */
+  --tab-height: 56px;
+  --content-max: 560px;
+}
