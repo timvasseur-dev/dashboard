@@ -1,0 +1,16 @@
+# dépendances et build
+node_modules/
+dist/
+.vite/
+
+# secrets et données réelles — voir CLAUDE.md § 2
+.env
+.env.*
+*.csv
+*.xlsx
+/data/
+
+# local
+*.local
+.DS_Store
+*.log
