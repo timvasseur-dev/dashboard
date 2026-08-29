@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!--
+    Icône source de V&V Investment.
+    Le monogramme tient dans le cercle de sécurité (rayon 40 % du côté), pour
+    rester entier une fois rogné en cercle sur Android : le même fichier sert
+    donc d'icône « any » et « maskable ».
+    Couleurs alignées sur les variables bg, accent et text de
+    src/styles/theme.css (un commentaire XML ne peut pas contenir deux tirets
+    consécutifs, d'où les noms sans préfixe).
+  -->
+  <rect width="512" height="512" fill="#0e1116"/>
+
+  <!-- deux chevrons « V » et « V », tracés dans la zone sûre -->
+  <g fill="none" stroke="#4c8dff" stroke-width="28"
+     stroke-linecap="round" stroke-linejoin="round">
+    <path d="M128 186 L178 306 L228 186"/>
+    <path d="M288 186 L338 306 L388 186"/>
+  </g>
+
+  <!-- souligné : la ligne de base du monogramme -->
+  <rect x="128" y="342" width="260" height="18" rx="9" fill="#e6edf3"/>
+</svg>
