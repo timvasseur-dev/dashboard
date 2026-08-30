@@ -1,0 +1,32 @@
+.section {
+  margin-bottom: var(--space-5);
+}
+
+.section__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  padding: 0 var(--space-1);
+}
+
+.section__pastille {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.section__titre {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.section__corps {
+  background: var(--bg-elev);
+  border-radius: var(--radius-m);
+  overflow: hidden;
+}

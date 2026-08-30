@@ -1,0 +1,55 @@
+.patrimoine__total {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-4) 0 var(--space-3);
+}
+
+.patrimoine__total-montant {
+  font-size: 34px;
+  font-weight: 650;
+}
+
+.patrimoine__pv {
+  font-size: 14px;
+}
+
+.patrimoine__pv--pos {
+  color: var(--positive);
+}
+
+.patrimoine__pv--neg {
+  color: var(--negative);
+}
+
+.patrimoine__taux {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 13px;
+  margin-bottom: var(--space-2);
+}
+
+.patrimoine__alerte {
+  text-align: center;
+  color: var(--negative);
+  font-size: 13px;
+  margin-bottom: var(--space-4);
+}
+
+.patrimoine__instantane {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius-s);
+  padding: var(--space-3);
+  text-align: center;
+  font-weight: 600;
+}
+
+.patrimoine__dernier {
+  text-align: center;
+  color: var(--text-faint);
+  font-size: 12px;
+  margin-top: var(--space-2);
+}

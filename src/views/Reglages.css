@@ -1,0 +1,45 @@
+.reglages__taux {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-4);
+}
+
+.reglages__taux .field {
+  flex: 1;
+}
+
+.reglages__note {
+  padding: 0 var(--space-4) var(--space-4);
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.reglages__import {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.reglages__fichier {
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.reglages__collage {
+  min-height: 100px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  padding: var(--space-3);
+  color: var(--text);
+  font-family: var(--font-num);
+  font-size: 13px;
+}
+
+.reglages__message {
+  padding: var(--space-3) var(--space-4);
+  color: var(--accent);
+  font-size: 14px;
+}

@@ -67,16 +67,34 @@ avec chaque valorisation, pour que l'historique reste juste rétroactivement.
 
 ### Entités
 
+L'état est un objet unique, sérialisé sous une clé unique `vv.state` dans `localStorage` :
+
 ```
 Institution   { id, nom, couleur }
 Account       { id, institutionId, libelle, type, devise }
-CashBalance   { id, accountId, date, montant }        // comptes espèces
+balances      { [accountId]: { montant, date } }         // solde courant, une map par compte
 Position      { id, accountId, ticker, isin, quantite, pru, devise }
-Quote         { ticker, prix, devise, horodatage }    // cache, jamais commité
+Watchlist     { id, ticker, libelle, devise, note }       // suivi hors patrimoine
+quotes        { [ticker]: { prix, devise, horodatage } }  // indexé par ticker, jamais commité
 FxRate        { paire, taux, horodatage }
+historique    [{ date, totalEur, tauxUsd }]               // instantanés, ajout seul, jamais réécrit
 ```
 
-`Account.type` ∈ `courant` | `livret` | `pea` | `cto`
+`Account.type` ∈ `courant` | `epargne` | `pea` | `cto` — Livret A et LDD sont des comptes
+`epargne` comme les autres, distingués seulement par leur `libelle`.
+
+`balances` est une map par compte, pas une entité `CashBalance` historisée : la phase 2
+n'a pas d'historique par compte, un solde courant horodaté suffit. Écart assumé par
+rapport à une conception qui garderait chaque solde comme événement daté ; à revoir si
+un historique par compte devient nécessaire.
+
+`Watchlist` est une racine à part, sans `accountId`, sans `quantite`, sans `pru` : aucun
+calcul de patrimoine ne la lit, elle ne peut pas entrer dans le total. `quotes` est
+indexé par ticker seul, partagé entre une position et une ligne de watchlist du même
+titre — promouvoir l'une en l'autre laisse le cours déjà saisi intact.
+
+`historique` ne se remplit que via une action explicite (« Enregistrer un instantané »),
+jamais automatiquement : une courbe de patrimoine ne se reconstruit pas après coup.
 
 ### Structure réelle des comptes
 

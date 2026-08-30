@@ -1,0 +1,71 @@
+.comptes__saisie {
+  width: 120px;
+  text-align: right;
+  background: var(--bg);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-s);
+  padding: var(--space-1) var(--space-2);
+  color: var(--text);
+  font-size: 15px;
+}
+
+.comptes__solde {
+  font-size: 15px;
+}
+
+.comptes__gerer {
+  color: var(--text-dim);
+  padding: var(--space-1) var(--space-2);
+  font-size: 18px;
+}
+
+.comptes__ajouter {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  color: var(--accent);
+  font-size: 14px;
+  text-align: left;
+}
+
+.comptes__formulaire {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.comptes__champ-select {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.comptes__champ-select select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  padding: var(--space-3);
+  color: var(--text);
+  font-size: 16px;
+  font-family: inherit;
+}
+
+.comptes__valider {
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius-s);
+  padding: var(--space-3);
+  text-align: center;
+  font-weight: 600;
+}
+
+.comptes__supprimer {
+  color: var(--negative);
+  padding: var(--space-3);
+  text-align: center;
+}
+
+.comptes__supprimer--confirme {
+  background: var(--negative);
+  color: #fff;
+  border-radius: var(--radius-s);
+}

@@ -1,0 +1,161 @@
+import { useSyncExternalStore } from 'react'
+import { charger, sauvegarder } from './storage.js'
+import { creerCompte, creerPosition, creerSuivi, VERSION } from './schema.js'
+import { migrer } from './migrations.js'
+import { jeuDemo } from './demo.js'
+
+/*
+ * Store maison, même motif que src/lib/router.js : un Set d'abonnés, emit()
+ * après chaque mutation. Écriture dans localStorage à chaque mutation.
+ */
+
+let etat = charger()
+const listeners = new Set()
+
+function emit() {
+  listeners.forEach((listener) => listener())
+}
+
+function subscribe(onChange) {
+  listeners.add(onChange)
+  return () => listeners.delete(onChange)
+}
+
+function set(prochainEtat) {
+  etat = prochainEtat
+  sauvegarder(etat)
+  emit()
+}
+
+/** État courant, mis à jour à chaque mutation. */
+export function useEtat() {
+  return useSyncExternalStore(subscribe, () => etat, () => etat)
+}
+
+/** Remplace tout l'état (import JSON), en le faisant remonter à la version courante. */
+export function remplacerEtat(nouvelEtat) {
+  set(migrer(nouvelEtat, VERSION))
+}
+
+/** Charge le jeu de démonstration à la place des données actuelles. */
+export function chargerDemo() {
+  const { comptes, balances, positions, watchlist, quotes, fx } = jeuDemo(etat.institutions)
+  set({ ...etat, accounts: comptes, balances, positions, watchlist, quotes, fx })
+}
+
+// --- Comptes ---
+
+export function ajouterCompte({ institutionId, libelle, type, devise }) {
+  const compte = creerCompte({ institutionId, libelle, type, devise })
+  set({ ...etat, accounts: [...etat.accounts, compte] })
+  return compte.id
+}
+
+export function renommerCompte(id, libelle) {
+  set({
+    ...etat,
+    accounts: etat.accounts.map((c) => (c.id === id ? { ...c, libelle } : c)),
+  })
+}
+
+export function supprimerCompte(id) {
+  const { [id]: _retire, ...balances } = etat.balances
+  set({
+    ...etat,
+    accounts: etat.accounts.filter((c) => c.id !== id),
+    balances,
+    positions: etat.positions.filter((p) => p.accountId !== id),
+  })
+}
+
+export function majSolde(accountId, montant) {
+  set({
+    ...etat,
+    balances: {
+      ...etat.balances,
+      [accountId]: { montant, date: new Date().toISOString() },
+    },
+  })
+}
+
+// --- Positions ---
+
+export function ajouterPosition(donnees) {
+  const position = creerPosition(donnees)
+  set({ ...etat, positions: [...etat.positions, position] })
+  return position.id
+}
+
+export function modifierPosition(id, changements) {
+  set({
+    ...etat,
+    positions: etat.positions.map((p) => (p.id === id ? { ...p, ...changements } : p)),
+  })
+}
+
+export function supprimerPosition(id) {
+  set({ ...etat, positions: etat.positions.filter((p) => p.id !== id) })
+}
+
+// --- Watchlist ---
+
+export function ajouterSuivi(donnees) {
+  const suivi = creerSuivi(donnees)
+  set({ ...etat, watchlist: [...etat.watchlist, suivi] })
+  return suivi.id
+}
+
+export function supprimerSuivi(id) {
+  set({ ...etat, watchlist: etat.watchlist.filter((s) => s.id !== id) })
+}
+
+/** Transforme une ligne de watchlist en position : `quotes` (indexé par ticker
+ * seul) n'est pas touché, le cours survit tel quel à la promotion. */
+export function promouvoirEnPosition(suiviId, { accountId, quantite, pru }) {
+  const suivi = etat.watchlist.find((s) => s.id === suiviId)
+  if (!suivi) return
+
+  const position = creerPosition({
+    accountId,
+    ticker: suivi.ticker,
+    isin: '',
+    quantite,
+    pru,
+    devise: suivi.devise,
+  })
+
+  set({
+    ...etat,
+    positions: [...etat.positions, position],
+    watchlist: etat.watchlist.filter((s) => s.id !== suiviId),
+  })
+}
+
+// --- Cours et taux ---
+
+export function majCours(ticker, prix, devise) {
+  set({
+    ...etat,
+    quotes: {
+      ...etat.quotes,
+      [ticker]: { prix, devise, horodatage: new Date().toISOString() },
+    },
+  })
+}
+
+export function majTauxUsd(taux) {
+  set({
+    ...etat,
+    fx: { ...etat.fx, 'USD/EUR': { taux, horodatage: new Date().toISOString() } },
+  })
+}
+
+// --- Historique ---
+
+/** Ajoute un instantané. Ajout seul : rien d'autre n'écrit ce tableau, jamais réécrit. */
+export function enregistrerInstantane({ totalEur, tauxUsd }) {
+  set({
+    ...etat,
+    historique: [...etat.historique, { date: new Date().toISOString(), totalEur, tauxUsd }],
+  })
+}
