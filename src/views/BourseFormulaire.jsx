@@ -5,8 +5,11 @@ import {
   modifierPosition,
   supprimerPosition,
   ajouterSuivi,
+  modifierSuivi,
+  supprimerSuivi,
   promouvoirEnPosition,
   majCours,
+  supprimerCours,
 } from '../data/store.js'
 import { DEVISES } from '../data/schema.js'
 
@@ -19,6 +22,8 @@ export default function FormulaireBourse({ sheet, comptes, quotes, onFermer }) {
       return <FormulairePosition comptes={comptes} quotes={quotes} position={sheet.position} onFermer={onFermer} />
     case 'nouveau-suivi':
       return <FormulaireSuivi onFermer={onFermer} />
+    case 'suivi':
+      return <FormulaireSuivi suivi={sheet.suivi} onFermer={onFermer} />
     case 'promotion':
       return <FormulairePromotion suivi={sheet.suivi} comptes={comptes} onFermer={onFermer} />
     default:
@@ -33,7 +38,8 @@ function FormulairePosition({ comptes, quotes, position, onFermer }) {
   const [quantite, setQuantite] = useState(position?.quantite ?? '')
   const [pru, setPru] = useState(position?.pru ?? '')
   const [devise, setDevise] = useState(position?.devise ?? DEVISES[0])
-  const [cours, setCours] = useState(position ? (quotes[position.ticker]?.prix ?? '') : '')
+  const coursInitial = position ? (quotes[position.ticker]?.prix ?? '') : ''
+  const [cours, setCours] = useState(coursInitial)
   const [confirmation, setConfirmation] = useState(false)
 
   const valider = (e) => {
@@ -52,7 +58,11 @@ function FormulairePosition({ comptes, quotes, position, onFermer }) {
     } else {
       ajouterPosition(donnees)
     }
-    if (cours !== '') majCours(tickerNormalise, Number(String(cours).replace(',', '.')), devise)
+    if (cours !== '') {
+      majCours(tickerNormalise, Number(String(cours).replace(',', '.')), devise)
+    } else if (coursInitial !== '') {
+      supprimerCours(position.ticker)
+    }
     onFermer()
   }
 
@@ -115,15 +125,21 @@ function FormulairePosition({ comptes, quotes, position, onFermer }) {
   )
 }
 
-function FormulaireSuivi({ onFermer }) {
-  const [ticker, setTicker] = useState('')
-  const [libelle, setLibelle] = useState('')
-  const [devise, setDevise] = useState(DEVISES[0])
-  const [note, setNote] = useState('')
+function FormulaireSuivi({ suivi, onFermer }) {
+  const [ticker, setTicker] = useState(suivi?.ticker ?? '')
+  const [libelle, setLibelle] = useState(suivi?.libelle ?? '')
+  const [devise, setDevise] = useState(suivi?.devise ?? DEVISES[0])
+  const [note, setNote] = useState(suivi?.note ?? '')
+  const [confirmation, setConfirmation] = useState(false)
 
   const valider = (e) => {
     e.preventDefault()
-    ajouterSuivi({ ticker: ticker.trim().toUpperCase(), libelle: libelle.trim(), devise, note: note.trim() })
+    const donnees = { ticker: ticker.trim().toUpperCase(), libelle: libelle.trim(), devise, note: note.trim() }
+    if (suivi) {
+      modifierSuivi(suivi.id, donnees)
+    } else {
+      ajouterSuivi(donnees)
+    }
     onFermer()
   }
 
@@ -145,6 +161,24 @@ function FormulaireSuivi({ onFermer }) {
       <button className="comptes__valider" type="submit">
         Enregistrer
       </button>
+
+      {suivi &&
+        (confirmation ? (
+          <button
+            type="button"
+            className="comptes__supprimer comptes__supprimer--confirme"
+            onClick={() => {
+              supprimerSuivi(suivi.id)
+              onFermer()
+            }}
+          >
+            Confirmer la suppression
+          </button>
+        ) : (
+          <button type="button" className="comptes__supprimer" onClick={() => setConfirmation(true)}>
+            Supprimer le suivi
+          </button>
+        ))}
     </form>
   )
 }

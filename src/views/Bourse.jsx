@@ -3,7 +3,7 @@ import Screen from '../components/Screen.jsx'
 import Section from '../components/Section.jsx'
 import Row from '../components/Row.jsx'
 import Sheet from '../components/Sheet.jsx'
-import { useEtat, majCours } from '../data/store.js'
+import { useEtat, majCours, supprimerCours } from '../data/store.js'
 import { valoriserPosition } from '../lib/portfolio.js'
 import { formatEur, formatDevise } from '../lib/money.js'
 import FormulaireBourse from './BourseFormulaire.jsx'
@@ -13,6 +13,7 @@ const TITRES_SHEET = {
   'nouvelle-position': 'Ajouter une position',
   position: 'Modifier la position',
   'nouveau-suivi': 'Ajouter à la watchlist',
+  suivi: 'Modifier le suivi',
   promotion: 'Promouvoir en position',
 }
 
@@ -25,7 +26,12 @@ export default function Bourse() {
   const comptesTitres = etat.accounts.filter((c) => c.type === 'pea' || c.type === 'cto')
 
   const validerCours = (ticker, devise) => (e) => {
-    majCours(ticker, Number(e.target.value.replace(',', '.')) || 0, devise)
+    const saisie = e.target.value.trim()
+    if (saisie === '') {
+      supprimerCours(ticker)
+    } else {
+      majCours(ticker, Number(saisie.replace(',', '.')) || 0, devise)
+    }
     setCoursEnEdition(null)
   }
 
@@ -97,6 +103,13 @@ export default function Bourse() {
               )}
               <button className="bourse__promouvoir" onClick={() => setSheet({ mode: 'promotion', suivi })}>
                 Promouvoir
+              </button>
+              <button
+                className="comptes__gerer"
+                aria-label="Gérer le suivi"
+                onClick={() => setSheet({ mode: 'suivi', suivi })}
+              >
+                ⋯
               </button>
             </Row>
           )

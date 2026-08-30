@@ -53,3 +53,68 @@
   font-size: 12px;
   margin-top: var(--space-2);
 }
+
+.patrimoine__groupe {
+  border-bottom: 1px solid var(--border);
+}
+
+.patrimoine__groupe:last-child {
+  border-bottom: none;
+}
+
+.patrimoine__groupe .row {
+  border-bottom: none;
+}
+
+.patrimoine__chevron {
+  color: var(--text-faint);
+  font-size: 12px;
+}
+
+.patrimoine__detail {
+  background: var(--bg-elev);
+  border-bottom: 2px solid var(--border);
+}
+
+.patrimoine__detail .row {
+  padding-left: var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.patrimoine__detail .row:last-child {
+  border-bottom: none;
+}
+
+.patrimoine__detail .row__libelle {
+  font-size: 13px;
+}
+
+.patrimoine__detail .row__sous-libelle {
+  font-size: 12px;
+}
+
+.patrimoine__detail-valeur {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.patrimoine__detail-eur {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.patrimoine__pv-detail {
+  font-size: 12px;
+}
+
+.patrimoine__sans-cours {
+  color: var(--text-faint);
+  font-size: 13px;
+}
+
+.patrimoine__detail-vide {
+  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-5);
+  color: var(--text-faint);
+  font-size: 13px;
+}

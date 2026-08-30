@@ -25,21 +25,42 @@ export function valoriserPosition(position, cours, tauxUsd) {
   }
 }
 
+// Classe d'actif par type de compte, au critère de disponibilité (cf. CLAUDE.md
+// § 3) : un PEA/CTO n'est pas mobilisable comme un compte courant, son cash
+// non investi est donc rangé avec les titres, pas avec le cash disponible.
+const CLASSE_PAR_TYPE = { courant: 'cash', epargne: 'epargne', pea: 'titres', cto: 'titres' }
+
 /**
- * Consolide tout le patrimoine en euros : comptes espèces + positions
- * valorisées. Une position sans cours saisi est exclue du total plutôt que
- * comptée pour zéro (`coursManquants`).
+ * Consolide tout le patrimoine en euros : comptes + positions valorisées.
+ * Une position sans cours saisi est exclue du total plutôt que comptée pour
+ * zéro (`coursManquants`), mais reste présente dans `positionsTitres` /
+ * `positionsParInstitution` pour l'affichage du détail.
+ *
+ * `etat.watchlist` n'est délibérément pas dans la signature : ce sont des
+ * titres non détenus (ni quantité, ni PRU), ils ne valent rien et ne doivent
+ * jamais entrer dans un total. Ne pas élargir la déstructuration ci-dessous
+ * pour y accéder — si un besoin d'affichage watchlist apparaît, il se lit
+ * depuis `etat.watchlist` en dehors de cette fonction, jamais dedans.
  */
-export function consolider(etat) {
-  const tauxUsd = etat.fx['USD/EUR']?.taux ?? null
+export function consolider({ accounts, balances, positions, quotes, fx }) {
+  const tauxUsd = fx['USD/EUR']?.taux ?? null
 
   let totalEur = 0
   let plusValueEur = 0
   const parInstitution = {}
-  const parClasse = { especes: 0, titres: 0 }
+  const parClasse = { cash: 0, epargne: 0, titres: 0 }
   const coursManquants = []
 
-  const institutionDe = (accountId) => etat.accounts.find((c) => c.id === accountId)?.institutionId ?? null
+  // Détail dépliable, par axe (institution ou classe) — cf. écran Patrimoine.
+  const comptesParInstitution = {}
+  const positionsParInstitution = {}
+  const positionsTitres = []
+  const comptesCash = []
+  const comptesEpargne = []
+  const comptesEnveloppe = [] // cash logé dans un PEA/CTO, détail de la classe "Titres"
+
+  const compteDe = (accountId) => accounts.find((c) => c.id === accountId)
+  const institutionDe = (accountId) => compteDe(accountId)?.institutionId ?? null
 
   const ajouter = (institutionId, classe, montantEur) => {
     if (montantEur === null) return
@@ -50,22 +71,52 @@ export function consolider(etat) {
     }
   }
 
-  for (const compte of etat.accounts) {
-    const solde = etat.balances[compte.id]
+  for (const compte of accounts) {
+    const solde = balances[compte.id]
     if (!solde) continue
-    ajouter(compte.institutionId, 'especes', versEur(solde.montant, compte.devise, tauxUsd))
+    const montantEur = versEur(solde.montant, compte.devise, tauxUsd)
+    const classe = CLASSE_PAR_TYPE[compte.type]
+    ajouter(compte.institutionId, classe, montantEur)
+
+    const ligne = { compte, montant: solde.montant, montantEur }
+    ;(comptesParInstitution[compte.institutionId] ??= []).push(ligne)
+    if (classe === 'cash') comptesCash.push(ligne)
+    else if (classe === 'epargne') comptesEpargne.push(ligne)
+    else comptesEnveloppe.push(ligne)
   }
 
-  for (const position of etat.positions) {
-    const cours = etat.quotes[position.ticker]
+  for (const position of positions) {
+    const compte = compteDe(position.accountId)
+    const institutionId = institutionDe(position.accountId)
+    const cours = quotes[position.ticker]
     const { valeurEur, plusValueEur: pvEur } = valoriserPosition(position, cours, tauxUsd)
+
+    const ligne = { position, compte, valeurEur, plusValueEur: pvEur, coursManquant: valeurEur === null }
+    positionsTitres.push(ligne)
+    if (institutionId) {
+      ;(positionsParInstitution[institutionId] ??= []).push(ligne)
+    }
+
     if (valeurEur === null) {
       coursManquants.push(position)
       continue
     }
-    ajouter(institutionDe(position.accountId), 'titres', valeurEur)
+    ajouter(institutionId, 'titres', valeurEur)
     if (pvEur !== null) plusValueEur += pvEur
   }
 
-  return { totalEur, parInstitution, parClasse, plusValueEur, tauxUtilise: tauxUsd, coursManquants }
+  return {
+    totalEur,
+    parInstitution,
+    parClasse,
+    plusValueEur,
+    tauxUtilise: tauxUsd,
+    coursManquants,
+    comptesParInstitution,
+    positionsParInstitution,
+    positionsTitres,
+    comptesCash,
+    comptesEpargne,
+    comptesEnveloppe,
+  }
 }

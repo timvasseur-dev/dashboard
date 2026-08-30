@@ -51,10 +51,10 @@ export function ajouterCompte({ institutionId, libelle, type, devise }) {
   return compte.id
 }
 
-export function renommerCompte(id, libelle) {
+export function modifierCompte(id, changements) {
   set({
     ...etat,
-    accounts: etat.accounts.map((c) => (c.id === id ? { ...c, libelle } : c)),
+    accounts: etat.accounts.map((c) => (c.id === id ? { ...c, ...changements } : c)),
   })
 }
 
@@ -105,6 +105,13 @@ export function ajouterSuivi(donnees) {
   return suivi.id
 }
 
+export function modifierSuivi(id, changements) {
+  set({
+    ...etat,
+    watchlist: etat.watchlist.map((s) => (s.id === id ? { ...s, ...changements } : s)),
+  })
+}
+
 export function supprimerSuivi(id) {
   set({ ...etat, watchlist: etat.watchlist.filter((s) => s.id !== id) })
 }
@@ -141,6 +148,12 @@ export function majCours(ticker, prix, devise) {
       [ticker]: { prix, devise, horodatage: new Date().toISOString() },
     },
   })
+}
+
+/** Retire le cours d'un ticker : absent, distinct d'un cours à zéro. */
+export function supprimerCours(ticker) {
+  const { [ticker]: _retire, ...quotes } = etat.quotes
+  set({ ...etat, quotes })
 }
 
 export function majTauxUsd(taux) {

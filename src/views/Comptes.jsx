@@ -4,7 +4,7 @@ import Section from '../components/Section.jsx'
 import Row from '../components/Row.jsx'
 import Sheet from '../components/Sheet.jsx'
 import Field from '../components/Field.jsx'
-import { useEtat, ajouterCompte, renommerCompte, supprimerCompte, majSolde } from '../data/store.js'
+import { useEtat, ajouterCompte, modifierCompte, supprimerCompte, majSolde } from '../data/store.js'
 import { TYPES_COMPTE, DEVISES } from '../data/schema.js'
 import { formatDevise } from '../lib/money.js'
 import './Comptes.css'
@@ -70,26 +70,31 @@ export default function Comptes() {
         ouvert={sheet !== null}
         onFermer={() => setSheet(null)}
       >
-        {sheet && <FormulaireCompte sheet={sheet} onFermer={() => setSheet(null)} />}
+        {sheet && (
+          <FormulaireCompte sheet={sheet} institutions={etat.institutions} onFermer={() => setSheet(null)} />
+        )}
       </Sheet>
     </Screen>
   )
 }
 
-function FormulaireCompte({ sheet, onFermer }) {
+function FormulaireCompte({ sheet, institutions, onFermer }) {
   const compte = sheet.mode === 'edition' ? sheet.compte : null
   const [libelle, setLibelle] = useState(compte?.libelle ?? '')
   const [type, setType] = useState(compte?.type ?? TYPES_COMPTE[0])
   const [devise, setDevise] = useState(compte?.devise ?? DEVISES[0])
+  const [institutionId, setInstitutionId] = useState(
+    compte?.institutionId ?? sheet.institutionId ?? institutions[0]?.id ?? '',
+  )
   const [confirmation, setConfirmation] = useState(false)
 
   const valider = (e) => {
     e.preventDefault()
     if (!libelle.trim()) return
     if (compte) {
-      renommerCompte(compte.id, libelle.trim())
+      modifierCompte(compte.id, { libelle: libelle.trim(), type, devise, institutionId })
     } else {
-      ajouterCompte({ institutionId: sheet.institutionId, libelle: libelle.trim(), type, devise })
+      ajouterCompte({ institutionId, libelle: libelle.trim(), type, devise })
     }
     onFermer()
   }
@@ -98,30 +103,36 @@ function FormulaireCompte({ sheet, onFermer }) {
     <form className="comptes__formulaire" onSubmit={valider}>
       <Field label="Libellé" value={libelle} onChange={(e) => setLibelle(e.target.value)} required />
 
-      {!compte && (
-        <>
-          <label className="comptes__champ-select">
-            <span className="field__label">Type</span>
-            <select value={type} onChange={(e) => setType(e.target.value)}>
-              {TYPES_COMPTE.map((t) => (
-                <option key={t} value={t}>
-                  {LIBELLE_TYPE[t]}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="comptes__champ-select">
-            <span className="field__label">Devise</span>
-            <select value={devise} onChange={(e) => setDevise(e.target.value)}>
-              {DEVISES.map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
-          </label>
-        </>
-      )}
+      <label className="comptes__champ-select">
+        <span className="field__label">Institution</span>
+        <select value={institutionId} onChange={(e) => setInstitutionId(e.target.value)}>
+          {institutions.map((i) => (
+            <option key={i.id} value={i.id}>
+              {i.nom}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="comptes__champ-select">
+        <span className="field__label">Type</span>
+        <select value={type} onChange={(e) => setType(e.target.value)}>
+          {TYPES_COMPTE.map((t) => (
+            <option key={t} value={t}>
+              {LIBELLE_TYPE[t]}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="comptes__champ-select">
+        <span className="field__label">Devise</span>
+        <select value={devise} onChange={(e) => setDevise(e.target.value)}>
+          {DEVISES.map((d) => (
+            <option key={d} value={d}>
+              {d}
+            </option>
+          ))}
+        </select>
+      </label>
 
       <button className="comptes__valider" type="submit">
         Enregistrer
