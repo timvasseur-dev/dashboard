@@ -9,6 +9,8 @@ import { formatEur, formatDevise } from '../lib/money.js'
 import FormulaireBourse from './BourseFormulaire.jsx'
 import './Bourse.css'
 
+const formatteurPourcentage = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 })
+
 const TITRES_SHEET = {
   'nouvelle-position': 'Ajouter une position',
   position: 'Modifier la position',
@@ -32,7 +34,8 @@ export default function Bourse() {
             .filter((p) => p.accountId === compte.id)
             .map((position) => {
               const cours = etat.quotes[position.ticker]
-              const { valeurEur, plusValueEur } = valoriserPosition(position, cours, tauxUsd)
+              const { valeurEur, plusValueEur, coutRevientEur } = valoriserPosition(position, cours, tauxUsd)
+              const pourcentage = coutRevientEur ? (plusValueEur / coutRevientEur) * 100 : null
               return (
                 <Row
                   key={position.id}
@@ -43,6 +46,7 @@ export default function Bourse() {
                     <span className="bourse__sans-cours">sans cours</span>
                   ) : (
                     <span className="bourse__valeur">
+                      <span className="num bourse__cours">{formatDevise(cours.prix, cours.devise)}</span>
                       <span className="num">{formatEur(valeurEur)}</span>
                       {plusValueEur !== null && (
                         <span
@@ -50,6 +54,8 @@ export default function Bourse() {
                         >
                           {plusValueEur >= 0 ? '+' : ''}
                           {formatEur(plusValueEur)}
+                          {pourcentage !== null &&
+                            ` (${pourcentage >= 0 ? '+' : ''}${formatteurPourcentage.format(pourcentage)} %)`}
                         </span>
                       )}
                     </span>

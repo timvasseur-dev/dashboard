@@ -5,6 +5,11 @@
   align-items: flex-end;
 }
 
+.bourse__cours {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
 .bourse__pv {
   font-size: 12px;
 }

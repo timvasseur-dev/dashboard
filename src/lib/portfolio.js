@@ -9,7 +9,7 @@ export function valoriserPosition(position, cours, tauxUsd) {
   const coutRevient = position.quantite * position.pru
 
   if (!cours) {
-    return { valeur: null, valeurEur: null, coutRevient, plusValueEur: null, tauxUtilise: null }
+    return { valeur: null, valeurEur: null, coutRevient, coutRevientEur: null, plusValueEur: null, tauxUtilise: null }
   }
 
   const valeur = position.quantite * cours.prix
@@ -20,6 +20,7 @@ export function valoriserPosition(position, cours, tauxUsd) {
     valeur,
     valeurEur,
     coutRevient,
+    coutRevientEur,
     plusValueEur: valeurEur !== null && coutRevientEur !== null ? valeurEur - coutRevientEur : null,
     tauxUtilise: cours.devise === 'USD' ? tauxUsd : null,
   }
