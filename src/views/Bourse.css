@@ -30,34 +30,20 @@
   text-align: left;
 }
 
-.bourse__cours {
-  font-size: 15px;
-}
-
-.bourse__saisie-cours {
-  width: 90px;
-  text-align: right;
-  background: var(--bg);
-  border: 1px solid var(--accent);
-  border-radius: var(--radius-s);
-  padding: var(--space-1) var(--space-2);
-  color: var(--text);
-  font-size: 15px;
-}
-
 .bourse__promouvoir {
   color: var(--accent);
   font-size: 13px;
   padding: var(--space-1) var(--space-2);
 }
 
-.bourse__promotion-info {
-  font-size: 15px;
-  font-weight: 600;
-}
-
 .bourse__formulaire {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+}
+
+.bourse__champ-favori {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }

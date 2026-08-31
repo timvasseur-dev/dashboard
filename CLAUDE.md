@@ -74,7 +74,8 @@ Institution   { id, nom, couleur }
 Account       { id, institutionId, libelle, type, devise }
 balances      { [accountId]: { montant, date } }         // solde courant, une map par compte
 Position      { id, accountId, ticker, isin, quantite, pru, devise }
-Watchlist     { id, ticker, libelle, devise, note }       // suivi hors patrimoine
+Watchlist     { id, ticker, libelle, conviction, horizon, zoneAchatMin,
+                zoneAchatMax, alertePrix, these, risques, favori }        // idée de suivi
 quotes        { [ticker]: { prix, devise, horodatage } }  // indexé par ticker, jamais commité
 FxRate        { paire, taux, horodatage }
 historique    [{ date, totalEur, tauxUsd }]               // instantanés, ajout seul, jamais réécrit
@@ -88,10 +89,15 @@ n'a pas d'historique par compte, un solde courant horodaté suffit. Écart assum
 rapport à une conception qui garderait chaque solde comme événement daté ; à revoir si
 un historique par compte devient nécessaire.
 
-`Watchlist` est une racine à part, sans `accountId`, sans `quantite`, sans `pru` : aucun
-calcul de patrimoine ne la lit, elle ne peut pas entrer dans le total. `quotes` est
-indexé par ticker seul, partagé entre une position et une ligne de watchlist du même
-titre — promouvoir l'une en l'autre laisse le cours déjà saisi intact.
+`Watchlist` est une racine à part, et une idée de suivi, pas un titre allégé : ni
+`accountId`, ni `quantite`, ni `pru`, ni `devise`, ni cours stocké sur l'entité elle-même.
+`consolider()` (`src/lib/portfolio.js`) ne reçoit jamais l'état complet, seulement
+`{ institutions, accounts, balances, positions, quotes, fx }` — `watchlist` n'est
+structurellement jamais dans son champ de vision, elle ne peut pas entrer dans le total.
+Le prix courant d'une idée de suivi se lit dans le cache `quotes` (indexé par ticker
+seul, partagé avec les positions), jamais écrit depuis la watchlist. Promouvoir une idée
+en position ouvre le formulaire de position pré-rempli du ticker : quantité, PRU et
+devise se saisissent là.
 
 `historique` ne se remplit que via une action explicite (« Enregistrer un instantané »),
 jamais automatiquement : une courbe de patrimoine ne se reconstruit pas après coup.

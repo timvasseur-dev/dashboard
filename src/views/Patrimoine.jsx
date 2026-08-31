@@ -24,7 +24,14 @@ export default function Patrimoine() {
     comptesCash,
     comptesEpargne,
     comptesEnveloppe,
-  } = consolider(etat)
+  } = consolider({
+    institutions: etat.institutions,
+    accounts: etat.accounts,
+    balances: etat.balances,
+    positions: etat.positions,
+    quotes: etat.quotes,
+    fx: etat.fx,
+  })
   const dernierInstantane = etat.historique.at(-1)
 
   const [institutionsOuvertes, setInstitutionsOuvertes] = useState(() => new Set())

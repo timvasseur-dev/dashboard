@@ -7,11 +7,10 @@ import {
   ajouterSuivi,
   modifierSuivi,
   supprimerSuivi,
-  promouvoirEnPosition,
   majCours,
   supprimerCours,
 } from '../data/store.js'
-import { DEVISES } from '../data/schema.js'
+import { DEVISES, CONVICTIONS, HORIZONS } from '../data/schema.js'
 
 /** Sélectionne le formulaire selon le mode de la feuille ouverte dans Bourse. */
 export default function FormulaireBourse({ sheet, comptes, quotes, onFermer }) {
@@ -25,15 +24,25 @@ export default function FormulaireBourse({ sheet, comptes, quotes, onFermer }) {
     case 'suivi':
       return <FormulaireSuivi suivi={sheet.suivi} onFermer={onFermer} />
     case 'promotion':
-      return <FormulairePromotion suivi={sheet.suivi} comptes={comptes} onFermer={onFermer} />
+      // Promouvoir une idée ouvre le formulaire de position pré-rempli du
+      // ticker : quantité, PRU et devise se saisissent là, pas sur l'idée.
+      return (
+        <FormulairePosition
+          comptes={comptes}
+          quotes={quotes}
+          tickerInitial={sheet.suivi.ticker}
+          suiviAPromouvoir={sheet.suivi.id}
+          onFermer={onFermer}
+        />
+      )
     default:
       return null
   }
 }
 
-function FormulairePosition({ comptes, quotes, position, onFermer }) {
+function FormulairePosition({ comptes, quotes, position, tickerInitial, suiviAPromouvoir, onFermer }) {
   const [accountId, setAccountId] = useState(position?.accountId ?? comptes[0]?.id ?? '')
-  const [ticker, setTicker] = useState(position?.ticker ?? '')
+  const [ticker, setTicker] = useState(position?.ticker ?? tickerInitial ?? '')
   const [isin, setIsin] = useState(position?.isin ?? '')
   const [quantite, setQuantite] = useState(position?.quantite ?? '')
   const [pru, setPru] = useState(position?.pru ?? '')
@@ -57,6 +66,7 @@ function FormulairePosition({ comptes, quotes, position, onFermer }) {
       modifierPosition(position.id, donnees)
     } else {
       ajouterPosition(donnees)
+      if (suiviAPromouvoir) supprimerSuivi(suiviAPromouvoir)
     }
     if (cours !== '') {
       majCours(tickerNormalise, Number(String(cours).replace(',', '.')), devise)
@@ -128,13 +138,32 @@ function FormulairePosition({ comptes, quotes, position, onFermer }) {
 function FormulaireSuivi({ suivi, onFermer }) {
   const [ticker, setTicker] = useState(suivi?.ticker ?? '')
   const [libelle, setLibelle] = useState(suivi?.libelle ?? '')
-  const [devise, setDevise] = useState(suivi?.devise ?? DEVISES[0])
-  const [note, setNote] = useState(suivi?.note ?? '')
+  const [conviction, setConviction] = useState(suivi?.conviction ?? '')
+  const [horizon, setHorizon] = useState(suivi?.horizon ?? '')
+  const [zoneAchatMin, setZoneAchatMin] = useState(suivi?.zoneAchatMin ?? '')
+  const [zoneAchatMax, setZoneAchatMax] = useState(suivi?.zoneAchatMax ?? '')
+  const [alertePrix, setAlertePrix] = useState(suivi?.alertePrix ?? '')
+  const [these, setThese] = useState(suivi?.these ?? '')
+  const [risques, setRisques] = useState(suivi?.risques ?? '')
+  const [favori, setFavori] = useState(suivi?.favori ?? false)
   const [confirmation, setConfirmation] = useState(false)
+
+  const nombreOuNul = (valeur) => (valeur === '' ? null : Number(valeur))
 
   const valider = (e) => {
     e.preventDefault()
-    const donnees = { ticker: ticker.trim().toUpperCase(), libelle: libelle.trim(), devise, note: note.trim() }
+    const donnees = {
+      ticker: ticker.trim().toUpperCase(),
+      libelle: libelle.trim(),
+      conviction,
+      horizon,
+      zoneAchatMin: nombreOuNul(zoneAchatMin),
+      zoneAchatMax: nombreOuNul(zoneAchatMax),
+      alertePrix: nombreOuNul(alertePrix),
+      these: these.trim(),
+      risques: risques.trim(),
+      favori,
+    }
     if (suivi) {
       modifierSuivi(suivi.id, donnees)
     } else {
@@ -148,16 +177,46 @@ function FormulaireSuivi({ suivi, onFermer }) {
       <Field label="Ticker" value={ticker} onChange={(e) => setTicker(e.target.value)} required />
       <Field label="Libellé" value={libelle} onChange={(e) => setLibelle(e.target.value)} />
       <label className="comptes__champ-select">
-        <span className="field__label">Devise</span>
-        <select value={devise} onChange={(e) => setDevise(e.target.value)}>
-          {DEVISES.map((d) => (
-            <option key={d} value={d}>
-              {d}
+        <span className="field__label">Conviction</span>
+        <select value={conviction} onChange={(e) => setConviction(e.target.value)}>
+          <option value="">—</option>
+          {CONVICTIONS.map((c) => (
+            <option key={c} value={c}>
+              {c}
             </option>
           ))}
         </select>
       </label>
-      <Field label="Note" value={note} onChange={(e) => setNote(e.target.value)} />
+      <label className="comptes__champ-select">
+        <span className="field__label">Horizon</span>
+        <select value={horizon} onChange={(e) => setHorizon(e.target.value)}>
+          <option value="">—</option>
+          {HORIZONS.map((h) => (
+            <option key={h} value={h}>
+              {h}
+            </option>
+          ))}
+        </select>
+      </label>
+      <Field
+        label="Zone d'achat min"
+        numerique
+        value={zoneAchatMin}
+        onChange={(e) => setZoneAchatMin(e.target.value)}
+      />
+      <Field
+        label="Zone d'achat max"
+        numerique
+        value={zoneAchatMax}
+        onChange={(e) => setZoneAchatMax(e.target.value)}
+      />
+      <Field label="Alerte prix" numerique value={alertePrix} onChange={(e) => setAlertePrix(e.target.value)} />
+      <Field label="Thèse" value={these} onChange={(e) => setThese(e.target.value)} />
+      <Field label="Risques" value={risques} onChange={(e) => setRisques(e.target.value)} />
+      <label className="bourse__champ-favori">
+        <input type="checkbox" checked={favori} onChange={(e) => setFavori(e.target.checked)} />
+        <span className="field__label">Favori</span>
+      </label>
       <button className="comptes__valider" type="submit">
         Enregistrer
       </button>
@@ -179,47 +238,6 @@ function FormulaireSuivi({ suivi, onFermer }) {
             Supprimer le suivi
           </button>
         ))}
-    </form>
-  )
-}
-
-function FormulairePromotion({ suivi, comptes, onFermer }) {
-  const [accountId, setAccountId] = useState(comptes[0]?.id ?? '')
-  const [quantite, setQuantite] = useState('')
-  const [pru, setPru] = useState('')
-
-  const valider = (e) => {
-    e.preventDefault()
-    promouvoirEnPosition(suivi.id, { accountId, quantite: Number(quantite), pru: Number(pru) })
-    onFermer()
-  }
-
-  return (
-    <form className="bourse__formulaire" onSubmit={valider}>
-      <p className="bourse__promotion-info">
-        {suivi.ticker} — {suivi.libelle}
-      </p>
-      <label className="comptes__champ-select">
-        <span className="field__label">Compte</span>
-        <select value={accountId} onChange={(e) => setAccountId(e.target.value)}>
-          {comptes.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.libelle}
-            </option>
-          ))}
-        </select>
-      </label>
-      <Field label="Quantité" numerique value={quantite} onChange={(e) => setQuantite(e.target.value)} required />
-      <Field
-        label="Prix de revient unitaire"
-        numerique
-        value={pru}
-        onChange={(e) => setPru(e.target.value)}
-        required
-      />
-      <button className="comptes__valider" type="submit">
-        Enregistrer
-      </button>
     </form>
   )
 }

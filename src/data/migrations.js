@@ -2,11 +2,30 @@ import { VERSION } from './schema.js'
 
 /*
  * Une entrée par numéro de version de départ : `migrations[1]` transforme un
- * état v1 en v2, etc. Vide aujourd'hui — la chaîne n'a rien à faire tant que
- * le modèle n'a pas changé — mais le point d'entrée existe pour ne pas perdre
- * les données à la première évolution.
+ * état v1 en v2, etc.
  */
-const migrations = {}
+const migrations = {
+  // v1 : watchlist { id, ticker, libelle, devise, note } — quasi-valorisable.
+  // v2 : watchlist { id, ticker, libelle, conviction, horizon, zoneAchatMin,
+  // zoneAchatMax, alertePrix, these, risques, favori } — idée de suivi, sans
+  // aucun montant. `devise` est abandonnée, `note` devient `these`.
+  1: (etat) => ({
+    ...etat,
+    watchlist: etat.watchlist.map(({ id, ticker, libelle, note }) => ({
+      id,
+      ticker,
+      libelle,
+      conviction: '',
+      horizon: '',
+      zoneAchatMin: null,
+      zoneAchatMax: null,
+      alertePrix: null,
+      these: note ?? '',
+      risques: '',
+      favori: false,
+    })),
+  }),
+}
 
 /** Fait remonter un état vers la version courante, migration par migration. */
 export function migrer(etat, versionCible = VERSION) {

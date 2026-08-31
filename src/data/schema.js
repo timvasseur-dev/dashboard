@@ -1,7 +1,9 @@
-export const VERSION = 1
+export const VERSION = 2
 
 export const TYPES_COMPTE = ['courant', 'epargne', 'pea', 'cto']
 export const DEVISES = ['EUR', 'USD', 'XPF']
+export const CONVICTIONS = ['faible', 'moyenne', 'forte']
+export const HORIZONS = ['court', 'moyen', 'long']
 
 // Institutions réelles, structure fixe (cf. CLAUDE.md § 3) : pas de gestion en
 // phase 2, seuls les comptes qu'elles contiennent se créent et se suppriment.
@@ -46,6 +48,31 @@ export function creerPosition({ accountId, ticker, isin, quantite, pru, devise }
   }
 }
 
-export function creerSuivi({ ticker, libelle, devise, note }) {
-  return { id: crypto.randomUUID(), ticker, libelle, devise, note: note ?? '' }
+/** Une ligne de watchlist est une idée de suivi, jamais un titre valorisable :
+ * ni quantité, ni PRU, ni devise, ni cours stocké (cf. CLAUDE.md § 3). */
+export function creerSuivi({
+  ticker,
+  libelle,
+  conviction,
+  horizon,
+  zoneAchatMin,
+  zoneAchatMax,
+  alertePrix,
+  these,
+  risques,
+  favori,
+}) {
+  return {
+    id: crypto.randomUUID(),
+    ticker,
+    libelle,
+    conviction: conviction ?? '',
+    horizon: horizon ?? '',
+    zoneAchatMin: zoneAchatMin ?? null,
+    zoneAchatMax: zoneAchatMax ?? null,
+    alertePrix: alertePrix ?? null,
+    these: these ?? '',
+    risques: risques ?? '',
+    favori: favori ?? false,
+  }
 }

@@ -36,13 +36,15 @@ const CLASSE_PAR_TYPE = { courant: 'cash', epargne: 'epargne', pea: 'titres', ct
  * zéro (`coursManquants`), mais reste présente dans `positionsTitres` /
  * `positionsParInstitution` pour l'affichage du détail.
  *
- * `etat.watchlist` n'est délibérément pas dans la signature : ce sont des
- * titres non détenus (ni quantité, ni PRU), ils ne valent rien et ne doivent
- * jamais entrer dans un total. Ne pas élargir la déstructuration ci-dessous
- * pour y accéder — si un besoin d'affichage watchlist apparaît, il se lit
- * depuis `etat.watchlist` en dehors de cette fonction, jamais dedans.
+ * Ne prend jamais l'état complet en paramètre, seulement ce sous-ensemble :
+ * `watchlist` n'y figure pas, ni dans la signature ni dans les appels
+ * (cf. Patrimoine.jsx). Une ligne de watchlist est une idée de suivi, sans
+ * quantité ni PRU ni cours stocké — elle ne peut structurellement rien
+ * valoir. Ne pas élargir la déstructuration ci-dessous pour y accéder ; si un
+ * besoin d'affichage watchlist apparaît, il se lit depuis `etat.watchlist`
+ * en dehors de cette fonction, jamais dedans.
  */
-export function consolider({ accounts, balances, positions, quotes, fx }) {
+export function consolider({ institutions, accounts, balances, positions, quotes, fx }) {
   const tauxUsd = fx['USD/EUR']?.taux ?? null
 
   let totalEur = 0

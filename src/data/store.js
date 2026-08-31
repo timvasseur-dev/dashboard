@@ -116,28 +116,6 @@ export function supprimerSuivi(id) {
   set({ ...etat, watchlist: etat.watchlist.filter((s) => s.id !== id) })
 }
 
-/** Transforme une ligne de watchlist en position : `quotes` (indexé par ticker
- * seul) n'est pas touché, le cours survit tel quel à la promotion. */
-export function promouvoirEnPosition(suiviId, { accountId, quantite, pru }) {
-  const suivi = etat.watchlist.find((s) => s.id === suiviId)
-  if (!suivi) return
-
-  const position = creerPosition({
-    accountId,
-    ticker: suivi.ticker,
-    isin: '',
-    quantite,
-    pru,
-    devise: suivi.devise,
-  })
-
-  set({
-    ...etat,
-    positions: [...etat.positions, position],
-    watchlist: etat.watchlist.filter((s) => s.id !== suiviId),
-  })
-}
-
 // --- Cours et taux ---
 
 export function majCours(ticker, prix, devise) {

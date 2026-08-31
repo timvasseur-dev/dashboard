@@ -59,7 +59,17 @@ export function jeuDemo(institutions) {
     }),
   ]
 
-  const watchlist = [creerSuivi({ ticker: 'AAPL', libelle: 'Apple', devise: 'USD', note: '' })]
+  const watchlist = [
+    creerSuivi({
+      ticker: 'AAPL',
+      libelle: 'Apple',
+      conviction: 'moyenne',
+      horizon: 'long',
+      these: 'Écosystème verrouillé, marge élevée.',
+      risques: 'Valorisation tendue.',
+      favori: true,
+    }),
+  ]
 
   const quotes = {
     'CW8.PA': { prix: 100, devise: 'EUR', horodatage: DATE_DEMO },
