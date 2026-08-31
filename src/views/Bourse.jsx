@@ -3,7 +3,7 @@ import Screen from '../components/Screen.jsx'
 import Section from '../components/Section.jsx'
 import Row from '../components/Row.jsx'
 import Sheet from '../components/Sheet.jsx'
-import { useEtat } from '../data/store.js'
+import { useEtat, rattacherPositionOrpheline, supprimerPositionOrpheline } from '../data/store.js'
 import { valoriserPosition } from '../lib/portfolio.js'
 import { formatEur, formatDevise } from '../lib/money.js'
 import FormulaireBourse from './BourseFormulaire.jsx'
@@ -65,10 +65,22 @@ export default function Bourse() {
               )
             }),
         )}
-        <button className="bourse__ajouter" onClick={() => setSheet({ mode: 'nouvelle-position' })}>
-          + Ajouter une position
-        </button>
+        {comptesTitres.length > 0 ? (
+          <button className="bourse__ajouter" onClick={() => setSheet({ mode: 'nouvelle-position' })}>
+            + Ajouter une position
+          </button>
+        ) : (
+          <p className="screen__empty">Créez d'abord un compte PEA ou CTO dans Comptes.</p>
+        )}
       </Section>
+
+      {etat.positionsOrphelines.length > 0 && (
+        <Section titre="Positions à rattacher">
+          {etat.positionsOrphelines.map((position) => (
+            <PositionOrpheline key={position.id} position={position} comptes={comptesTitres} />
+          ))}
+        </Section>
+      )}
 
       <Section titre="Ma watchlist">
         {etat.watchlist.map((suivi) => (
@@ -77,9 +89,11 @@ export default function Bourse() {
             libelle={`${suivi.favori ? '★ ' : ''}${suivi.ticker}`}
             sousLibelle={[suivi.libelle, suivi.conviction, suivi.horizon].filter(Boolean).join(' · ')}
           >
-            <button className="bourse__promouvoir" onClick={() => setSheet({ mode: 'promotion', suivi })}>
-              Promouvoir
-            </button>
+            {comptesTitres.length > 0 && (
+              <button className="bourse__promouvoir" onClick={() => setSheet({ mode: 'promotion', suivi })}>
+                Promouvoir
+              </button>
+            )}
             <button
               className="comptes__gerer"
               aria-label="Gérer le suivi"
@@ -105,5 +119,48 @@ export default function Bourse() {
         )}
       </Sheet>
     </Screen>
+  )
+}
+
+/** Position sans compte valide (accountId vide, ou compte supprimé lors d'un
+ * import) : ne s'affiche nulle part ailleurs tant qu'elle n'est pas résolue
+ * par l'utilisateur — rattachée à un compte, ou supprimée explicitement. */
+function PositionOrpheline({ position, comptes }) {
+  const [accountId, setAccountId] = useState(comptes[0]?.id ?? '')
+  const [confirmation, setConfirmation] = useState(false)
+
+  return (
+    <Row
+      libelle={position.ticker}
+      sousLibelle={`${position.quantite} × ${formatDevise(position.pru, position.devise)}`}
+    >
+      {comptes.length > 0 && (
+        <>
+          <select value={accountId} onChange={(e) => setAccountId(e.target.value)}>
+            {comptes.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.libelle}
+              </option>
+            ))}
+          </select>
+          <button className="bourse__promouvoir" onClick={() => rattacherPositionOrpheline(position.id, accountId)}>
+            Rattacher
+          </button>
+        </>
+      )}
+      {confirmation ? (
+        <button
+          type="button"
+          className="comptes__supprimer comptes__supprimer--confirme"
+          onClick={() => supprimerPositionOrpheline(position.id)}
+        >
+          Confirmer
+        </button>
+      ) : (
+        <button type="button" className="comptes__supprimer" onClick={() => setConfirmation(true)}>
+          Supprimer
+        </button>
+      )}
+    </Row>
   )
 }

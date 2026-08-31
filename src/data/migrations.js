@@ -25,6 +25,25 @@ const migrations = {
       favori: false,
     })),
   }),
+
+  // v2 : une Position doit avoir un accountId correspondant à un compte
+  // existant (cf. CLAUDE.md, correction du bug des positions orphelines).
+  // Celles qui ne correspondent à aucun compte (accountId vide ou compte
+  // supprimé) sont déplacées vers `positionsOrphelines`, jamais
+  // supprimées : l'utilisateur décide de les rattacher ou de les effacer.
+  2: (etat) => {
+    const idsComptes = new Set(etat.accounts.map((c) => c.id))
+    const positions = []
+    const orphelines = [...(etat.positionsOrphelines ?? [])]
+    for (const position of etat.positions) {
+      if (position.accountId && idsComptes.has(position.accountId)) {
+        positions.push(position)
+      } else {
+        orphelines.push(position)
+      }
+    }
+    return { ...etat, positions, positionsOrphelines: orphelines }
+  },
 }
 
 /** Fait remonter un état vers la version courante, migration par migration. */

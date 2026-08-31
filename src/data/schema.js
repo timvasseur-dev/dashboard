@@ -1,4 +1,4 @@
-export const VERSION = 2
+export const VERSION = 3
 
 export const TYPES_COMPTE = ['courant', 'epargne', 'pea', 'cto']
 export const DEVISES = ['EUR', 'USD', 'XPF']
@@ -25,6 +25,7 @@ export function etatVide() {
     accounts: [],
     balances: {},
     positions: [],
+    positionsOrphelines: [],
     watchlist: [],
     quotes: {},
     fx: {},
@@ -37,6 +38,7 @@ export function creerCompte({ institutionId, libelle, type, devise }) {
 }
 
 export function creerPosition({ accountId, ticker, isin, quantite, pru, devise }) {
+  if (!accountId) throw new Error('creerPosition : accountId requis')
   return {
     id: crypto.randomUUID(),
     accountId,

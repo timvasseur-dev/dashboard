@@ -13,10 +13,16 @@ import {
 import { DEVISES, CONVICTIONS, HORIZONS } from '../data/schema.js'
 
 /** Sélectionne le formulaire selon le mode de la feuille ouverte dans Bourse. */
+const MESSAGE_AUCUN_COMPTE = "Créez d'abord un compte PEA ou CTO dans Comptes."
+
 export default function FormulaireBourse({ sheet, comptes, quotes, onFermer }) {
   switch (sheet.mode) {
     case 'nouvelle-position':
-      return <FormulairePosition comptes={comptes} quotes={quotes} onFermer={onFermer} />
+      return comptes.length === 0 ? (
+        <p className="screen__empty">{MESSAGE_AUCUN_COMPTE}</p>
+      ) : (
+        <FormulairePosition comptes={comptes} quotes={quotes} onFermer={onFermer} />
+      )
     case 'position':
       return <FormulairePosition comptes={comptes} quotes={quotes} position={sheet.position} onFermer={onFermer} />
     case 'nouveau-suivi':
@@ -26,7 +32,9 @@ export default function FormulaireBourse({ sheet, comptes, quotes, onFermer }) {
     case 'promotion':
       // Promouvoir une idée ouvre le formulaire de position pré-rempli du
       // ticker : quantité, PRU et devise se saisissent là, pas sur l'idée.
-      return (
+      return comptes.length === 0 ? (
+        <p className="screen__empty">{MESSAGE_AUCUN_COMPTE}</p>
+      ) : (
         <FormulairePosition
           comptes={comptes}
           quotes={quotes}

@@ -29,6 +29,7 @@ const CLES_ATTENDUES = [
   'accounts',
   'balances',
   'positions',
+  'positionsOrphelines',
   'watchlist',
   'quotes',
   'fx',
@@ -46,6 +47,7 @@ export function validerEtatImporte(candidat) {
     Array.isArray(candidat.accounts) &&
     typeof candidat.balances === 'object' &&
     Array.isArray(candidat.positions) &&
+    Array.isArray(candidat.positionsOrphelines) &&
     Array.isArray(candidat.watchlist) &&
     typeof candidat.quotes === 'object' &&
     typeof candidat.fx === 'object' &&

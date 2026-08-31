@@ -40,7 +40,7 @@ export function remplacerEtat(nouvelEtat) {
 /** Charge le jeu de démonstration à la place des données actuelles. */
 export function chargerDemo() {
   const { comptes, balances, positions, watchlist, quotes, fx } = jeuDemo(etat.institutions)
-  set({ ...etat, accounts: comptes, balances, positions, watchlist, quotes, fx })
+  set({ ...etat, accounts: comptes, balances, positions, positionsOrphelines: [], watchlist, quotes, fx })
 }
 
 // --- Comptes ---
@@ -80,13 +80,23 @@ export function majSolde(accountId, montant) {
 
 // --- Positions ---
 
+function compteExiste(accountId) {
+  return etat.accounts.some((c) => c.id === accountId)
+}
+
 export function ajouterPosition(donnees) {
+  if (!compteExiste(donnees.accountId)) {
+    throw new Error('ajouterPosition : compte introuvable')
+  }
   const position = creerPosition(donnees)
   set({ ...etat, positions: [...etat.positions, position] })
   return position.id
 }
 
 export function modifierPosition(id, changements) {
+  if ('accountId' in changements && !compteExiste(changements.accountId)) {
+    throw new Error('modifierPosition : compte introuvable')
+  }
   set({
     ...etat,
     positions: etat.positions.map((p) => (p.id === id ? { ...p, ...changements } : p)),
@@ -95,6 +105,27 @@ export function modifierPosition(id, changements) {
 
 export function supprimerPosition(id) {
   set({ ...etat, positions: etat.positions.filter((p) => p.id !== id) })
+}
+
+// --- Positions orphelines (accountId invalide, issues d'une migration) ---
+
+/** Rattache une position orpheline à un compte existant : elle rejoint `positions`. */
+export function rattacherPositionOrpheline(id, accountId) {
+  if (!compteExiste(accountId)) {
+    throw new Error('rattacherPositionOrpheline : compte introuvable')
+  }
+  const position = etat.positionsOrphelines.find((p) => p.id === id)
+  if (!position) return
+  set({
+    ...etat,
+    positionsOrphelines: etat.positionsOrphelines.filter((p) => p.id !== id),
+    positions: [...etat.positions, { ...position, accountId }],
+  })
+}
+
+/** Supprime une position orpheline pour de bon, décision explicite de l'utilisateur. */
+export function supprimerPositionOrpheline(id) {
+  set({ ...etat, positionsOrphelines: etat.positionsOrphelines.filter((p) => p.id !== id) })
 }
 
 // --- Watchlist ---
