@@ -2,23 +2,17 @@ import { useState } from 'react'
 import Screen from '../components/Screen.jsx'
 import Section from '../components/Section.jsx'
 import Row from '../components/Row.jsx'
-import Field from '../components/Field.jsx'
-import { useEtat, majTauxUsd, remplacerEtat, chargerDemo } from '../data/store.js'
+import Age from '../components/Age.jsx'
+import { useEtat, remplacerEtat, chargerDemo } from '../data/store.js'
 import { validerEtatImporte } from '../data/storage.js'
 import { XPF_PAR_EUR } from '../lib/money.js'
 import './Reglages.css'
 
 export default function Reglages() {
   const etat = useEtat()
-  const [taux, setTaux] = useState(etat.fx['USD/EUR']?.taux ?? '')
   const [colle, setColle] = useState('')
   const [message, setMessage] = useState('')
-
-  const validerTaux = (e) => {
-    e.preventDefault()
-    const valeur = Number(String(taux).replace(',', '.'))
-    if (valeur > 0) majTauxUsd(valeur)
-  }
+  const tauxUsd = etat.fx['USD/EUR']
 
   const texteExport = () => JSON.stringify(etat, null, 2)
 
@@ -75,12 +69,15 @@ export default function Reglages() {
   return (
     <Screen title="Réglages" subtitle="Taux, export, import">
       <Section titre="Taux de change">
-        <form className="reglages__taux" onSubmit={validerTaux}>
-          <Field label="USD/EUR" numerique value={taux} onChange={(e) => setTaux(e.target.value)} />
-          <button className="comptes__valider" type="submit">
-            Enregistrer
-          </button>
-        </form>
+        <Row libelle="USD/EUR" sousLibelle="1 USD en euros, récupéré depuis l'écran Marché">
+          {tauxUsd ? (
+            <span>
+              <span className="num">{tauxUsd.taux.toFixed(4)}</span> <Age horodatage={tauxUsd.horodatage} />
+            </span>
+          ) : (
+            <span className="indisponible">indisponible</span>
+          )}
+        </Row>
         <p className="reglages__note">XPF/EUR est un taux fixe : 1 EUR = {XPF_PAR_EUR} XPF.</p>
       </Section>
 

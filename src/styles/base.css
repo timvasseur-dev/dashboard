@@ -49,3 +49,16 @@ button {
   font-family: var(--font-num);
   font-variant-numeric: tabular-nums;
 }
+
+/* Âge d'une valeur horodatée (cours, taux) : cf. src/components/Age.jsx. */
+.age {
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+/* Valeur pas encore récupérée (cours, taux) : cf. src/views/Marche.jsx,
+   src/views/Reglages.jsx. */
+.indisponible {
+  font-size: 13px;
+  color: var(--text-faint);
+}

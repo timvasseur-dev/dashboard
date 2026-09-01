@@ -76,7 +76,7 @@ balances      { [accountId]: { montant, date } }         // solde courant, une m
 Position      { id, accountId, ticker, isin, quantite, pru, devise }
 Watchlist     { id, ticker, libelle, conviction, horizon, zoneAchatMin,
                 zoneAchatMax, alertePrix, these, risques, favori }        // idée de suivi
-quotes        { [ticker]: { prix, devise, horodatage } }  // indexé par ticker, jamais commité
+quotes        { [ticker]: { prix, devise, nom, horodatage } }  // indexé par ticker, jamais commité
 FxRate        { paire, taux, horodatage }
 historique    [{ date, totalEur, tauxUsd }]               // instantanés, ajout seul, jamais réécrit
 ```
@@ -101,6 +101,24 @@ devise se saisissent là.
 
 `historique` ne se remplit que via une action explicite (« Enregistrer un instantané »),
 jamais automatiquement : une courbe de patrimoine ne se reconstruit pas après coup.
+
+### Le ticker ne suffit pas
+
+Un ticker seul n'identifie pas un instrument : c'est le couple **ticker + place de
+cotation** qui l'identifie (`GOLD.PA` sur Euronext Paris n'est pas la même chose que
+`GOLD` sur une place américaine). Deux instruments sans rapport peuvent partager un
+ticker proche, et un cours plausible ne prouve rien — un incident a vu `GOLD.PA`
+répondre pour un mauvais instrument, prix crédible, devise différente de celle de la
+position réelle. Seul l'**ISIN** est une référence stable, indépendante de la place de
+cotation.
+
+En conséquence : `quotes[ticker].nom`, renvoyé par Yahoo, est affiché à côté de chaque
+position (Bourse, détail Patrimoine) — c'est le premier signal qu'on a le mauvais
+instrument. La devise renvoyée par Yahoo est comparée à celle de la position ; une
+divergence est une alerte visible, jamais une conversion silencieuse. À la saisie
+(position ou idée de suivi), la route `/recherche` du worker (recherche Yahoo par nom
+ou ISIN) permet de choisir l'instrument dans une liste plutôt que de taper un ticker à
+l'aveugle.
 
 ### Structure réelle des comptes
 
@@ -136,9 +154,13 @@ l'application affiche le cours du BTC en référence et la position IBIT réelle
 
 - **Cours actions / ETF** : Yahoo Finance, via un Worker Cloudflare servant de proxy
   (l'appel direct depuis le navigateur est bloqué par CORS). Ne pas utiliser de proxy
-  CORS public : ils tombent régulièrement.
+  CORS public : ils tombent régulièrement. Le même worker expose une route de
+  recherche (nom ou ISIN → ticker, nom, place, devise), cf. « Le ticker ne suffit
+  pas » ci-dessus.
 - **Cours BTC** : CoinGecko, API publique gratuite.
-- **Taux USD/EUR** : à décider en phase 3.
+- **Taux USD/EUR** : Frankfurter (`api.frankfurter.dev`), taux de référence BCE,
+  gratuit, sans clé — mis à jour une fois par jour ouvré, largement suffisant pour
+  l'affichage.
 
 Toute réponse réseau est mise en cache avec un horodatage. L'application doit rester
 utilisable hors ligne, en affichant les dernières valeurs connues et leur âge.

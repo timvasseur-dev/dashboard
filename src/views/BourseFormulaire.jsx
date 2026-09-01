@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import Field from '../components/Field.jsx'
+import Age from '../components/Age.jsx'
+import ChercheurTicker from '../components/ChercheurTicker.jsx'
 import {
   ajouterPosition,
   modifierPosition,
@@ -7,10 +9,10 @@ import {
   ajouterSuivi,
   modifierSuivi,
   supprimerSuivi,
-  majCours,
   supprimerCours,
 } from '../data/store.js'
 import { DEVISES, CONVICTIONS, HORIZONS } from '../data/schema.js'
+import { formatDevise } from '../lib/money.js'
 
 /** Sélectionne le formulaire selon le mode de la feuille ouverte dans Bourse. */
 const MESSAGE_AUCUN_COMPTE = "Créez d'abord un compte PEA ou CTO dans Comptes."
@@ -55,16 +57,14 @@ function FormulairePosition({ comptes, quotes, position, tickerInitial, suiviAPr
   const [quantite, setQuantite] = useState(position?.quantite ?? '')
   const [pru, setPru] = useState(position?.pru ?? '')
   const [devise, setDevise] = useState(position?.devise ?? DEVISES[0])
-  const coursInitial = position ? (quotes[position.ticker]?.prix ?? '') : ''
-  const [cours, setCours] = useState(coursInitial)
   const [confirmation, setConfirmation] = useState(false)
+  const coursActuel = position ? quotes[position.ticker] : null
 
   const valider = (e) => {
     e.preventDefault()
-    const tickerNormalise = ticker.trim().toUpperCase()
     const donnees = {
       accountId,
-      ticker: tickerNormalise,
+      ticker: ticker.trim().toUpperCase(),
       isin: isin.trim(),
       quantite: Number(quantite),
       pru: Number(pru),
@@ -75,11 +75,6 @@ function FormulairePosition({ comptes, quotes, position, tickerInitial, suiviAPr
     } else {
       ajouterPosition(donnees)
       if (suiviAPromouvoir) supprimerSuivi(suiviAPromouvoir)
-    }
-    if (cours !== '') {
-      majCours(tickerNormalise, Number(String(cours).replace(',', '.')), devise)
-    } else if (coursInitial !== '') {
-      supprimerCours(position.ticker)
     }
     onFermer()
   }
@@ -96,6 +91,12 @@ function FormulairePosition({ comptes, quotes, position, tickerInitial, suiviAPr
           ))}
         </select>
       </label>
+      <ChercheurTicker
+        onChoisir={(r) => {
+          setTicker(r.ticker)
+          if (r.devise) setDevise(r.devise)
+        }}
+      />
       <Field label="Ticker" value={ticker} onChange={(e) => setTicker(e.target.value)} required />
       <Field label="ISIN" value={isin} onChange={(e) => setIsin(e.target.value)} />
       <Field label="Quantité" numerique value={quantite} onChange={(e) => setQuantite(e.target.value)} required />
@@ -116,7 +117,16 @@ function FormulairePosition({ comptes, quotes, position, tickerInitial, suiviAPr
           ))}
         </select>
       </label>
-      <Field label="Cours actuel" numerique value={cours} onChange={(e) => setCours(e.target.value)} />
+      {coursActuel && (
+        <div className="bourse__cours-actuel">
+          <span>
+            Cours actuel : {formatDevise(coursActuel.prix, coursActuel.devise)} <Age horodatage={coursActuel.horodatage} />
+          </span>
+          <button type="button" className="bourse__effacer-cours" onClick={() => supprimerCours(position.ticker)}>
+            Effacer le cours
+          </button>
+        </div>
+      )}
 
       <button className="comptes__valider" type="submit">
         Enregistrer
@@ -182,6 +192,7 @@ function FormulaireSuivi({ suivi, onFermer }) {
 
   return (
     <form className="bourse__formulaire" onSubmit={valider}>
+      <ChercheurTicker onChoisir={(r) => setTicker(r.ticker)} />
       <Field label="Ticker" value={ticker} onChange={(e) => setTicker(e.target.value)} required />
       <Field label="Libellé" value={libelle} onChange={(e) => setLibelle(e.target.value)} />
       <label className="comptes__champ-select">

@@ -32,6 +32,11 @@ export function useEtat() {
   return useSyncExternalStore(subscribe, () => etat, () => etat)
 }
 
+/** État courant hors composant (ex. src/data/rafraichissement.js). */
+export function etatCourant() {
+  return etat
+}
+
 /** Remplace tout l'état (import JSON), en le faisant remonter à la version courante. */
 export function remplacerEtat(nouvelEtat) {
   set(migrer(nouvelEtat, VERSION))
@@ -149,12 +154,12 @@ export function supprimerSuivi(id) {
 
 // --- Cours et taux ---
 
-export function majCours(ticker, prix, devise) {
+export function majCours(ticker, prix, devise, nom) {
   set({
     ...etat,
     quotes: {
       ...etat.quotes,
-      [ticker]: { prix, devise, horodatage: new Date().toISOString() },
+      [ticker]: { prix, devise, nom: nom ?? null, horodatage: new Date().toISOString() },
     },
   })
 }

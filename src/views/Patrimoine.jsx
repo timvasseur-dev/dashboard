@@ -86,7 +86,7 @@ export default function Patrimoine() {
                     <CompteLigne key={compte.id} compte={compte} montant={montant} montantEur={montantEur} />
                   ))}
                   {positions.map((ligne) => (
-                    <PositionLigne key={ligne.position.id} {...ligne} />
+                    <PositionLigne key={ligne.position.id} {...ligne} cours={etat.quotes[ligne.position.ticker]} />
                   ))}
                   {comptes.length === 0 && positions.length === 0 && (
                     <p className="patrimoine__detail-vide">Aucun compte</p>
@@ -158,7 +158,7 @@ export default function Patrimoine() {
                 />
               ))}
               {positionsTitres.map((ligne) => (
-                <PositionLigne key={ligne.position.id} {...ligne} />
+                <PositionLigne key={ligne.position.id} {...ligne} cours={etat.quotes[ligne.position.ticker]} />
               ))}
               {comptesEnveloppe.length === 0 && positionsTitres.length === 0 && (
                 <p className="patrimoine__detail-vide">Aucune position</p>
@@ -194,27 +194,44 @@ function CompteLigne({ compte, montant, montantEur, sousLibelle }) {
   )
 }
 
-function PositionLigne({ position, compte, valeurEur, plusValueEur, coursManquant }) {
+function PositionLigne({ position, compte, valeurEur, plusValueEur, coursManquant, cours }) {
   return (
     <Row
       libelle={position.ticker}
-      sousLibelle={`${compte?.libelle ?? ''} · ${position.quantite} × ${formatDevise(position.pru, position.devise)}`}
-    >
-      {coursManquant ? (
-        <span className="patrimoine__sans-cours">sans cours</span>
-      ) : (
-        <span className="patrimoine__detail-valeur">
-          <span className="num">{formatEur(valeurEur)}</span>
-          {plusValueEur !== null && (
-            <span
-              className={`num patrimoine__pv-detail ${plusValueEur >= 0 ? 'patrimoine__pv--pos' : 'patrimoine__pv--neg'}`}
-            >
-              {plusValueEur >= 0 ? '+' : ''}
-              {formatEur(plusValueEur)}
-            </span>
+      sousLibelle={
+        <>
+          {compte?.libelle ?? ''} · {position.quantite} × {formatDevise(position.pru, position.devise)}
+          {cours?.nom && (
+            <>
+              <br />
+              {cours.nom}
+            </>
           )}
-        </span>
-      )}
+        </>
+      }
+    >
+      <span className="patrimoine__detail-valeur">
+        {cours && cours.devise !== position.devise && (
+          <span className="patrimoine__devise-alerte">
+            ⚠ {cours.devise} ≠ {position.devise}
+          </span>
+        )}
+        {coursManquant ? (
+          <span className="patrimoine__sans-cours">sans cours</span>
+        ) : (
+          <>
+            <span className="num">{formatEur(valeurEur)}</span>
+            {plusValueEur !== null && (
+              <span
+                className={`num patrimoine__pv-detail ${plusValueEur >= 0 ? 'patrimoine__pv--pos' : 'patrimoine__pv--neg'}`}
+              >
+                {plusValueEur >= 0 ? '+' : ''}
+                {formatEur(plusValueEur)}
+              </span>
+            )}
+          </>
+        )}
+      </span>
     </Row>
   )
 }

@@ -1,8 +1,20 @@
+.bourse__colonne {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
 .bourse__valeur,
 .bourse__sans-cours {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+}
+
+.bourse__devise-alerte {
+  font-size: 12px;
+  color: var(--negative);
 }
 
 .bourse__cours {
@@ -51,4 +63,38 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
+}
+
+.bourse__cours-actuel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.bourse__effacer-cours {
+  color: var(--negative);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.bourse__zone {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.bourse__zone-bornes {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.bourse__zone--dedans .num {
+  color: var(--positive);
+}
+
+.bourse__zone--dedans .bourse__zone-bornes {
+  color: var(--positive);
 }

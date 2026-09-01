@@ -1,9 +1,11 @@
-// Proxy de cotations. Une seule responsabilité, trois routes : cours
-// d'actions/ETF (Yahoo), cours du BTC (CoinGecko), taux USD/EUR
-// (Frankfurter). Rien d'autre ici — pas de notification, pas de tâche
-// planifiée : ces routes-là vivront dans un fichier séparé si elles arrivent.
+// Proxy de cotations. Une seule responsabilité, quatre routes : cours
+// d'actions/ETF (Yahoo), recherche d'instrument (Yahoo), cours du BTC
+// (CoinGecko), taux USD/EUR (Frankfurter). Rien d'autre ici — pas de
+// notification, pas de tâche planifiée : ces routes-là vivront dans un
+// fichier séparé si elles arrivent.
 import { enTetesCors, reponsePreflight } from './cors.js'
 import { gererCours } from './cours.js'
+import { gererRecherche } from './recherche.js'
 import { gererBtc } from './btc.js'
 import { gererFx } from './fx.js'
 
@@ -32,6 +34,8 @@ async function router(url) {
   switch (url.pathname) {
     case '/cours':
       return gererCours(url)
+    case '/recherche':
+      return gererRecherche(url)
     case '/btc':
       return gererBtc()
     case '/taux/usd-eur':

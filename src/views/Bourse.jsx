@@ -3,7 +3,10 @@ import Screen from '../components/Screen.jsx'
 import Section from '../components/Section.jsx'
 import Row from '../components/Row.jsx'
 import Sheet from '../components/Sheet.jsx'
+import Age from '../components/Age.jsx'
+import BoutonActualiser from '../components/BoutonActualiser.jsx'
 import { useEtat, rattacherPositionOrpheline, supprimerPositionOrpheline } from '../data/store.js'
+import { actualiserBourse } from '../data/rafraichissement.js'
 import { valoriserPosition } from '../lib/portfolio.js'
 import { formatEur, formatDevise } from '../lib/money.js'
 import FormulaireBourse from './BourseFormulaire.jsx'
@@ -28,6 +31,7 @@ export default function Bourse() {
 
   return (
     <Screen title="Bourse" subtitle="Positions PEA et CTO">
+      <BoutonActualiser onActualiser={actualiserBourse} />
       <Section titre="Mes positions">
         {comptesTitres.flatMap((compte) =>
           etat.positions
@@ -40,26 +44,46 @@ export default function Bourse() {
                 <Row
                   key={position.id}
                   libelle={position.ticker}
-                  sousLibelle={`${compte.libelle} · ${position.quantite} × ${formatDevise(position.pru, position.devise)}`}
-                >
-                  {valeurEur === null ? (
-                    <span className="bourse__sans-cours">sans cours</span>
-                  ) : (
-                    <span className="bourse__valeur">
-                      <span className="num bourse__cours">{formatDevise(cours.prix, cours.devise)}</span>
-                      <span className="num">{formatEur(valeurEur)}</span>
-                      {plusValueEur !== null && (
-                        <span
-                          className={`num bourse__pv ${plusValueEur >= 0 ? 'bourse__pv--pos' : 'bourse__pv--neg'}`}
-                        >
-                          {plusValueEur >= 0 ? '+' : ''}
-                          {formatEur(plusValueEur)}
-                          {pourcentage !== null &&
-                            ` (${pourcentage >= 0 ? '+' : ''}${formatteurPourcentage.format(pourcentage)} %)`}
-                        </span>
+                  sousLibelle={
+                    <>
+                      {compte.libelle} · {position.quantite} × {formatDevise(position.pru, position.devise)}
+                      {cours?.nom && (
+                        <>
+                          <br />
+                          {cours.nom}
+                        </>
                       )}
-                    </span>
-                  )}
+                    </>
+                  }
+                >
+                  <span className="bourse__colonne">
+                    {cours && cours.devise !== position.devise && (
+                      <span className="bourse__devise-alerte">
+                        ⚠ {cours.devise} ≠ {position.devise}
+                      </span>
+                    )}
+                    {valeurEur === null ? (
+                      <span className="bourse__sans-cours">sans cours</span>
+                    ) : (
+                      <span className="bourse__valeur">
+                        <span className="bourse__cours">
+                          <span className="num">{formatDevise(cours.prix, cours.devise)}</span>{' '}
+                          <Age horodatage={cours.horodatage} />
+                        </span>
+                        <span className="num">{formatEur(valeurEur)}</span>
+                        {plusValueEur !== null && (
+                          <span
+                            className={`num bourse__pv ${plusValueEur >= 0 ? 'bourse__pv--pos' : 'bourse__pv--neg'}`}
+                          >
+                            {plusValueEur >= 0 ? '+' : ''}
+                            {formatEur(plusValueEur)}
+                            {pourcentage !== null &&
+                              ` (${pourcentage >= 0 ? '+' : ''}${formatteurPourcentage.format(pourcentage)} %)`}
+                          </span>
+                        )}
+                      </span>
+                    )}
+                  </span>
                   <button
                     className="comptes__gerer"
                     aria-label="Gérer la position"
@@ -95,6 +119,7 @@ export default function Bourse() {
             libelle={`${suivi.favori ? '★ ' : ''}${suivi.ticker}`}
             sousLibelle={[suivi.libelle, suivi.conviction, suivi.horizon].filter(Boolean).join(' · ')}
           >
+            <ZoneAchat suivi={suivi} cours={etat.quotes[suivi.ticker]} />
             {comptesTitres.length > 0 && (
               <button className="bourse__promouvoir" onClick={() => setSheet({ mode: 'promotion', suivi })}>
                 Promouvoir
@@ -168,5 +193,26 @@ function PositionOrpheline({ position, comptes }) {
         </button>
       )}
     </Row>
+  )
+}
+
+/** Cours courant d'une idée de suivi face à sa zone d'achat, avec une mise
+ * en évidence quand le cours y entre (cf. CLAUDE.md § « Le front »). */
+function ZoneAchat({ suivi, cours }) {
+  if (!cours) return null
+  const { zoneAchatMin, zoneAchatMax } = suivi
+  const bornesConnues = zoneAchatMin != null && zoneAchatMax != null
+  const dansZone = bornesConnues && cours.prix >= zoneAchatMin && cours.prix <= zoneAchatMax
+
+  return (
+    <span className={`bourse__zone ${dansZone ? 'bourse__zone--dedans' : ''}`}>
+      <span className="num">{formatDevise(cours.prix, cours.devise)}</span>
+      {bornesConnues && (
+        <span className="bourse__zone-bornes">
+          zone {formatDevise(zoneAchatMin, cours.devise)}–{formatDevise(zoneAchatMax, cours.devise)}
+        </span>
+      )}
+      <Age horodatage={cours.horodatage} />
+    </span>
   )
 }
