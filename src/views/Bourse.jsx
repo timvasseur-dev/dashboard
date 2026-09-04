@@ -43,16 +43,11 @@ export default function Bourse() {
               return (
                 <Row
                   key={position.id}
-                  libelle={position.ticker}
+                  libelle={cours?.nom ?? position.ticker}
                   sousLibelle={
                     <>
-                      {compte.libelle} · {position.quantite} × {formatDevise(position.pru, position.devise)}
-                      {cours?.nom && (
-                        <>
-                          <br />
-                          {cours.nom}
-                        </>
-                      )}
+                      {position.ticker} · {compte.libelle} · {position.quantite} ×{' '}
+                      {formatDevise(position.pru, position.devise)}
                     </>
                   }
                 >
