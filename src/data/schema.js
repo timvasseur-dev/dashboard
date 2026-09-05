@@ -1,4 +1,4 @@
-export const VERSION = 3
+export const VERSION = 4
 
 export const TYPES_COMPTE = ['courant', 'epargne', 'pea', 'cto']
 export const DEVISES = ['EUR', 'USD', 'XPF']
@@ -14,7 +14,9 @@ const INSTITUTIONS_PAR_DEFAUT = [
   { nom: 'IBKR', couleur: '#20c997' },
 ]
 
-/** État vide de départ, institutions déjà en place. */
+/** État vide de départ, institutions déjà en place. `appareilId` identifie ce
+ * navigateur pour la synchronisation (phase 4) : assigné une fois, jamais
+ * recréé ensuite, y compris après un import (cf. `remplacerEtat`). */
 export function etatVide() {
   return {
     version: VERSION,
@@ -30,6 +32,8 @@ export function etatVide() {
     quotes: {},
     fx: {},
     historique: [],
+    dernierModification: null,
+    appareilId: crypto.randomUUID(),
   }
 }
 

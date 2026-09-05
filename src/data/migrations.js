@@ -44,6 +44,17 @@ const migrations = {
     }
     return { ...etat, positions, positionsOrphelines: orphelines }
   },
+
+  // v3 : ajoute la traçabilité nécessaire à la synchro cloud (phase 4).
+  // `appareilId` identifie ce navigateur, jamais recréé après coup ;
+  // `dernierModification` à null tant qu'aucune mutation locale n'a encore
+  // eu lieu depuis la migration (cf. store.js, qui le timestampe ensuite à
+  // chaque écriture).
+  3: (etat) => ({
+    ...etat,
+    dernierModification: etat.dernierModification ?? null,
+    appareilId: etat.appareilId ?? crypto.randomUUID(),
+  }),
 }
 
 /** Fait remonter un état vers la version courante, migration par migration. */

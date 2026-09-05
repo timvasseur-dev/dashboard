@@ -2,3 +2,7 @@ name = "vv-cours"
 main = "src/index.js"
 compatibility_date = "2024-11-01"
 account_id = "662a912862604a28f18aef6f3f686e76"
+
+[[kv_namespaces]]
+binding = "ETAT_KV"
+id = "b092f0ddfdc84e67b2f375deb82bad8b"

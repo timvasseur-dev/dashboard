@@ -21,8 +21,21 @@ function subscribe(onChange) {
   return () => listeners.delete(onChange)
 }
 
+// Toute mutation locale passe par ici et se voit timestampée : c'est ce que
+// la synchro (phase 4) compare pour savoir qui, d'un appareil ou de l'autre,
+// a la version la plus récente.
 function set(prochainEtat) {
-  etat = prochainEtat
+  etat = { ...prochainEtat, dernierModification: new Date().toISOString() }
+  sauvegarder(etat)
+  emit()
+}
+
+/** Applique un état reçu de la synchro cloud tel quel, sans le traiter comme
+ * une modification locale : sa date et son appareilId d'origine sont
+ * l'information utile pour la prochaine comparaison, pas « maintenant » sur
+ * cet appareil. N'appeler que depuis src/data/sync.js. */
+export function appliquerEtatDistant(etatDistant) {
+  etat = etatDistant
   sauvegarder(etat)
   emit()
 }
@@ -37,9 +50,12 @@ export function etatCourant() {
   return etat
 }
 
-/** Remplace tout l'état (import JSON), en le faisant remonter à la version courante. */
+/** Remplace tout l'état (import JSON), en le faisant remonter à la version
+ * courante. L'identité d'appareil reste celle de ce navigateur, pas celle du
+ * fichier importé (qui peut venir d'un autre appareil) : `appareilId`
+ * identifie qui a fait la dernière modification, pas qui a produit l'export. */
 export function remplacerEtat(nouvelEtat) {
-  set(migrer(nouvelEtat, VERSION))
+  set({ ...migrer(nouvelEtat, VERSION), appareilId: etat.appareilId })
 }
 
 /** Charge le jeu de démonstration à la place des données actuelles. */

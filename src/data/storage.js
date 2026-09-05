@@ -34,6 +34,8 @@ const CLES_ATTENDUES = [
   'quotes',
   'fx',
   'historique',
+  'dernierModification',
+  'appareilId',
 ]
 
 /** Vérifie la forme d'un état avant de l'appliquer (import JSON). */
@@ -51,6 +53,8 @@ export function validerEtatImporte(candidat) {
     Array.isArray(candidat.watchlist) &&
     typeof candidat.quotes === 'object' &&
     typeof candidat.fx === 'object' &&
-    Array.isArray(candidat.historique)
+    Array.isArray(candidat.historique) &&
+    (candidat.dernierModification === null || typeof candidat.dernierModification === 'string') &&
+    typeof candidat.appareilId === 'string'
   )
 }
