@@ -195,7 +195,26 @@ rien. Quand la synchronisation cloud arrivera :
 
 ---
 
-## 8. Conventions de travail
+## 8. Limitations connues
+
+### Synchronisation : angle mort des onglets multiples (phase 4)
+
+La détection de conflit (`src/lib/conflit.js`) compare des instantanés par
+**appareil** (`appareilId`), pas par onglet. Chaque onglet ouvert sur le même
+appareil charge son propre `état` en mémoire (le module `src/data/store.js`
+est instancié par onglet) ; si deux onglets du même navigateur éditent sans
+se recharger l'un l'autre, celui qui pousse en second écrase le premier sans
+qu'aucun conflit ne soit détecté — les deux portent le même `appareilId`, donc
+`comparerEtats` ne voit rien d'anormal. Résultat possible : un solde ou une
+position modifiés dans un onglet disparaissent silencieusement, sans message
+d'erreur, si un autre onglet du même appareil pousse après coup une version
+plus ancienne.
+
+Non traité pour l'instant : la phase 4 raisonne par appareil, pas par onglet.
+À corriger si ça se manifeste réellement (ex. identifiant par onglet en plus
+de l'identifiant d'appareil), pas par anticipation.
+
+## 9. Conventions de travail
 
 - Toujours proposer un plan avant d'écrire du code.
 - Commits en français, à l'impératif : `ajoute le modèle de comptes`.

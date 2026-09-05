@@ -1,6 +1,7 @@
 import { verifierJeton } from './auth.js'
 
 const CLE = 'etat'
+const CHAMPS_REQUIS = ['dernierModification', 'appareilId', 'iv', 'blob']
 
 /** GET /etat — l'état chiffré partagé entre appareils, protégé par jeton.
  * 404 si personne n'a encore synchronisé : distinct d'un état vide, pour que
@@ -34,8 +35,11 @@ export async function gererEcrireEtat(requete, env) {
     return { corps: { erreur: 'JSON illisible' }, statut: 400 }
   }
 
-  if (!corps.dernierModification || !corps.appareilId || !corps.iv || !corps.blob) {
-    return { corps: { erreur: 'champs manquants : dernierModification, appareilId, iv, blob' }, statut: 400 }
+  // Présence, pas véracité : une chaîne vide (iv sans chiffrement le temps
+  // des tests), un 0 ou un false sont des valeurs présentes, pas absentes.
+  const manquants = CHAMPS_REQUIS.filter((champ) => corps[champ] === undefined || corps[champ] === null)
+  if (manquants.length > 0) {
+    return { corps: { erreur: `champ manquant : ${manquants.join(', ')}` }, statut: 400 }
   }
 
   await env.ETAT_KV.put(CLE, JSON.stringify(corps))
