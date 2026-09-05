@@ -1,0 +1,39 @@
+.synchro__champ {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.synchro__boutons {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.synchro__message {
+  color: var(--accent);
+  font-size: 14px;
+}
+
+.synchro__avertissement {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.synchro__erreur {
+  padding: 0 var(--space-4) var(--space-4);
+  color: var(--negative);
+  font-size: 14px;
+}
+
+.synchro__pleine-largeur {
+  margin: var(--space-4);
+}
+
+.synchro__conflit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}

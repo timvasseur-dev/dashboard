@@ -17,7 +17,8 @@ export function comparerEtats(local, distant, derniereSyncReussie) {
     return local.dernierModification ? 'a-pousser' : 'a-jour'
   }
 
-  const localModifie = !derniereSyncReussie || (local.dernierModification ?? '') > derniereSyncReussie
+  const localModifie =
+    local.dernierModification !== null && (!derniereSyncReussie || local.dernierModification > derniereSyncReussie)
   const distantDejaVu =
     distant.appareilId === local.appareilId || (derniereSyncReussie && distant.dernierModification <= derniereSyncReussie)
   const distantModifie = !distantDejaVu

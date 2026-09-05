@@ -6,6 +6,7 @@ import Age from '../components/Age.jsx'
 import { useEtat, remplacerEtat, chargerDemo } from '../data/store.js'
 import { validerEtatImporte } from '../data/storage.js'
 import { XPF_PAR_EUR } from '../lib/money.js'
+import PanneauSynchro from './PanneauSynchro.jsx'
 import './Reglages.css'
 
 export default function Reglages() {
@@ -80,6 +81,8 @@ export default function Reglages() {
         </Row>
         <p className="reglages__note">XPF/EUR est un taux fixe : 1 EUR = {XPF_PAR_EUR} XPF.</p>
       </Section>
+
+      <PanneauSynchro />
 
       <Section titre="Données">
         <Row
