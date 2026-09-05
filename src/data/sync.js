@@ -6,6 +6,8 @@
 import { etatCourant, appliquerEtatDistant } from './store.js'
 import { lireEtatDistant, ecrireEtatDistant } from './syncApi.js'
 import { chargerJeton, chargerDerniereSync, sauvegarderDerniereSync } from './syncLocal.js'
+import { obtenirCle } from './cleChiffrement.js'
+import { chiffrer, dechiffrer } from '../lib/crypto.js'
 import { comparerEtats } from '../lib/conflit.js'
 import {
   debuterSynchronisation,
@@ -15,16 +17,20 @@ import {
   statutSynchronisationCourant,
 } from './statutSynchronisation.js'
 
-// TODO(étape suivante) : remplacer par un vrai chiffrement (src/lib/crypto.js).
-// En attendant, ce simple encodage base64 permet de valider toute la
-// plomberie push/pull/conflit sans dépendre d'un module qui n'existe pas
-// encore. Le worker ne voit dans les deux cas qu'un blob opaque.
-function empaqueter(etat) {
+// dernierModification/appareilId restent en clair (nécessaires à comparerEtats
+// sans déchiffrement) ; tout le reste de l'état est chiffré côté client, le
+// worker ne voit jamais qu'un blob opaque (cf. CLAUDE.md § 7).
+async function empaqueter(etat) {
+  const cle = await obtenirCle()
+  if (!cle) throw new Error('phrase secrète non définie sur cet appareil')
   const { dernierModification, appareilId, ...contenu } = etat
-  return { dernierModification, appareilId, iv: '', blob: btoa(JSON.stringify(contenu)) }
+  const { iv, blob } = await chiffrer(cle, contenu)
+  return { dernierModification, appareilId, iv, blob }
 }
-function depaqueter(payload) {
-  const contenu = JSON.parse(atob(payload.blob))
+async function depaqueter(payload) {
+  const cle = await obtenirCle()
+  if (!cle) throw new Error('phrase secrète non définie sur cet appareil')
+  const contenu = await dechiffrer(cle, payload)
   return { ...contenu, dernierModification: payload.dernierModification, appareilId: payload.appareilId }
 }
 
@@ -32,7 +38,7 @@ async function pousser(jeton) {
   if (statutSynchronisationCourant().conflit) {
     throw new Error('conflit non résolu : synchronisation suspendue')
   }
-  await ecrireEtatDistant(jeton, empaqueter(etatCourant()))
+  await ecrireEtatDistant(jeton, await empaqueter(etatCourant()))
   const maintenant = new Date().toISOString()
   sauvegarderDerniereSync(maintenant)
   return maintenant
@@ -78,7 +84,7 @@ export async function verifierSynchronisation() {
         break
 
       case 'a-tirer': {
-        const distant = depaqueter(payloadDistant)
+        const distant = await depaqueter(payloadDistant)
         appliquerEtatDistant(distant)
         sauvegarderDerniereSync(distant.dernierModification)
         terminerSynchronisation(null, 'Mis à jour depuis un autre appareil.')
@@ -86,7 +92,7 @@ export async function verifierSynchronisation() {
       }
 
       case 'conflit':
-        definirConflit({ local, distant: depaqueter(payloadDistant) })
+        definirConflit({ local, distant: await depaqueter(payloadDistant) })
         terminerSynchronisation(null, null)
         break
     }
@@ -109,12 +115,12 @@ export async function synchroniserMaintenant() {
     const decision = comparerEtats(local, payloadDistant, derniereSyncReussie)
 
     if (decision === 'conflit') {
-      definirConflit({ local, distant: depaqueter(payloadDistant) })
+      definirConflit({ local, distant: await depaqueter(payloadDistant) })
       terminerSynchronisation(null, null)
       return
     }
     if (decision === 'a-tirer') {
-      const distant = depaqueter(payloadDistant)
+      const distant = await depaqueter(payloadDistant)
       appliquerEtatDistant(distant)
       sauvegarderDerniereSync(distant.dernierModification)
       terminerSynchronisation(null, 'Mis à jour depuis un autre appareil.')
