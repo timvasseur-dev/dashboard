@@ -13,6 +13,11 @@
   font-size: 15px;
 }
 
+.comptes__ouvrir {
+  font-size: 15px;
+  text-align: left;
+}
+
 .comptes__gerer {
   color: var(--text-dim);
   padding: var(--space-1) var(--space-2);

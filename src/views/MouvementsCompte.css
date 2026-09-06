@@ -1,0 +1,39 @@
+.mouvements__barre {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+}
+
+.mouvements__recherche {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  padding: var(--space-2) var(--space-3);
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.mouvements__importer {
+  flex-shrink: 0;
+  color: var(--accent);
+  font-size: 14px;
+}
+
+.mouvements__vide {
+  padding: var(--space-4);
+  color: var(--text-dim);
+  font-size: 14px;
+  text-align: center;
+}
+
+.mouvements__montant--positif {
+  color: var(--positive);
+}
+
+.mouvements__montant--negatif {
+  color: var(--negative);
+}

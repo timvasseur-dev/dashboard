@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react'
 import { charger, sauvegarder } from './storage.js'
-import { creerCompte, creerPosition, creerSuivi, VERSION } from './schema.js'
+import { creerCompte, creerPosition, creerSuivi, creerProfilImport, VERSION } from './schema.js'
 import { migrer } from './migrations.js'
 import { jeuDemo } from './demo.js'
 
@@ -61,7 +61,17 @@ export function remplacerEtat(nouvelEtat) {
 /** Charge le jeu de démonstration à la place des données actuelles. */
 export function chargerDemo() {
   const { comptes, balances, positions, watchlist, quotes, fx } = jeuDemo(etat.institutions)
-  set({ ...etat, accounts: comptes, balances, positions, positionsOrphelines: [], watchlist, quotes, fx })
+  set({
+    ...etat,
+    accounts: comptes,
+    balances,
+    positions,
+    positionsOrphelines: [],
+    watchlist,
+    quotes,
+    fx,
+    transactions: [],
+  })
 }
 
 // --- Comptes ---
@@ -201,4 +211,33 @@ export function enregistrerInstantane({ totalEur, tauxUsd }) {
     ...etat,
     historique: [...etat.historique, { date: new Date().toISOString(), totalEur, tauxUsd }],
   })
+}
+
+// --- Transactions (import bancaire, phase 5) ---
+
+/** Ajoute des transactions déjà dédoublonnées (cf. `lib/dedoublonnage.js`) en
+ * une seule écriture : soit tout l'import est pris en compte, soit rien, si
+ * l'appelant échoue avant cet appel. N'écrase jamais rien. */
+export function ajouterTransactions(transactions) {
+  if (transactions.length === 0) return
+  set({ ...etat, transactions: [...etat.transactions, ...transactions] })
+}
+
+// --- Profils de correspondance CSV ---
+
+export function ajouterProfilImport(donnees) {
+  const profil = creerProfilImport(donnees)
+  set({ ...etat, profilsImport: [...etat.profilsImport, profil] })
+  return profil.id
+}
+
+export function modifierProfilImport(id, changements) {
+  set({
+    ...etat,
+    profilsImport: etat.profilsImport.map((p) => (p.id === id ? { ...p, ...changements } : p)),
+  })
+}
+
+export function supprimerProfilImport(id) {
+  set({ ...etat, profilsImport: etat.profilsImport.filter((p) => p.id !== id) })
 }

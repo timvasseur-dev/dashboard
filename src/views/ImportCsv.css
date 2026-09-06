@@ -1,0 +1,62 @@
+.import__choix {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+
+.import__champ-select {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.import__champ-select select,
+.import__champ-select input[type='file'] {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  padding: var(--space-3);
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.import__aide {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.import__erreur {
+  color: var(--negative);
+  font-size: 13px;
+}
+
+.import__analyser {
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius-s);
+  padding: var(--space-3);
+  text-align: center;
+  font-weight: 600;
+}
+
+.import__analyser:disabled {
+  opacity: 0.5;
+}
+
+.import__termine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+}
+
+.import__termine button {
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius-s);
+  padding: var(--space-3) var(--space-4);
+  font-weight: 600;
+}

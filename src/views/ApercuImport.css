@@ -1,0 +1,97 @@
+.apercu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.apercu__encodage {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.apercu__compteurs {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.apercu__compteur {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  flex: 1;
+}
+
+.apercu__valeur {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.apercu__libelle {
+  font-size: 12px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.apercu__erreurs {
+  margin: 0;
+  padding: var(--space-3);
+  background: var(--bg-elev);
+  border-radius: var(--radius-s);
+  color: var(--negative);
+  font-size: 13px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.apercu__extrait {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  overflow: hidden;
+}
+
+.apercu__extrait-titre {
+  padding: var(--space-2) var(--space-3);
+  font-size: 12px;
+  color: var(--text-dim);
+  background: var(--bg-elev);
+}
+
+.apercu__extrait-separateur {
+  padding: var(--space-2) var(--space-3);
+  font-size: 12px;
+  color: var(--text-faint);
+  text-align: center;
+}
+
+.apercu__montant--positif {
+  color: var(--positive);
+}
+
+.apercu__montant--negatif {
+  color: var(--negative);
+}
+
+.apercu__aide {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.apercu__confirmer {
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius-s);
+  padding: var(--space-3);
+  text-align: center;
+  font-weight: 600;
+}
+
+.apercu__confirmer:disabled {
+  opacity: 0.5;
+}
+
+.apercu__annuler {
+  color: var(--text-dim);
+  padding: var(--space-3);
+  text-align: center;
+}

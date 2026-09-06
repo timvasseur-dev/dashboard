@@ -19,3 +19,26 @@ export function ageMs(horodatage) {
   if (!horodatage) return Infinity
   return Date.now() - new Date(horodatage).getTime()
 }
+
+/** Parse une date de relevé bancaire vers une date ISO (`AAAA-MM-JJ`).
+ * `format` est choisi une fois par l'utilisateur dans le profil de
+ * correspondance (cf. CLAUDE.md § phase 5 : ambigu, donc jamais deviné —
+ * `03/04/2025` peut être le 3 avril ou le 4 mars selon la banque). */
+export function parseDateImport(chaine, format) {
+  const valeur = (chaine ?? '').trim()
+  if (format === 'AAAA-MM-JJ') {
+    return /^\d{4}-\d{2}-\d{2}$/.test(valeur) ? valeur : null
+  }
+  if (format === 'JJ/MM/AAAA') {
+    const correspondance = valeur.match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+    if (!correspondance) return null
+    const [, jour, mois, annee] = correspondance
+    return `${annee}-${mois}-${jour}`
+  }
+  return null
+}
+
+/** Date ISO (`AAAA-MM-JJ`) affichée en français (`JJ/MM/AAAA`). */
+export function formatDateAffichee(dateIso) {
+  return new Date(dateIso).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+}

@@ -13,6 +13,9 @@ Chromebook sous Crostini, **4 Go de RAM**, processeur MediaTek Kompanio 820.
 - Aucun fichier source ne dépasse **300 lignes**. Si un fichier grossit, il est découpé.
 - Aucune dépendance lourde sans justification explicite. Pas de framework UI complet,
   pas de bibliothèque de composants, pas de state manager externe.
+  Cette règle vise le bundle de production : ce qui part sur le téléphone. Un outil de
+  développement qui ne quitte jamais la machine (test runner, linter) n'est pas concerné,
+  à condition de rester cité et justifié explicitement (cf. § 9).
 - Le serveur de dev doit rester léger. Si `npm run dev` sature la mémoire, c'est un bug
   à corriger, pas une fatalité à accepter.
 
@@ -177,6 +180,7 @@ utilisable hors ligne, en affichant les dernières valeurs connues et leur âge.
 | 4 | Synchronisation cloud (Workers KV) + jeton d'authentification | oui |
 | 5 | Import des exports bancaires (CSV / XLSX) | oui |
 | 6 | Graphiques, historique, watchlists, analyse | oui |
+| 7 | Historique des ordres exécutés (IBKR, PEA Boursobank) : entité `Ordre` (date, sens, quantité, cours, frais, devise), calcul des plus-values réalisées | oui |
 
 Une phase se termine par un commit fonctionnel. On ne commence pas la suivante
 avant que la précédente tourne sur le téléphone.

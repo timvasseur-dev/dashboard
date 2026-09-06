@@ -44,3 +44,18 @@ export function formatDevise(montant, devise) {
   const formatteur = formatteurs[devise]
   return formatteur ? formatteur.format(montant) : `${montant} ${devise}`
 }
+
+// `\s` couvre aussi l'espace insécable (U+00A0) et l'insécable fine (U+202F)
+// en JavaScript : les formes vues comme séparateur de milliers dans de vrais
+// exports bancaires.
+const ESPACES_MILLIERS = /\s/g
+
+/** Parse un montant au format français (« 1 234,56 », insécables comprises)
+ * en nombre. `null` si la chaîne est vide (colonne débit ou crédit non
+ * renseignée sur la ligne). */
+export function parseMontantFr(chaine) {
+  const nettoye = (chaine ?? '').trim()
+  if (nettoye === '') return null
+  const nombre = Number(nettoye.replace(ESPACES_MILLIERS, '').replace(',', '.'))
+  return Number.isNaN(nombre) ? null : nombre
+}

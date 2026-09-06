@@ -55,6 +55,15 @@ const migrations = {
     dernierModification: etat.dernierModification ?? null,
     appareilId: etat.appareilId ?? crypto.randomUUID(),
   }),
+
+  // v4 : phase 5, import bancaire — `transactions` (ajout seul, une entrée
+  // par mouvement importé) et `profilsImport` (réglages de correspondance
+  // CSV, un par forme de fichier bancaire).
+  4: (etat) => ({
+    ...etat,
+    transactions: etat.transactions ?? [],
+    profilsImport: etat.profilsImport ?? [],
+  }),
 }
 
 /** Fait remonter un état vers la version courante, migration par migration. */
