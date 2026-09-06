@@ -5,7 +5,7 @@
 // ne pousse rien (cf. sync.js).
 import { useSyncExternalStore } from 'react'
 
-let statut = { enCours: false, derniereErreur: null, dernierMessage: null, conflit: null }
+let statut = { enCours: false, derniereErreur: null, dernierMessage: null, conflit: null, totaux: null }
 const listeners = new Set()
 
 function emit() {
@@ -38,6 +38,15 @@ export function terminerSynchronisation(erreur, message) {
 
 export function definirConflit(conflit) {
   statut = { ...statut, conflit }
+  emit()
+}
+
+/** Totaux consolidés { local, distant } (en euros), recalculés à chaque
+ * vérification — `distant` vaut null si rien n'a jamais été synchronisé.
+ * Affichés dans le panneau de synchro pour repérer une divergence sans
+ * attendre qu'elle soit signalée comme conflit. */
+export function definirTotaux(totaux) {
+  statut = { ...statut, totaux }
   emit()
 }
 

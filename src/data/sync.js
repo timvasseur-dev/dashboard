@@ -9,13 +9,26 @@ import { chargerJeton, chargerDerniereSync, sauvegarderDerniereSync } from './sy
 import { obtenirCle } from './cleChiffrement.js'
 import { chiffrer, dechiffrer } from '../lib/crypto.js'
 import { comparerEtats } from '../lib/conflit.js'
+import { consolider } from '../lib/portfolio.js'
 import {
   debuterSynchronisation,
   terminerSynchronisation,
   definirConflit,
   effacerConflit,
+  definirTotaux,
   statutSynchronisationCourant,
 } from './statutSynchronisation.js'
+
+// consolider() ne reçoit jamais l'état complet (cf. CLAUDE.md § 3) : même
+// sous-ensemble que celui attendu par sa signature.
+function sousEnsemble(etat) {
+  const { institutions, accounts, balances, positions, quotes, fx } = etat
+  return { institutions, accounts, balances, positions, quotes, fx }
+}
+
+function totalConsolideEur(etat) {
+  return consolider(sousEnsemble(etat)).totalEur
+}
 
 // dernierModification/appareilId restent en clair (nécessaires à comparerEtats
 // sans déchiffrement) ; tout le reste de l'état est chiffré côté client, le
@@ -73,6 +86,10 @@ export async function verifierSynchronisation() {
     const derniereSyncReussie = chargerDerniereSync()
     const payloadDistant = await lireEtatDistant(jeton)
     const decision = comparerEtats(local, payloadDistant, derniereSyncReussie)
+    // Déchiffré une seule fois ici, pour l'affichage des totaux comme pour
+    // les branches ci-dessous — jamais un second aller-retour de déchiffrement.
+    const distant = payloadDistant ? await depaqueter(payloadDistant) : null
+    definirTotaux({ local: totalConsolideEur(local), distant: distant ? totalConsolideEur(distant) : null })
 
     switch (decision) {
       case 'a-jour':
@@ -83,16 +100,14 @@ export async function verifierSynchronisation() {
         terminerSynchronisation(null, 'Modifications locales non encore synchronisées.')
         break
 
-      case 'a-tirer': {
-        const distant = await depaqueter(payloadDistant)
+      case 'a-tirer':
         appliquerEtatDistant(distant)
         sauvegarderDerniereSync(distant.dernierModification)
         terminerSynchronisation(null, 'Mis à jour depuis un autre appareil.')
         break
-      }
 
       case 'conflit':
-        definirConflit({ local, distant: await depaqueter(payloadDistant) })
+        definirConflit({ local, distant })
         terminerSynchronisation(null, null)
         break
     }
@@ -113,14 +128,15 @@ export async function synchroniserMaintenant() {
     const derniereSyncReussie = chargerDerniereSync()
     const payloadDistant = await lireEtatDistant(jeton)
     const decision = comparerEtats(local, payloadDistant, derniereSyncReussie)
+    const distant = payloadDistant ? await depaqueter(payloadDistant) : null
+    definirTotaux({ local: totalConsolideEur(local), distant: distant ? totalConsolideEur(distant) : null })
 
     if (decision === 'conflit') {
-      definirConflit({ local, distant: await depaqueter(payloadDistant) })
+      definirConflit({ local, distant })
       terminerSynchronisation(null, null)
       return
     }
     if (decision === 'a-tirer') {
-      const distant = await depaqueter(payloadDistant)
       appliquerEtatDistant(distant)
       sauvegarderDerniereSync(distant.dernierModification)
       terminerSynchronisation(null, 'Mis à jour depuis un autre appareil.')
@@ -146,5 +162,44 @@ export async function resoudreConflit(choix) {
   } else {
     appliquerEtatDistant(conflit.distant)
     sauvegarderDerniereSync(conflit.distant.dernierModification)
+  }
+}
+
+/** Écrasement manuel, hors détection de conflit : geste de dernier recours
+ * (écran Réglages) pour trancher une divergence que l'app n'aurait pas
+ * signalée elle-même. `effacerConflit()` lève la garde de `pousser()` si un
+ * conflit était en cours — c'est précisément le point : l'utilisateur vient
+ * de trancher. */
+export async function ecraserDistantAvecLocal() {
+  const jeton = chargerJeton()
+  if (!jeton) throw new Error('aucun jeton enregistré')
+
+  debuterSynchronisation()
+  try {
+    effacerConflit()
+    await pousser(jeton)
+    terminerSynchronisation(null, 'Version distante écrasée avec cet appareil.')
+  } catch (erreur) {
+    terminerSynchronisation(erreur.message, null)
+  }
+}
+
+/** Symétrique : remplace l'état local par le distant, sans passer par la
+ * détection de conflit. */
+export async function ecraserLocalAvecDistant() {
+  const jeton = chargerJeton()
+  if (!jeton) throw new Error('aucun jeton enregistré')
+
+  debuterSynchronisation()
+  try {
+    effacerConflit()
+    const payloadDistant = await lireEtatDistant(jeton)
+    if (!payloadDistant) throw new Error('aucun état distant enregistré')
+    const distant = await depaqueter(payloadDistant)
+    appliquerEtatDistant(distant)
+    sauvegarderDerniereSync(distant.dernierModification)
+    terminerSynchronisation(null, 'Cet appareil écrasé avec la version distante.')
+  } catch (erreur) {
+    terminerSynchronisation(erreur.message, null)
   }
 }

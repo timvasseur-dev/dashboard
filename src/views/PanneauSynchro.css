@@ -32,6 +32,11 @@
   margin: var(--space-4);
 }
 
+.synchro__divergence {
+  color: var(--negative);
+  font-weight: 600;
+}
+
 .synchro__conflit {
   display: flex;
   flex-direction: column;

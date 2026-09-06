@@ -8,8 +8,7 @@ import { useStatutSynchronisation } from '../data/statutSynchronisation.js'
 import { chargerJeton, sauvegarderJeton, chargerDerniereSync } from '../data/syncLocal.js'
 import { testerConnexion } from '../data/syncApi.js'
 import { definirPhrase, oublierPhrase } from '../data/cleChiffrement.js'
-import { synchroniserMaintenant, resoudreConflit } from '../data/sync.js'
-import { consolider } from '../lib/portfolio.js'
+import { synchroniserMaintenant, resoudreConflit, ecraserDistantAvecLocal, ecraserLocalAvecDistant } from '../data/sync.js'
 import { formatEur } from '../lib/money.js'
 import './PanneauSynchro.css'
 
@@ -54,6 +53,26 @@ export default function PanneauSynchro() {
     setMessagePhrase('Phrase oubliée sur cet appareil.')
   }
 
+  const confirmerEtEcraserDistant = () => {
+    if (
+      window.confirm(
+        'Remplacer la version distante par les données de cet appareil ? Les autres appareils perdront leurs modifications non synchronisées.'
+      )
+    ) {
+      ecraserDistantAvecLocal()
+    }
+  }
+
+  const confirmerEtEcraserLocal = () => {
+    if (
+      window.confirm(
+        'Remplacer les données de cet appareil par la version distante ? Les modifications locales non synchronisées seront perdues.'
+      )
+    ) {
+      ecraserLocalAvecDistant()
+    }
+  }
+
   return (
     <>
       <Section titre="Synchronisation">
@@ -96,6 +115,20 @@ export default function PanneauSynchro() {
         <Row libelle="Dernière synchro réussie" sousLibelle={statut.dernierMessage ?? ''}>
           {derniereSync ? <Age horodatage={derniereSync} /> : <span className="indisponible">jamais</span>}
         </Row>
+        {statut.totaux && (
+          <Row libelle="Total consolidé" sousLibelle="cet appareil · distant">
+            <span
+              className={
+                statut.totaux.distant !== null && statut.totaux.distant !== statut.totaux.local
+                  ? 'num synchro__divergence'
+                  : 'num'
+              }
+            >
+              {formatEur(statut.totaux.local)} ·{' '}
+              {statut.totaux.distant !== null ? formatEur(statut.totaux.distant) : 'jamais synchronisé'}
+            </span>
+          </Row>
+        )}
         {statut.derniereErreur && (
           <p className="synchro__erreur">
             Échec ({statut.derniereErreur})
@@ -111,26 +144,33 @@ export default function PanneauSynchro() {
         <button className="comptes__valider synchro__pleine-largeur" onClick={synchroniserMaintenant} disabled={statut.enCours}>
           {statut.enCours ? 'Synchronisation…' : 'Synchroniser maintenant'}
         </button>
+
+        <div className="synchro__champ">
+          <p className="synchro__avertissement">
+            Dernier recours en cas de divergence : écrase entièrement un des deux côtés avec l'autre, sans fusion.
+          </p>
+          <div className="synchro__boutons">
+            <button className="comptes__supprimer" onClick={confirmerEtEcraserDistant} disabled={statut.enCours || !jeton.trim()}>
+              Écraser avec ma version locale
+            </button>
+            <button className="comptes__supprimer" onClick={confirmerEtEcraserLocal} disabled={statut.enCours || !jeton.trim()}>
+              Écraser avec la version distante
+            </button>
+          </div>
+        </div>
       </Section>
 
       <Sheet titre="Conflit de synchronisation" ouvert={statut.conflit !== null} onFermer={() => {}}>
-        {statut.conflit && <ResolutionConflit conflit={statut.conflit} />}
+        {statut.conflit && <ResolutionConflit conflit={statut.conflit} totaux={statut.totaux} />}
       </Sheet>
     </>
   )
 }
 
-// consolider() ne reçoit jamais l'état complet (cf. CLAUDE.md § 3) : même
-// règle ici, on ne lui passe que le sous-ensemble attendu.
-function sousEnsemble(etat) {
-  const { institutions, accounts, balances, positions, quotes, fx } = etat
-  return { institutions, accounts, balances, positions, quotes, fx }
-}
-
-function ResolutionConflit({ conflit }) {
-  const totalLocal = consolider(sousEnsemble(conflit.local)).totalEur
-  const totalDistant = consolider(sousEnsemble(conflit.distant)).totalEur
-
+// Les totaux sont déjà calculés par sync.js au moment où un conflit est
+// détecté (cf. definirTotaux dans verifierSynchronisation/synchroniserMaintenant) :
+// on les réutilise plutôt que d'appeler consolider() une seconde fois ici.
+function ResolutionConflit({ conflit, totaux }) {
   return (
     <div className="synchro__conflit">
       <p className="synchro__avertissement">
@@ -138,10 +178,10 @@ function ResolutionConflit({ conflit }) {
         — l'autre sera écrasée, aucune fusion n'est possible.
       </p>
       <Row libelle="Cet appareil" sousLibelle={new Date(conflit.local.dernierModification).toLocaleString('fr-FR')}>
-        <span className="num">{formatEur(totalLocal)}</span>
+        <span className="num">{formatEur(totaux.local)}</span>
       </Row>
       <Row libelle="Autre appareil" sousLibelle={new Date(conflit.distant.dernierModification).toLocaleString('fr-FR')}>
-        <span className="num">{formatEur(totalDistant)}</span>
+        <span className="num">{formatEur(totaux.distant)}</span>
       </Row>
       <div className="synchro__boutons">
         <button className="comptes__valider" onClick={() => resoudreConflit('local')}>
