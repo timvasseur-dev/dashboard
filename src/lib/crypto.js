@@ -10,8 +10,21 @@
 const SEL = new TextEncoder().encode('vv-investment-sel-fixe-v1')
 const ITERATIONS_PBKDF2 = 200_000
 
+// Étaler un grand tableau d'octets dans un appel de fonction
+// (`String.fromCharCode(...octets)`) casse au-delà de quelques dizaines de
+// milliers d'éléments — chaque élément étalé devient un argument, et le
+// moteur JS a une limite d'arguments par appel. Un état de quelques
+// centaines de transactions chiffré dépasse largement ce seuil. On construit
+// donc la chaîne par blocs.
+const TAILLE_BLOC_BASE64 = 8192
+
 function versBase64(tampon) {
-  return btoa(String.fromCharCode(...new Uint8Array(tampon)))
+  const octets = new Uint8Array(tampon)
+  let binaire = ''
+  for (let i = 0; i < octets.length; i += TAILLE_BLOC_BASE64) {
+    binaire += String.fromCharCode(...octets.subarray(i, i + TAILLE_BLOC_BASE64))
+  }
+  return btoa(binaire)
 }
 function depuisBase64(texte) {
   return Uint8Array.from(atob(texte), (c) => c.charCodeAt(0))

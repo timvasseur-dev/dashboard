@@ -27,6 +27,10 @@
   font-size: 13px;
 }
 
+.reglages__volume--alerte {
+  color: var(--negative);
+}
+
 .reglages__message {
   padding: var(--space-3) var(--space-4);
   color: var(--accent);

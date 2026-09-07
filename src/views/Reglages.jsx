@@ -9,11 +9,30 @@ import { XPF_PAR_EUR } from '../lib/money.js'
 import PanneauSynchro from './PanneauSynchro.jsx'
 import './Reglages.css'
 
+// Seuil d'alerte visuelle sur le volume de transactions. Pas un seuil de
+// blocage : les vrais murs (réécriture localStorage à chaque mutation, puis
+// quota) sont plus loin, mais un signal tôt vaut mieux qu'un échec silencieux
+// découvert en synchro (cf. discussion suite au dépassement de pile importé
+// à 875 transactions).
+const NOMBRE_TRANSACTIONS_ALERTE = 5000
+
+function formatTaille(octets) {
+  if (octets < 1024) return `${octets} o`
+  if (octets < 1024 * 1024) return `${(octets / 1024).toFixed(1)} Ko`
+  return `${(octets / (1024 * 1024)).toFixed(2)} Mo`
+}
+
 export default function Reglages() {
   const etat = useEtat()
   const [colle, setColle] = useState('')
   const [message, setMessage] = useState('')
   const tauxUsd = etat.fx['USD/EUR']
+  const nombreTransactions = etat.transactions.length
+  // Même sérialisation que `storage.js` (compacte, sans indentation) : c'est
+  // ce qui part réellement en localStorage et en synchro, pas le JSON mis en
+  // forme de l'export.
+  const tailleEtat = new TextEncoder().encode(JSON.stringify(etat)).length
+  const alerteVolume = nombreTransactions >= NOMBRE_TRANSACTIONS_ALERTE
 
   const texteExport = () => JSON.stringify(etat, null, 2)
 
@@ -83,6 +102,15 @@ export default function Reglages() {
       </Section>
 
       <PanneauSynchro />
+
+      <Section titre="Volume des données">
+        <Row libelle="Transactions" sousLibelle={alerteVolume ? `À partir de ${NOMBRE_TRANSACTIONS_ALERTE}, surveiller les temps de sauvegarde` : undefined}>
+          <span className={'num' + (alerteVolume ? ' reglages__volume--alerte' : '')}>{nombreTransactions}</span>
+        </Row>
+        <Row libelle="Taille de l'état" sousLibelle="Ce qui est écrit en localStorage à chaque modification">
+          <span className="num">{formatTaille(tailleEtat)}</span>
+        </Row>
+      </Section>
 
       <Section titre="Données">
         <Row
