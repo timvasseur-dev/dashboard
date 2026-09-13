@@ -25,7 +25,19 @@ const TITRES_SHEET = {
 export default function Bourse() {
   const etat = useEtat()
   const [sheet, setSheet] = useState(null)
+  // La confirmation de suppression vit ici, et non dans le formulaire, parce
+  // que c'est la Sheet qui doit se verrouiller tant qu'elle est en attente.
+  const [confirmationSuppression, setConfirmationSuppression] = useState(false)
   const tauxUsd = etat.fx['USD/EUR']?.taux ?? null
+
+  const ouvrirSheet = (valeur) => {
+    setConfirmationSuppression(false)
+    setSheet(valeur)
+  }
+  const fermerSheet = () => {
+    setConfirmationSuppression(false)
+    setSheet(null)
+  }
 
   const comptesTitres = etat.accounts.filter((c) => c.type === 'pea' || c.type === 'cto')
 
@@ -82,7 +94,7 @@ export default function Bourse() {
                   <button
                     className="comptes__gerer"
                     aria-label="Gérer la position"
-                    onClick={() => setSheet({ mode: 'position', position })}
+                    onClick={() => ouvrirSheet({ mode: 'position', position })}
                   >
                     ⋯
                   </button>
@@ -91,7 +103,7 @@ export default function Bourse() {
             }),
         )}
         {comptesTitres.length > 0 ? (
-          <button className="bourse__ajouter" onClick={() => setSheet({ mode: 'nouvelle-position' })}>
+          <button className="bourse__ajouter" onClick={() => ouvrirSheet({ mode: 'nouvelle-position' })}>
             + Ajouter une position
           </button>
         ) : (
@@ -116,31 +128,38 @@ export default function Bourse() {
           >
             <ZoneAchat suivi={suivi} cours={etat.quotes[suivi.ticker]} />
             {comptesTitres.length > 0 && (
-              <button className="bourse__promouvoir" onClick={() => setSheet({ mode: 'promotion', suivi })}>
+              <button className="bourse__promouvoir" onClick={() => ouvrirSheet({ mode: 'promotion', suivi })}>
                 Promouvoir
               </button>
             )}
             <button
               className="comptes__gerer"
               aria-label="Gérer le suivi"
-              onClick={() => setSheet({ mode: 'suivi', suivi })}
+              onClick={() => ouvrirSheet({ mode: 'suivi', suivi })}
             >
               ⋯
             </button>
           </Row>
         ))}
-        <button className="bourse__ajouter" onClick={() => setSheet({ mode: 'nouveau-suivi' })}>
+        <button className="bourse__ajouter" onClick={() => ouvrirSheet({ mode: 'nouveau-suivi' })}>
           + Ajouter à la watchlist
         </button>
       </Section>
 
-      <Sheet titre={sheet ? TITRES_SHEET[sheet.mode] : ''} ouvert={sheet !== null} onFermer={() => setSheet(null)}>
+      <Sheet
+        titre={sheet ? TITRES_SHEET[sheet.mode] : ''}
+        ouvert={sheet !== null}
+        onFermer={fermerSheet}
+        verrouille={confirmationSuppression}
+      >
         {sheet && (
           <FormulaireBourse
             sheet={sheet}
             comptes={comptesTitres}
             quotes={etat.quotes}
-            onFermer={() => setSheet(null)}
+            onFermer={fermerSheet}
+            confirmation={confirmationSuppression}
+            onConfirmationChange={setConfirmationSuppression}
           />
         )}
       </Sheet>

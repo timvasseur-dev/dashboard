@@ -74,3 +74,9 @@
   color: #fff;
   border-radius: var(--radius-s);
 }
+
+.comptes__annuler {
+  color: var(--text-dim);
+  padding: var(--space-3);
+  text-align: center;
+}

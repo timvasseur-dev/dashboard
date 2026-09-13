@@ -17,7 +17,7 @@ import { formatDevise } from '../lib/money.js'
 /** Sélectionne le formulaire selon le mode de la feuille ouverte dans Bourse. */
 const MESSAGE_AUCUN_COMPTE = "Créez d'abord un compte PEA ou CTO dans Comptes."
 
-export default function FormulaireBourse({ sheet, comptes, quotes, onFermer }) {
+export default function FormulaireBourse({ sheet, comptes, quotes, onFermer, confirmation, onConfirmationChange }) {
   switch (sheet.mode) {
     case 'nouvelle-position':
       return comptes.length === 0 ? (
@@ -26,11 +26,27 @@ export default function FormulaireBourse({ sheet, comptes, quotes, onFermer }) {
         <FormulairePosition comptes={comptes} quotes={quotes} onFermer={onFermer} />
       )
     case 'position':
-      return <FormulairePosition comptes={comptes} quotes={quotes} position={sheet.position} onFermer={onFermer} />
+      return (
+        <FormulairePosition
+          comptes={comptes}
+          quotes={quotes}
+          position={sheet.position}
+          onFermer={onFermer}
+          confirmation={confirmation}
+          onConfirmationChange={onConfirmationChange}
+        />
+      )
     case 'nouveau-suivi':
       return <FormulaireSuivi onFermer={onFermer} />
     case 'suivi':
-      return <FormulaireSuivi suivi={sheet.suivi} onFermer={onFermer} />
+      return (
+        <FormulaireSuivi
+          suivi={sheet.suivi}
+          onFermer={onFermer}
+          confirmation={confirmation}
+          onConfirmationChange={onConfirmationChange}
+        />
+      )
     case 'promotion':
       // Promouvoir une idée ouvre le formulaire de position pré-rempli du
       // ticker : quantité, PRU et devise se saisissent là, pas sur l'idée.
@@ -50,14 +66,22 @@ export default function FormulaireBourse({ sheet, comptes, quotes, onFermer }) {
   }
 }
 
-function FormulairePosition({ comptes, quotes, position, tickerInitial, suiviAPromouvoir, onFermer }) {
+function FormulairePosition({
+  comptes,
+  quotes,
+  position,
+  tickerInitial,
+  suiviAPromouvoir,
+  onFermer,
+  confirmation,
+  onConfirmationChange,
+}) {
   const [accountId, setAccountId] = useState(position?.accountId ?? comptes[0]?.id ?? '')
   const [ticker, setTicker] = useState(position?.ticker ?? tickerInitial ?? '')
   const [isin, setIsin] = useState(position?.isin ?? '')
   const [quantite, setQuantite] = useState(position?.quantite ?? '')
   const [pru, setPru] = useState(position?.pru ?? '')
   const [devise, setDevise] = useState(position?.devise ?? DEVISES[0])
-  const [confirmation, setConfirmation] = useState(false)
   const coursActuel = position ? quotes[position.ticker] : null
 
   const valider = (e) => {
@@ -134,18 +158,23 @@ function FormulairePosition({ comptes, quotes, position, tickerInitial, suiviAPr
 
       {position &&
         (confirmation ? (
-          <button
-            type="button"
-            className="comptes__supprimer comptes__supprimer--confirme"
-            onClick={() => {
-              supprimerPosition(position.id)
-              onFermer()
-            }}
-          >
-            Confirmer la suppression
-          </button>
+          <>
+            <button
+              type="button"
+              className="comptes__supprimer comptes__supprimer--confirme"
+              onClick={() => {
+                supprimerPosition(position.id)
+                onFermer()
+              }}
+            >
+              Confirmer la suppression
+            </button>
+            <button type="button" className="comptes__annuler" onClick={() => onConfirmationChange(false)}>
+              Annuler
+            </button>
+          </>
         ) : (
-          <button type="button" className="comptes__supprimer" onClick={() => setConfirmation(true)}>
+          <button type="button" className="comptes__supprimer" onClick={() => onConfirmationChange(true)}>
             Supprimer la position
           </button>
         ))}
@@ -153,7 +182,7 @@ function FormulairePosition({ comptes, quotes, position, tickerInitial, suiviAPr
   )
 }
 
-function FormulaireSuivi({ suivi, onFermer }) {
+function FormulaireSuivi({ suivi, onFermer, confirmation, onConfirmationChange }) {
   const [ticker, setTicker] = useState(suivi?.ticker ?? '')
   const [libelle, setLibelle] = useState(suivi?.libelle ?? '')
   const [conviction, setConviction] = useState(suivi?.conviction ?? '')
@@ -164,7 +193,6 @@ function FormulaireSuivi({ suivi, onFermer }) {
   const [these, setThese] = useState(suivi?.these ?? '')
   const [risques, setRisques] = useState(suivi?.risques ?? '')
   const [favori, setFavori] = useState(suivi?.favori ?? false)
-  const [confirmation, setConfirmation] = useState(false)
 
   const nombreOuNul = (valeur) => (valeur === '' ? null : Number(valeur))
 
@@ -242,18 +270,23 @@ function FormulaireSuivi({ suivi, onFermer }) {
 
       {suivi &&
         (confirmation ? (
-          <button
-            type="button"
-            className="comptes__supprimer comptes__supprimer--confirme"
-            onClick={() => {
-              supprimerSuivi(suivi.id)
-              onFermer()
-            }}
-          >
-            Confirmer la suppression
-          </button>
+          <>
+            <button
+              type="button"
+              className="comptes__supprimer comptes__supprimer--confirme"
+              onClick={() => {
+                supprimerSuivi(suivi.id)
+                onFermer()
+              }}
+            >
+              Confirmer la suppression
+            </button>
+            <button type="button" className="comptes__annuler" onClick={() => onConfirmationChange(false)}>
+              Annuler
+            </button>
+          </>
         ) : (
-          <button type="button" className="comptes__supprimer" onClick={() => setConfirmation(true)}>
+          <button type="button" className="comptes__supprimer" onClick={() => onConfirmationChange(true)}>
             Supprimer le suivi
           </button>
         ))}

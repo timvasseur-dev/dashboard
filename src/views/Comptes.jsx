@@ -16,6 +16,18 @@ export default function Comptes() {
   const etat = useEtat()
   const [soldeEnEdition, setSoldeEnEdition] = useState(null)
   const [sheet, setSheet] = useState(null) // { mode: 'ajout' | 'edition', ... }
+  // La confirmation de suppression vit ici, et non dans le formulaire, parce
+  // que c'est la Sheet qui doit se verrouiller tant qu'elle est en attente.
+  const [confirmationSuppression, setConfirmationSuppression] = useState(false)
+
+  const ouvrirSheet = (valeur) => {
+    setConfirmationSuppression(false)
+    setSheet(valeur)
+  }
+  const fermerSheet = () => {
+    setConfirmationSuppression(false)
+    setSheet(null)
+  }
 
   const groupes = etat.institutions.map((institution) => ({
     institution,
@@ -61,7 +73,7 @@ export default function Comptes() {
                 <button
                   className="comptes__gerer"
                   aria-label="Gérer le compte"
-                  onClick={() => setSheet({ mode: 'edition', compte })}
+                  onClick={() => ouvrirSheet({ mode: 'edition', compte })}
                 >
                   ⋯
                 </button>
@@ -70,7 +82,7 @@ export default function Comptes() {
           )}
           <button
             className="comptes__ajouter"
-            onClick={() => setSheet({ mode: 'ajout', institutionId: institution.id })}
+            onClick={() => ouvrirSheet({ mode: 'ajout', institutionId: institution.id })}
           >
             + Ajouter un compte
           </button>
@@ -80,17 +92,24 @@ export default function Comptes() {
       <Sheet
         titre={sheet?.mode === 'edition' ? 'Modifier le compte' : 'Ajouter un compte'}
         ouvert={sheet !== null}
-        onFermer={() => setSheet(null)}
+        onFermer={fermerSheet}
+        verrouille={confirmationSuppression}
       >
         {sheet && (
-          <FormulaireCompte sheet={sheet} institutions={etat.institutions} onFermer={() => setSheet(null)} />
+          <FormulaireCompte
+            sheet={sheet}
+            institutions={etat.institutions}
+            onFermer={fermerSheet}
+            confirmation={confirmationSuppression}
+            onConfirmationChange={setConfirmationSuppression}
+          />
         )}
       </Sheet>
     </Screen>
   )
 }
 
-function FormulaireCompte({ sheet, institutions, onFermer }) {
+function FormulaireCompte({ sheet, institutions, onFermer, confirmation, onConfirmationChange }) {
   const compte = sheet.mode === 'edition' ? sheet.compte : null
   const [libelle, setLibelle] = useState(compte?.libelle ?? '')
   const [type, setType] = useState(compte?.type ?? TYPES_COMPTE[0])
@@ -98,7 +117,6 @@ function FormulaireCompte({ sheet, institutions, onFermer }) {
   const [institutionId, setInstitutionId] = useState(
     compte?.institutionId ?? sheet.institutionId ?? institutions[0]?.id ?? '',
   )
-  const [confirmation, setConfirmation] = useState(false)
 
   const valider = (e) => {
     e.preventDefault()
@@ -152,18 +170,23 @@ function FormulaireCompte({ sheet, institutions, onFermer }) {
 
       {compte &&
         (confirmation ? (
-          <button
-            type="button"
-            className="comptes__supprimer comptes__supprimer--confirme"
-            onClick={() => {
-              supprimerCompte(compte.id)
-              onFermer()
-            }}
-          >
-            Confirmer la suppression
-          </button>
+          <>
+            <button
+              type="button"
+              className="comptes__supprimer comptes__supprimer--confirme"
+              onClick={() => {
+                supprimerCompte(compte.id)
+                onFermer()
+              }}
+            >
+              Confirmer la suppression
+            </button>
+            <button type="button" className="comptes__annuler" onClick={() => onConfirmationChange(false)}>
+              Annuler
+            </button>
+          </>
         ) : (
-          <button type="button" className="comptes__supprimer" onClick={() => setConfirmation(true)}>
+          <button type="button" className="comptes__supprimer" onClick={() => onConfirmationChange(true)}>
             Supprimer le compte
           </button>
         ))}
