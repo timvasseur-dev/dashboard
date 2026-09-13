@@ -3,6 +3,7 @@ import Section from '../components/Section.jsx'
 import Row from '../components/Row.jsx'
 import Barre from '../components/Barre.jsx'
 import Montant from '../components/Montant.jsx'
+import { ouvrirTitre } from '../data/modaleTitre.js'
 import { groupesDe, partDuTotal } from './patrimoineAxes.js'
 import './PatrimoineGroupes.css'
 
@@ -88,6 +89,7 @@ function PositionLigne({ position, compte, valeurEur, plusValueEur, coursManquan
   return (
     <Row
       libelle={cours?.nom ?? position.ticker}
+      onClick={() => ouvrirTitre({ ticker: position.ticker, position, libelle: cours?.nom ?? position.ticker })}
       sousLibelle={
         <>
           {position.ticker} · {compte?.libelle ?? ''} · <Montant valeur={position.quantite} brut /> ×{' '}

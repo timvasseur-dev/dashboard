@@ -44,6 +44,26 @@ export function versPolyline(valeurs, { largeur, hauteur, marge = 2 }) {
     .join(' ')
 }
 
+/**
+ * Ordonnée d'une valeur dans le même repère que `versPolyline` — pour poser un
+ * repère horizontal sur la courbe (une zone d'achat, un seuil). `null` si la
+ * série est vide.
+ *
+ * La valeur peut tomber hors des bornes de la série : c'est à l'appelant de
+ * décider s'il la ramène dans le cadre ou s'il ne la trace pas. La ramener ici
+ * ferait passer un repère hors champ pour un repère atteint.
+ */
+export function versY(valeur, valeurs, { hauteur, marge = 2 }) {
+  const limites = bornes(valeurs)
+  if (!limites) return null
+
+  const amplitude = limites.max - limites.min
+  if (amplitude === 0) return hauteur / 2
+
+  const utileY = hauteur - marge * 2
+  return arrondir(marge + utileY - ((valeur - limites.min) / amplitude) * utileY)
+}
+
 /** Mêmes points, refermés sur le bas du cadre : de quoi remplir l'aire sous
  * la courbe avec un `polygon`. Chaîne vide si la courbe l'est. */
 export function versAire(valeurs, dimensions) {

@@ -98,3 +98,11 @@
 .bourse__zone--dedans .bourse__zone-bornes {
   color: var(--positive);
 }
+
+/* Le nom de l'instrument ouvre sa modale. Bouton et non ligne entière : la
+   ligne porte déjà « Promouvoir » et « ⋯ », qu'on n'imbrique pas dedans. */
+.bourse__ouvrir {
+  font-size: 15px;
+  text-align: left;
+  color: inherit;
+}

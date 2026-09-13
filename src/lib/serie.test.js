@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { bornes, versPolyline, versAire } from './serie.js'
+import { bornes, versPolyline, versAire, versY } from './serie.js'
 
 const cadre = { largeur: 100, hauteur: 40, marge: 0 }
 
@@ -35,6 +35,28 @@ describe('versPolyline', () => {
   it('respecte la marge aux deux extrémités', () => {
     const points = versPolyline([0, 10], { largeur: 100, hauteur: 40, marge: 5 })
     expect(points).toBe('5,35 95,5')
+  })
+})
+
+describe('versY', () => {
+  it('place une valeur dans le même repère que la courbe', () => {
+    expect(versY(5, [0, 10], cadre)).toBe(20)
+    expect(versY(0, [0, 10], cadre)).toBe(40)
+    expect(versY(10, [0, 10], cadre)).toBe(0)
+  })
+
+  it('renvoie le milieu quand la série est constante', () => {
+    expect(versY(500, [500, 500], cadre)).toBe(20)
+  })
+
+  // Une zone d'achat sous le plus bas cours de la période sort du cadre : à
+  // la vue de le dire, pas à la projection de faire semblant.
+  it('laisse sortir du cadre une valeur hors des bornes', () => {
+    expect(versY(20, [0, 10], cadre)).toBe(-40)
+  })
+
+  it('renvoie null sur une série vide', () => {
+    expect(versY(5, [], cadre)).toBeNull()
   })
 })
 

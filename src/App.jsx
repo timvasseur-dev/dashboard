@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { useHashRoute } from './lib/router.js'
 import { resolveRoute } from './routes.js'
 import TabBar from './components/TabBar.jsx'
+import ModaleTitre from './views/ModaleTitre.jsx'
 import { useEtat } from './data/store.js'
 import { rafraichirAuDemarrage } from './data/rafraichissement.js'
 import { enregistrerInstantaneAutomatique } from './data/instantaneAuto.js'
@@ -34,6 +35,9 @@ export default function App() {
   return (
     <>
       <View />
+      {/* Montée une seule fois : la modale par titre s'ouvre depuis
+          n'importe quel écran, sans faire descendre de props. */}
+      <ModaleTitre />
       <TabBar current={route.path} />
     </>
   )

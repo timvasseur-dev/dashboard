@@ -7,6 +7,7 @@ import Age from '../components/Age.jsx'
 import BoutonActualiser from '../components/BoutonActualiser.jsx'
 import { useEtat, rattacherPositionOrpheline, supprimerPositionOrpheline } from '../data/store.js'
 import { actualiserBourse } from '../data/rafraichissement.js'
+import { ouvrirTitre } from '../data/modaleTitre.js'
 import { valoriserPosition } from '../lib/portfolio.js'
 import { formatDevise } from '../lib/money.js'
 import Montant from '../components/Montant.jsx'
@@ -56,7 +57,16 @@ export default function Bourse() {
               return (
                 <Row
                   key={position.id}
-                  libelle={cours?.nom ?? position.ticker}
+                  libelle={
+                    <button
+                      className="bourse__ouvrir"
+                      onClick={() =>
+                        ouvrirTitre({ ticker: position.ticker, position, libelle: cours?.nom ?? position.ticker })
+                      }
+                    >
+                      {cours?.nom ?? position.ticker}
+                    </button>
+                  }
                   sousLibelle={
                     <>
                       {position.ticker} · {compte.libelle} · <Montant valeur={position.quantite} brut /> ×{' '}
@@ -123,7 +133,15 @@ export default function Bourse() {
         {etat.watchlist.map((suivi) => (
           <Row
             key={suivi.id}
-            libelle={`${suivi.favori ? '★ ' : ''}${suivi.ticker}`}
+            libelle={
+              <button
+                className="bourse__ouvrir"
+                onClick={() => ouvrirTitre({ ticker: suivi.ticker, suivi, libelle: suivi.libelle || suivi.ticker })}
+              >
+                {suivi.favori ? '★ ' : ''}
+                {suivi.ticker}
+              </button>
+            }
             sousLibelle={[suivi.libelle, suivi.conviction, suivi.horizon].filter(Boolean).join(' · ')}
           >
             <ZoneAchat suivi={suivi} cours={etat.quotes[suivi.ticker]} />

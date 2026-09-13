@@ -36,6 +36,7 @@ export async function gererCours(url) {
       prix: ligne.regularMarketPrice,
       devise: ligne.currency,
       nom: ligne.longName ?? ligne.shortName ?? null,
+      variationJour: ligne.regularMarketChangePercent ?? null,
       horodatage,
     }
   }

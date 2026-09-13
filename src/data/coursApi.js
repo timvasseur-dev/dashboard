@@ -17,6 +17,13 @@ export function recupererCours(tickers) {
   return recuperer(`/cours?tickers=${tickers.map(encodeURIComponent).join(',')}`)
 }
 
+/** { ticker, devise, points: [{ date, cloture }] } — clôtures journalières.
+ * `periode` est une clé de `lib/periode.js` ; le worker n'en accepte pas
+ * d'autre et refuse avant tout appel à Yahoo. */
+export function recupererHistorique(ticker, periode) {
+  return recuperer(`/historique?ticker=${encodeURIComponent(ticker)}&periode=${encodeURIComponent(periode)}`)
+}
+
 export function recupererBtc() {
   return recuperer('/btc')
 }

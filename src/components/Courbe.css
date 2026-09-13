@@ -13,3 +13,8 @@
   text-align: center;
   padding: var(--space-4) 0;
 }
+
+/* Zone d'achat d'une idée de suivi, posée sous la courbe. */
+.courbe__zone {
+  opacity: 0.18;
+}

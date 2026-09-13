@@ -4,6 +4,7 @@
 // jeton ; état partagé (KV) — privé, protégé par jeton (cf. auth.js).
 import { enTetesCors, reponsePreflight } from './cors.js'
 import { gererCours } from './cours.js'
+import { gererHistorique } from './historiqueCours.js'
 import { gererRecherche } from './recherche.js'
 import { gererBtc } from './btc.js'
 import { gererFx } from './fx.js'
@@ -34,6 +35,8 @@ async function router(url, requete, env) {
   switch (url.pathname) {
     case '/cours':
       return gererCours(url)
+    case '/historique':
+      return gererHistorique(url)
     case '/recherche':
       return gererRecherche(url)
     case '/btc':
