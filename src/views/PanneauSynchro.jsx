@@ -9,7 +9,7 @@ import { chargerJeton, sauvegarderJeton, chargerDerniereSync } from '../data/syn
 import { testerConnexion } from '../data/syncApi.js'
 import { definirPhrase, oublierPhrase } from '../data/cleChiffrement.js'
 import { synchroniserMaintenant, resoudreConflit, ecraserDistantAvecLocal, ecraserLocalAvecDistant } from '../data/sync.js'
-import { formatEur } from '../lib/money.js'
+import Montant from '../components/Montant.jsx'
 import './PanneauSynchro.css'
 
 // Exactement 3 issues pour le test de connexion (cf. CLAUDE.md § 7) : jamais
@@ -120,12 +120,16 @@ export default function PanneauSynchro() {
             <span
               className={
                 statut.totaux.distant !== null && statut.totaux.distant !== statut.totaux.local
-                  ? 'num synchro__divergence'
-                  : 'num'
+                  ? 'synchro__divergence'
+                  : undefined
               }
             >
-              {formatEur(statut.totaux.local)} ·{' '}
-              {statut.totaux.distant !== null ? formatEur(statut.totaux.distant) : 'jamais synchronisé'}
+              <Montant valeur={statut.totaux.local} /> ·{' '}
+              {statut.totaux.distant !== null ? (
+                <Montant valeur={statut.totaux.distant} />
+              ) : (
+                'jamais synchronisé'
+              )}
             </span>
           </Row>
         )}
@@ -178,10 +182,10 @@ function ResolutionConflit({ conflit, totaux }) {
         — l'autre sera écrasée, aucune fusion n'est possible.
       </p>
       <Row libelle="Cet appareil" sousLibelle={new Date(conflit.local.dernierModification).toLocaleString('fr-FR')}>
-        <span className="num">{formatEur(totaux.local)}</span>
+        <Montant valeur={totaux.local} />
       </Row>
       <Row libelle="Autre appareil" sousLibelle={new Date(conflit.distant.dernierModification).toLocaleString('fr-FR')}>
-        <span className="num">{formatEur(totaux.distant)}</span>
+        <Montant valeur={totaux.distant} />
       </Row>
       <div className="synchro__boutons">
         <button className="comptes__valider" onClick={() => resoudreConflit('local')}>

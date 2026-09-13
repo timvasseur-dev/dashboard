@@ -10,10 +10,19 @@
   position: sticky;
   top: 0;
   z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   padding: calc(env(safe-area-inset-top, 0px) + var(--space-4)) var(--space-4)
     var(--space-3);
   background: var(--bg);
   border-bottom: 1px solid var(--border);
+}
+
+.screen__titres {
+  flex: 1;
+  /* laisse le titre se tronquer plutôt que pousser l'action hors de l'écran */
+  min-width: 0;
 }
 
 .screen__title {

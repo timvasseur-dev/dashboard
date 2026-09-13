@@ -4,7 +4,7 @@ import { useHashRoute, navigate } from '../lib/router.js'
 import Screen from '../components/Screen.jsx'
 import Section from '../components/Section.jsx'
 import Row from '../components/Row.jsx'
-import { formatDevise } from '../lib/money.js'
+import Montant from '../components/Montant.jsx'
 import { formatDateAffichee } from '../lib/date.js'
 import './MouvementsCompte.css'
 
@@ -61,14 +61,14 @@ export default function MouvementsCompte() {
         ) : (
           mouvements.map((t) => (
             <Row key={t.id} libelle={t.libelle} sousLibelle={formatDateAffichee(t.date)}>
-              <span
+              <Montant
+                valeur={t.montant}
+                devise={t.devise}
                 className={
-                  'num mouvements__montant ' +
+                  'mouvements__montant ' +
                   (t.montant < 0 ? 'mouvements__montant--negatif' : 'mouvements__montant--positif')
                 }
-              >
-                {formatDevise(t.montant, t.devise)}
-              </span>
+              />
             </Row>
           ))
         )}

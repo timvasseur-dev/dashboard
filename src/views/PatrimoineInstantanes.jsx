@@ -5,7 +5,7 @@ import Sheet from '../components/Sheet.jsx'
 import Field from '../components/Field.jsx'
 import { enregistrerInstantane, enregistrerInstantanePasse } from '../data/store.js'
 import { serieHistorique } from '../lib/historique.js'
-import { formatEur } from '../lib/money.js'
+import Montant from '../components/Montant.jsx'
 import './PatrimoineInstantanes.css'
 
 const LIBELLE_ORIGINE = {
@@ -52,7 +52,7 @@ export default function PatrimoineInstantanes({ totalEur, tauxUsd, historique })
           })}
           sousLibelle={LIBELLE_ORIGINE[instantane.origine] ?? LIBELLE_ORIGINE.manuel}
         >
-          <span className="num">{formatEur(instantane.totalEur)}</span>
+          <Montant valeur={instantane.totalEur} />
         </Row>
       ))}
 

@@ -1,0 +1,23 @@
+.periodes {
+  display: flex;
+  gap: var(--space-1);
+  background: var(--bg-elev);
+  border-radius: var(--radius-s);
+  padding: 3px;
+}
+
+.periodes__choix {
+  flex: 1;
+  padding: var(--space-2) 0;
+  font-size: 13px;
+  color: var(--text-dim);
+  border-radius: var(--radius-s);
+  /* cible tactile : la hauteur du texte seule serait trop basse au doigt */
+  min-height: 34px;
+}
+
+.periodes__choix[aria-pressed='true'] {
+  background: var(--bg-press);
+  color: var(--text);
+  font-weight: 600;
+}

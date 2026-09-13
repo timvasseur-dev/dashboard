@@ -4,7 +4,8 @@ import Section from '../components/Section.jsx'
 import Row from '../components/Row.jsx'
 import { useEtat } from '../data/store.js'
 import { consolider } from '../lib/portfolio.js'
-import { formatEur, formatDevise } from '../lib/money.js'
+import Montant from '../components/Montant.jsx'
+import BoutonOeil from '../components/BoutonOeil.jsx'
 import PatrimoineInstantanes from './PatrimoineInstantanes.jsx'
 import './Patrimoine.css'
 
@@ -46,12 +47,11 @@ export default function Patrimoine() {
   const institutionDe = (institutionId) => etat.institutions.find((i) => i.id === institutionId)
 
   return (
-    <Screen title="Patrimoine" subtitle="Vue consolidée, en euros">
+    <Screen title="Patrimoine" subtitle="Vue consolidée, en euros" action={<BoutonOeil />}>
       <div className="patrimoine__total">
-        <span className="patrimoine__total-montant num">{formatEur(totalEur)}</span>
-        <span className={`num patrimoine__pv ${plusValueEur >= 0 ? 'patrimoine__pv--pos' : 'patrimoine__pv--neg'}`}>
-          {plusValueEur >= 0 ? '+' : ''}
-          {formatEur(plusValueEur)} de plus-value latente
+        <Montant valeur={totalEur} className="patrimoine__total-montant" />
+        <span className={`patrimoine__pv ${plusValueEur >= 0 ? 'patrimoine__pv--pos' : 'patrimoine__pv--neg'}`}>
+          <Montant valeur={plusValueEur} signe /> de plus-value latente
         </span>
       </div>
 
@@ -85,7 +85,7 @@ export default function Patrimoine() {
                 libelle={institution.nom}
                 onClick={() => basculer(institutionsOuvertes, setInstitutionsOuvertes, institution.id)}
               >
-                <span className="num">{formatEur(parInstitution[institution.id] ?? 0)}</span>
+                <Montant valeur={parInstitution[institution.id] ?? 0} />
                 <span className="patrimoine__chevron">{ouvert ? '▾' : '▸'}</span>
               </Row>
               {ouvert && (
@@ -109,7 +109,7 @@ export default function Patrimoine() {
       <Section titre="Par classe">
         <div className="patrimoine__groupe">
           <Row libelle="Cash" onClick={() => basculer(classesOuvertes, setClassesOuvertes, 'cash')}>
-            <span className="num">{formatEur(parClasse.cash)}</span>
+            <Montant valeur={parClasse.cash} />
             <span className="patrimoine__chevron">{classesOuvertes.has('cash') ? '▾' : '▸'}</span>
           </Row>
           {classesOuvertes.has('cash') && (
@@ -143,7 +143,7 @@ export default function Patrimoine() {
 
         <div className="patrimoine__groupe">
           <Row libelle="Épargne" onClick={() => basculer(classesOuvertes, setClassesOuvertes, 'epargne')}>
-            <span className="num">{formatEur(parClasse.epargne)}</span>
+            <Montant valeur={parClasse.epargne} />
             <span className="patrimoine__chevron">{classesOuvertes.has('epargne') ? '▾' : '▸'}</span>
           </Row>
           {classesOuvertes.has('epargne') && (
@@ -164,7 +164,7 @@ export default function Patrimoine() {
 
         <div className="patrimoine__groupe">
           <Row libelle="Titres" onClick={() => basculer(classesOuvertes, setClassesOuvertes, 'titres')}>
-            <span className="num">{formatEur(parClasse.titres)}</span>
+            <Montant valeur={parClasse.titres} />
             <span className="patrimoine__chevron">{classesOuvertes.has('titres') ? '▾' : '▸'}</span>
           </Row>
           {classesOuvertes.has('titres') && (
@@ -187,14 +187,14 @@ function CompteLigne({ compte, montant, montantEur, sousLibelle }) {
   return (
     <Row libelle={compte.libelle} sousLibelle={sousLibelle ?? LIBELLE_TYPE[compte.type]}>
       <span className="patrimoine__detail-valeur">
-        <span className="num">{formatDevise(montant, compte.devise)}</span>
+        <Montant valeur={montant} devise={compte.devise} />
         {compte.devise !== 'EUR' &&
           (montantEur === null ? (
             // Surtout pas formatEur(null), qui afficherait « 0,00 € » pour un
             // montant qu'on ne sait simplement pas convertir.
             <span className="patrimoine__sans-cours">sans taux</span>
           ) : (
-            <span className="num patrimoine__detail-eur">{formatEur(montantEur)}</span>
+            <Montant valeur={montantEur} className="patrimoine__detail-eur" />
           ))}
       </span>
     </Row>
@@ -207,8 +207,8 @@ function PositionLigne({ position, compte, valeurEur, plusValueEur, coursManquan
       libelle={cours?.nom ?? position.ticker}
       sousLibelle={
         <>
-          {position.ticker} · {compte?.libelle ?? ''} · {position.quantite} ×{' '}
-          {formatDevise(position.pru, position.devise)}
+          {position.ticker} · {compte?.libelle ?? ''} · <Montant valeur={position.quantite} brut /> ×{' '}
+          <Montant valeur={position.pru} devise={position.devise} />
         </>
       }
     >
@@ -222,14 +222,13 @@ function PositionLigne({ position, compte, valeurEur, plusValueEur, coursManquan
           <span className="patrimoine__sans-cours">{coursManquant ? 'sans cours' : 'sans taux'}</span>
         ) : (
           <>
-            <span className="num">{formatEur(valeurEur)}</span>
+            <Montant valeur={valeurEur} />
             {plusValueEur !== null && (
-              <span
-                className={`num patrimoine__pv-detail ${plusValueEur >= 0 ? 'patrimoine__pv--pos' : 'patrimoine__pv--neg'}`}
-              >
-                {plusValueEur >= 0 ? '+' : ''}
-                {formatEur(plusValueEur)}
-              </span>
+              <Montant
+                valeur={plusValueEur}
+                signe
+                className={`patrimoine__pv-detail ${plusValueEur >= 0 ? 'patrimoine__pv--pos' : 'patrimoine__pv--neg'}`}
+              />
             )}
           </>
         )}

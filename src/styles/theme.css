@@ -20,6 +20,12 @@
   --positive: #3fb950;
   --negative: #f85149;
 
+  /* classes d'actif — pour l'anneau de répartition et les barres de part.
+     Volontairement ni vertes ni rouges : une classe n'est pas un gain. */
+  --classe-cash: #58a6ff;
+  --classe-epargne: #a371f7;
+  --classe-titres: #f0a35e;
+
   /* structure */
   --border: #232a33;
 

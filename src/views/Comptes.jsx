@@ -6,7 +6,7 @@ import Sheet from '../components/Sheet.jsx'
 import Field from '../components/Field.jsx'
 import { useEtat, ajouterCompte, modifierCompte, supprimerCompte, majSolde } from '../data/store.js'
 import { TYPES_COMPTE, DEVISES } from '../data/schema.js'
-import { formatDevise } from '../lib/money.js'
+import Montant from '../components/Montant.jsx'
 import { navigate } from '../lib/router.js'
 import './Comptes.css'
 
@@ -67,8 +67,8 @@ export default function Comptes() {
                 }
                 sousLibelle={LIBELLE_TYPE[compte.type]}
               >
-                <button className="comptes__solde num" onClick={() => setSoldeEnEdition(compte.id)}>
-                  {formatDevise(etat.balances[compte.id]?.montant ?? 0, compte.devise)}
+                <button className="comptes__solde" onClick={() => setSoldeEnEdition(compte.id)}>
+                  <Montant valeur={etat.balances[compte.id]?.montant ?? 0} devise={compte.devise} />
                 </button>
                 <button
                   className="comptes__gerer"

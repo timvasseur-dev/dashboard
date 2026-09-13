@@ -1,0 +1,15 @@
+.courbe {
+  display: block;
+  width: 100%;
+}
+
+.courbe__aire {
+  opacity: 0.14;
+}
+
+.courbe__vide {
+  color: var(--text-faint);
+  font-size: 13px;
+  text-align: center;
+  padding: var(--space-4) 0;
+}

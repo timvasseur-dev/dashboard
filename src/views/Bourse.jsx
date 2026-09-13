@@ -8,7 +8,8 @@ import BoutonActualiser from '../components/BoutonActualiser.jsx'
 import { useEtat, rattacherPositionOrpheline, supprimerPositionOrpheline } from '../data/store.js'
 import { actualiserBourse } from '../data/rafraichissement.js'
 import { valoriserPosition } from '../lib/portfolio.js'
-import { formatEur, formatDevise } from '../lib/money.js'
+import { formatDevise } from '../lib/money.js'
+import Montant from '../components/Montant.jsx'
 import FormulaireBourse from './BourseFormulaire.jsx'
 import './Bourse.css'
 
@@ -58,8 +59,8 @@ export default function Bourse() {
                   libelle={cours?.nom ?? position.ticker}
                   sousLibelle={
                     <>
-                      {position.ticker} · {compte.libelle} · {position.quantite} ×{' '}
-                      {formatDevise(position.pru, position.devise)}
+                      {position.ticker} · {compte.libelle} · <Montant valeur={position.quantite} brut /> ×{' '}
+                      <Montant valeur={position.pru} devise={position.devise} />
                     </>
                   }
                 >
@@ -79,13 +80,10 @@ export default function Bourse() {
                           <span className="num">{formatDevise(cours.prix, cours.devise)}</span>{' '}
                           <Age horodatage={cours.horodatage} />
                         </span>
-                        <span className="num">{formatEur(valeurEur)}</span>
+                        <Montant valeur={valeurEur} />
                         {plusValueEur !== null && (
-                          <span
-                            className={`num bourse__pv ${plusValueEur >= 0 ? 'bourse__pv--pos' : 'bourse__pv--neg'}`}
-                          >
-                            {plusValueEur >= 0 ? '+' : ''}
-                            {formatEur(plusValueEur)}
+                          <span className={`bourse__pv ${plusValueEur >= 0 ? 'bourse__pv--pos' : 'bourse__pv--neg'}`}>
+                            <Montant valeur={plusValueEur} signe />
                             {pourcentage !== null &&
                               ` (${pourcentage >= 0 ? '+' : ''}${formatteurPourcentage.format(pourcentage)} %)`}
                           </span>
@@ -179,7 +177,11 @@ function PositionOrpheline({ position, comptes }) {
   return (
     <Row
       libelle={position.ticker}
-      sousLibelle={`${position.quantite} × ${formatDevise(position.pru, position.devise)}`}
+      sousLibelle={
+        <>
+          <Montant valeur={position.quantite} brut /> × <Montant valeur={position.pru} devise={position.devise} />
+        </>
+      }
     >
       {comptes.length > 0 && (
         <>
