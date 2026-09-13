@@ -1,0 +1,87 @@
+.groupes__groupe {
+  border-bottom: 1px solid var(--border);
+}
+
+.groupes__groupe:last-child {
+  border-bottom: none;
+}
+
+.groupes__chiffres {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.groupes__chevron {
+  color: var(--text-faint);
+  margin-left: var(--space-2);
+}
+
+/* La barre de part touche le bas de la ligne du groupe : elle la prolonge,
+   elle n'est pas une ligne de plus. */
+.groupes__barre {
+  padding: 0 var(--space-4) var(--space-2);
+}
+
+/* La ligne de groupe n'a pas de trait propre : c'est le groupe entier qui en
+   porte un, barre de part comprise. */
+.groupes__groupe .row {
+  border-bottom: none;
+}
+
+.groupes__detail {
+  background: var(--bg-elev);
+  border-bottom: 2px solid var(--border);
+}
+
+.groupes__detail .row {
+  padding-left: var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.groupes__detail .row:last-child {
+  border-bottom: none;
+}
+
+.groupes__detail .row__libelle {
+  font-size: 13px;
+}
+
+.groupes__detail .row__sous-libelle {
+  font-size: 12px;
+}
+
+.groupes__valeur {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.groupes__secondaire,
+.groupes__pv {
+  font-size: 12px;
+}
+
+.groupes__pv--pos {
+  color: var(--positive);
+}
+
+.groupes__pv--neg {
+  color: var(--negative);
+}
+
+.groupes__sans-valeur {
+  color: var(--text-faint);
+  font-size: 13px;
+}
+
+.groupes__devise-alerte {
+  font-size: 12px;
+  color: var(--negative);
+}
+
+.groupes__detail-vide {
+  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-5);
+  color: var(--text-faint);
+  font-size: 13px;
+}

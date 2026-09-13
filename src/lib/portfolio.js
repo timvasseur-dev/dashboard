@@ -61,6 +61,7 @@ export function consolider({ institutions, accounts, balances, positions, quotes
   let totalEur = 0
   let plusValueEur = 0
   const parInstitution = {}
+  const plusValueParInstitution = {}
   const parClasse = { cash: 0, epargne: 0, titres: 0 }
   const coursManquants = []
   const montantsNonConvertis = []
@@ -130,12 +131,18 @@ export function consolider({ institutions, accounts, balances, positions, quotes
       continue
     }
     ajouter(institutionId, 'titres', valeurEur)
-    if (pvEur !== null) plusValueEur += pvEur
+    if (pvEur !== null) {
+      plusValueEur += pvEur
+      if (institutionId) {
+        plusValueParInstitution[institutionId] = (plusValueParInstitution[institutionId] ?? 0) + pvEur
+      }
+    }
   }
 
   return {
     totalEur,
     parInstitution,
+    plusValueParInstitution,
     parClasse,
     plusValueEur,
     tauxUtilise: tauxUsd,

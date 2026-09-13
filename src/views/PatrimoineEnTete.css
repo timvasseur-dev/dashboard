@@ -1,0 +1,38 @@
+.entete {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.entete__total {
+  font-size: 34px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+.entete__variation {
+  text-align: center;
+  font-size: 14px;
+}
+
+.entete__pv {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-top: var(--space-1);
+}
+
+.entete__hausse {
+  color: var(--positive);
+}
+
+.entete__baisse {
+  color: var(--negative);
+}
+
+.entete__indisponible {
+  color: var(--text-faint);
+  font-size: 13px;
+}

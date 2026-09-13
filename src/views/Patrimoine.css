@@ -1,33 +1,12 @@
-.patrimoine__total {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-4) 0 var(--space-3);
-}
-
-.patrimoine__total-montant {
-  font-size: 34px;
-  font-weight: 650;
-}
-
-.patrimoine__pv {
-  font-size: 14px;
-}
-
-.patrimoine__pv--pos {
-  color: var(--positive);
-}
-
-.patrimoine__pv--neg {
-  color: var(--negative);
-}
+/* L'écran n'assemble plus que des blocs : chacun porte son propre style
+   (PatrimoineEnTete.css, PatrimoineRepartition.css, PatrimoineGroupes.css,
+   PatrimoineInstantanes.css). Ne restent ici que les deux lignes de service. */
 
 .patrimoine__taux {
   text-align: center;
   color: var(--text-dim);
   font-size: 13px;
-  margin-bottom: var(--space-2);
+  margin: var(--space-3) 0 var(--space-2);
 }
 
 .patrimoine__alerte {
@@ -35,74 +14,4 @@
   color: var(--negative);
   font-size: 13px;
   margin-bottom: var(--space-4);
-}
-
-.patrimoine__groupe {
-  border-bottom: 1px solid var(--border);
-}
-
-.patrimoine__groupe:last-child {
-  border-bottom: none;
-}
-
-.patrimoine__groupe .row {
-  border-bottom: none;
-}
-
-.patrimoine__chevron {
-  color: var(--text-faint);
-  font-size: 12px;
-}
-
-.patrimoine__detail {
-  background: var(--bg-elev);
-  border-bottom: 2px solid var(--border);
-}
-
-.patrimoine__detail .row {
-  padding-left: var(--space-5);
-  border-bottom: 1px solid var(--border);
-}
-
-.patrimoine__detail .row:last-child {
-  border-bottom: none;
-}
-
-.patrimoine__detail .row__libelle {
-  font-size: 13px;
-}
-
-.patrimoine__detail .row__sous-libelle {
-  font-size: 12px;
-}
-
-.patrimoine__detail-valeur {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.patrimoine__detail-eur {
-  font-size: 12px;
-  color: var(--text-dim);
-}
-
-.patrimoine__pv-detail {
-  font-size: 12px;
-}
-
-.patrimoine__sans-cours {
-  color: var(--text-faint);
-  font-size: 13px;
-}
-
-.patrimoine__devise-alerte {
-  font-size: 12px;
-  color: var(--negative);
-}
-
-.patrimoine__detail-vide {
-  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-5);
-  color: var(--text-faint);
-  font-size: 13px;
 }
