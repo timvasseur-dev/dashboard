@@ -6,6 +6,7 @@
 // L'instantané n'est pas écrit à tout prix : mieux vaut un trou dans la courbe
 // qu'un point faux, qu'on ne pourra plus distinguer des vrais ensuite.
 import { etatCourant, enregistrerInstantane } from './store.js'
+import { statutSynchronisationCourant } from './statutSynchronisation.js'
 import { consolider } from '../lib/portfolio.js'
 import { instantaneDuJour } from '../lib/historique.js'
 
@@ -18,6 +19,12 @@ import { instantaneDuJour } from '../lib/historique.js'
  * définitivement faux.
  */
 export function enregistrerInstantaneAutomatique() {
+  // Un conflit de synchro en attente signifie que l'utilisateur n'a pas
+  // encore dit quelle version garder. Ajouter un instantané à la version
+  // locale la modifierait pendant qu'il choisit, et le perdrait s'il garde
+  // l'autre.
+  if (statutSynchronisationCourant().conflit) return { ecrit: false, raison: 'conflit' }
+
   const etat = etatCourant()
 
   if (instantaneDuJour(etat.historique)) return { ecrit: false, raison: 'deja' }

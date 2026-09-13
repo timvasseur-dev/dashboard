@@ -15,13 +15,21 @@ export default function App() {
   const etat = useEtat()
   const monte = useRef(false)
 
-  // L'instantané du jour s'écrit après le rafraîchissement et seulement s'il a
-  // abouti : figer un total, c'est figer les cours qui l'ont produit.
+  // Trois étapes au démarrage, dans cet ordre et jamais en parallèle.
+  //
+  // La synchro d'abord : elle lit l'état local avant son aller-retour réseau,
+  // et peut le remplacer entièrement par l'état distant. Un instantané écrit
+  // pendant ce temps serait effacé sans un mot.
+  //
+  // Le rafraîchissement ensuite, l'instantané en dernier et seulement si le
+  // rafraîchissement a abouti : figer un total, c'est figer les cours qui
+  // l'ont produit.
   useEffect(() => {
-    rafraichirAuDemarrage().then((reussi) => {
-      if (reussi) enregistrerInstantaneAutomatique()
-    })
-    verifierSynchronisation()
+    const demarrer = async () => {
+      await verifierSynchronisation()
+      if (await rafraichirAuDemarrage()) enregistrerInstantaneAutomatique()
+    }
+    demarrer()
   }, [])
 
   // Pousse après chaque modification locale — jamais au montage, où

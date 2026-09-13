@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { etatCourant, remplacerEtat } from './store.js'
 import { etatVide, VERSION } from './schema.js'
+import { definirConflit, effacerConflit } from './statutSynchronisation.js'
 import { enregistrerInstantaneAutomatique } from './instantaneAuto.js'
 
 const COMPTE_EUR = { id: 'c1', institutionId: 'i1', libelle: 'Courant', type: 'courant', devise: 'EUR' }
@@ -59,6 +60,18 @@ describe('enregistrerInstantaneAutomatique', () => {
     remplacerEtat(etatComplet({ accounts: [], balances: {}, positions: [] }))
     expect(enregistrerInstantaneAutomatique()).toEqual({ ecrit: false, raison: 'vide' })
     expect(etatCourant().historique).toHaveLength(0)
+  })
+
+  // Tant qu'un conflit n'est pas tranché, la version locale peut encore être
+  // jetée : un instantané ajouté dessus partirait avec elle.
+  it('refuse d’écrire tant qu’un conflit de synchro n’est pas résolu', () => {
+    definirConflit({ local: {}, distant: {} })
+    try {
+      expect(enregistrerInstantaneAutomatique()).toEqual({ ecrit: false, raison: 'conflit' })
+      expect(etatCourant().historique).toHaveLength(0)
+    } finally {
+      effacerConflit()
+    }
   })
 
   it('ne touche pas aux instantanés déjà enregistrés', () => {
