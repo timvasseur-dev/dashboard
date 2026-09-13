@@ -13,6 +13,24 @@ import { ageMs } from '../lib/date.js'
 // collision avec un vrai ticker Yahoo.
 export const TICKER_BTC = 'CRYPTO:BTC'
 
+// Même précaution pour les indices et l'or : ils sont rangés dans `quotes`
+// sous un préfixe, donc structurellement hors d'atteinte de `consolider()`,
+// qui ne lit `quotes` que par le ticker d'une position réelle. Un indicateur
+// ne peut pas entrer dans un total, même par erreur de saisie.
+const PREFIXE_MARCHE = 'MARCHE:'
+
+export const cleMarche = (ticker) => `${PREFIXE_MARCHE}${ticker}`
+
+/** Les indicateurs suivis sur l'écran Marché. `nature` dit comment les lire :
+ * un indice se compte en points — « 7 500 € » pour le CAC 40 n'aurait aucun
+ * sens — l'or se cote en dollars l'once. */
+export const INDICATEURS = [
+  { ticker: '^GSPC', libelle: 'S&P 500', detail: 'Indice, en points', nature: 'indice' },
+  { ticker: '^IXIC', libelle: 'Nasdaq Composite', detail: 'Indice, en points', nature: 'indice' },
+  { ticker: '^FCHI', libelle: 'CAC 40', detail: 'Indice, en points', nature: 'indice' },
+  { ticker: 'GC=F', libelle: 'Or', detail: 'Future COMEX, l’once', nature: 'devise' },
+]
+
 // Alignés sur le TTL du cache worker : en dessous, rappeler le réseau ne
 // renvoie de toute façon que la même valeur déjà en cache côté worker.
 const SEUIL_COTATIONS_MS = 5 * 60 * 1000
@@ -36,7 +54,7 @@ async function rafraichirCotations(force) {
 
   const resultat = await recupererCours(aRafraichir)
   for (const [ticker, cours] of Object.entries(resultat)) {
-    majCours(ticker, cours.prix, cours.devise, cours.nom)
+    majCours(ticker, cours)
   }
 
   // Un ticker demandé mais absent de la réponse ne doit jamais se confondre
@@ -54,7 +72,20 @@ async function rafraichirMarche(force) {
   const appels = []
 
   if (force || ageMs(etat.quotes[TICKER_BTC]?.horodatage) > SEUIL_COTATIONS_MS) {
-    appels.push(recupererBtc().then((btc) => majCours(TICKER_BTC, btc.prix, btc.devise)))
+    appels.push(recupererBtc().then((btc) => majCours(TICKER_BTC, btc)))
+  }
+
+  const indicateurs = INDICATEURS.filter(
+    (indicateur) => force || ageMs(etat.quotes[cleMarche(indicateur.ticker)]?.horodatage) > SEUIL_COTATIONS_MS,
+  )
+  if (indicateurs.length > 0) {
+    appels.push(
+      recupererCours(indicateurs.map((indicateur) => indicateur.ticker)).then((resultat) => {
+        for (const [ticker, cours] of Object.entries(resultat)) {
+          majCours(cleMarche(ticker), cours)
+        }
+      }),
+    )
   }
   if (force || ageMs(etat.fx['USD/EUR']?.horodatage) > SEUIL_FX_MS) {
     appels.push(recupererTauxUsd().then((fx) => majTauxUsd(fx.taux)))

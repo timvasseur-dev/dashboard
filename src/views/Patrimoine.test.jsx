@@ -5,6 +5,11 @@ import { basculerMasquage } from '../data/masquage.js'
 import { etatVide, VERSION } from '../data/schema.js'
 import Patrimoine from './Patrimoine.jsx'
 
+// Intl sépare les milliers par une espace insécable fine (U+202F), invisible
+// dans le source d'un test : on normalise, pour que les chaînes attendues
+// ci-dessous restent des chaînes qu'on peut lire et retaper.
+const lisible = (html) => html.replace(/[\u202f\u00a0]/g, ' ')
+
 /*
  * Test de fumée du rendu : l'écran s'assemble à partir de six fichiers, et
  * une erreur d'accès à une donnée absente ne se verrait qu'à l'exécution.
@@ -31,7 +36,7 @@ function etatDeTest(surcharges = {}) {
   }
 }
 
-const rendre = () => renderToStaticMarkup(<Patrimoine />)
+const rendre = () => lisible(renderToStaticMarkup(<Patrimoine />))
 
 describe('écran Patrimoine', () => {
   beforeEach(() => {
@@ -40,7 +45,7 @@ describe('écran Patrimoine', () => {
 
   it('affiche le total consolidé', () => {
     // 1000 € + 200 $ × 0,9 + 10 × 50 $ × 0,9 = 1 630 €
-    expect(rendre()).toContain('1 630,00')
+    expect(rendre()).toContain('1 630,00')
   })
 
   it('trace l’anneau de répartition avec un segment par classe servie', () => {
@@ -80,7 +85,7 @@ describe('écran Patrimoine', () => {
     try {
       const html = rendre()
       expect(html).toContain('•••')
-      expect(html).not.toContain('1 630,00')
+      expect(html).not.toContain('1 630,00')
     } finally {
       basculerMasquage()
     }

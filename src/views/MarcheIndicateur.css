@@ -1,0 +1,21 @@
+.indicateur__vignette {
+  width: 64px;
+  flex: none;
+  margin-right: var(--space-3);
+}
+
+.indicateur__valeur {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.indicateur__hausse {
+  color: var(--positive);
+  font-size: 12px;
+}
+
+.indicateur__baisse {
+  color: var(--negative);
+  font-size: 12px;
+}

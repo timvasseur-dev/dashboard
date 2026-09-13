@@ -12,6 +12,8 @@ import { formatDevise } from '../lib/money.js'
 import './ModaleTitre.css'
 
 const formatteurPourcentage = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 })
+// Un indice se compte en points : « 7 500 € » pour le CAC 40 n'a aucun sens.
+const formatteurPoints = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 })
 
 /**
  * Le détail d'un instrument : son cours, sa courbe, et ce qu'on en détient ou
@@ -33,7 +35,7 @@ function Contenu({ cible }) {
   const [periode, setPeriode] = useState('1a')
   const historique = useHistoriqueCours(cible.ticker, periode)
 
-  const cours = etat.quotes[cible.ticker]
+  const cours = etat.quotes[cible.cleCours ?? cible.ticker]
   const zone = zoneDe(cible.suivi)
 
   return (
@@ -44,7 +46,9 @@ function Contenu({ cible }) {
         <p className="titre__cours">
           {/* Un cours est une donnée de marché : il reste lisible même l'œil
               fermé, il ne dit rien de ce qu'on détient. */}
-          <span className="num titre__prix">{formatDevise(cours.prix, cours.devise)}</span>
+          <span className="num titre__prix">
+            {cible.nature === 'indice' ? formatteurPoints.format(cours.prix) : formatDevise(cours.prix, cours.devise)}
+          </span>
           {cours.variationJour != null && (
             <span className={`num ${cours.variationJour >= 0 ? 'titre__hausse' : 'titre__baisse'}`}>
               {cours.variationJour >= 0 ? '+' : ''}

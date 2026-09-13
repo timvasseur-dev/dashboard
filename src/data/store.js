@@ -180,12 +180,22 @@ export function supprimerSuivi(id) {
 
 // --- Cours et taux ---
 
-export function majCours(ticker, prix, devise, nom) {
+/** Écrit un cours. `cours` est ce que renvoie le worker : `{ prix, devise,
+ * nom, variationJour }`. Les champs absents sont mis à null plutôt que
+ * laissés indéfinis — une variation inconnue et une variation nulle ne
+ * s'affichent pas pareil. */
+export function majCours(ticker, cours) {
   set({
     ...etat,
     quotes: {
       ...etat.quotes,
-      [ticker]: { prix, devise, nom: nom ?? null, horodatage: new Date().toISOString() },
+      [ticker]: {
+        prix: cours.prix,
+        devise: cours.devise,
+        nom: cours.nom ?? null,
+        variationJour: cours.variationJour ?? null,
+        horodatage: new Date().toISOString(),
+      },
     },
   })
 }

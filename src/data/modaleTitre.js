@@ -7,7 +7,11 @@
 // faire descendre un callback à travers trois niveaux de composants.
 import { useSyncExternalStore } from 'react'
 
-let ouvert = null // { ticker, position?, suivi?, libelle? }
+// { ticker, libelle?, position?, suivi?, cleCours?, nature? }
+// `cleCours` existe parce que les indicateurs de marché sont rangés dans
+// `quotes` sous un préfixe, alors que `ticker` doit rester le vrai symbole
+// Yahoo pour l'appel à /historique.
+let ouvert = null
 const listeners = new Set()
 
 function emit() {

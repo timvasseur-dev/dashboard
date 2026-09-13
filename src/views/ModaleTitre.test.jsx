@@ -5,6 +5,11 @@ import { ouvrirTitre, fermerTitre } from '../data/modaleTitre.js'
 import { etatVide, VERSION } from '../data/schema.js'
 import ModaleTitre from './ModaleTitre.jsx'
 
+// Intl sépare les milliers par une espace insécable fine (U+202F), invisible
+// dans le source d'un test : on normalise, pour que les chaînes attendues
+// ci-dessous restent des chaînes qu'on peut lire et retaper.
+const lisible = (html) => html.replace(/[\u202f\u00a0]/g, ' ')
+
 /*
  * Rendu en chaîne : les effets ne s'exécutent pas, donc aucun appel réseau
  * n'est déclenché et la courbe reste à l'état « chargement ». Ce qui est
@@ -52,7 +57,7 @@ describe('modale par titre', () => {
 
   it('montre le cours, la variation du jour et ce qu’on détient', () => {
     ouvrirTitre({ ticker: 'IBIT', position: POSITION, libelle: 'iShares Bitcoin Trust' })
-    const html = renderToStaticMarkup(<ModaleTitre />)
+    const html = lisible(renderToStaticMarkup(<ModaleTitre />))
 
     expect(html).toContain('iShares Bitcoin Trust')
     expect(html).toContain('+1,5 % aujourd’hui')
@@ -64,7 +69,7 @@ describe('modale par titre', () => {
 
   it('montre la thèse et la zone d’achat d’une idée de suivi', () => {
     ouvrirTitre({ ticker: 'ASML.AS', suivi: SUIVI, libelle: 'ASML' })
-    const html = renderToStaticMarkup(<ModaleTitre />)
+    const html = lisible(renderToStaticMarkup(<ModaleTitre />))
 
     expect(html).toContain('monopole EUV')
     expect(html).toContain('600')
