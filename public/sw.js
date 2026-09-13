@@ -7,7 +7,7 @@
  *  - assets hachés : cache d'abord, ils sont immuables par construction
  */
 
-const VERSION = 'v1'
+const VERSION = 'v2'
 const CACHE = `vv-shell-${VERSION}`
 const BASE = '/dashboard/'
 
@@ -17,6 +17,8 @@ const SHELL = [
   `${BASE}icons/icon-192.png`,
   `${BASE}icons/icon-512.png`,
   `${BASE}icons/apple-touch-icon.png`,
+  `${BASE}icons/icon-maskable-512.png`,
+  `${BASE}icons/splash-portrait.webp`,
 ]
 
 self.addEventListener('install', (event) => {

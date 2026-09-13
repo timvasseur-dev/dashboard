@@ -9,8 +9,9 @@
     <title>V&amp;V Investment</title>
     <meta name="description" content="Suivi de patrimoine personnel" />
 
-    <!-- couleur de la barre système, alignée sur --bg de theme.css -->
-    <meta name="theme-color" content="#0e1116" />
+    <!-- couleur de la barre système. La palette de theme.css suit dans un
+         second temps : ces deux valeurs divergent jusque-là. -->
+    <meta name="theme-color" content="#0A1121" />
     <link rel="manifest" href="/dashboard/manifest.webmanifest" />
 
     <!-- iOS ignore le manifest pour l'écran d'accueil : ces balises sont nécessaires -->
@@ -19,8 +20,26 @@
     <meta name="apple-mobile-web-app-title" content="V&amp;V Investment" />
     <link rel="apple-touch-icon" href="/dashboard/icons/apple-touch-icon.png" />
     <link rel="icon" href="/dashboard/icons/icon-192.png" />
+    <style>
+      /* Écran d'ouverture. Retiré du DOM au premier rendu React (main.jsx),
+         pas à la fin du chargement des données : l'état vient du localStorage
+         et est déjà là, alors que les cours mettent plusieurs secondes. */
+      #splash-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #0A1121 url('/dashboard/icons/splash-portrait.webp') center /
+          cover no-repeat;
+        transition: opacity 220ms ease-out;
+      }
+      #splash-screen.parti {
+        opacity: 0;
+        pointer-events: none;
+      }
+    </style>
   </head>
   <body>
+    <div id="splash-screen"></div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
