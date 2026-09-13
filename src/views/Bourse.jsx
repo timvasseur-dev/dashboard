@@ -70,7 +70,9 @@ export default function Bourse() {
                       </span>
                     )}
                     {valeurEur === null ? (
-                      <span className="bourse__sans-cours">sans cours</span>
+                      // Un cours connu mais inconvertible faute de taux n'est
+                      // pas un cours absent : le dire, plutôt que les confondre.
+                      <span className="bourse__sans-cours">{cours ? 'sans taux USD/EUR' : 'sans cours'}</span>
                     ) : (
                       <span className="bourse__valeur">
                         <span className="bourse__cours">

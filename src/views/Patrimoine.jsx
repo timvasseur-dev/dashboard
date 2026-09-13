@@ -4,6 +4,7 @@ import Section from '../components/Section.jsx'
 import Row from '../components/Row.jsx'
 import { useEtat, enregistrerInstantane } from '../data/store.js'
 import { consolider } from '../lib/portfolio.js'
+import { dernierInstantane } from '../lib/historique.js'
 import { formatEur, formatDevise } from '../lib/money.js'
 import './Patrimoine.css'
 
@@ -18,6 +19,7 @@ export default function Patrimoine() {
     plusValueEur,
     tauxUtilise,
     coursManquants,
+    montantsNonConvertis,
     comptesParInstitution,
     positionsParInstitution,
     positionsTitres,
@@ -32,7 +34,9 @@ export default function Patrimoine() {
     quotes: etat.quotes,
     fx: etat.fx,
   })
-  const dernierInstantane = etat.historique.at(-1)
+  // Le plus récent par date, jamais `historique.at(-1)` : l'ordre du tableau
+  // suit les ajouts, et un instantané passé s'y range en dernier.
+  const dernier = dernierInstantane(etat.historique)
 
   const [institutionsOuvertes, setInstitutionsOuvertes] = useState(() => new Set())
   const [classesOuvertes, setClassesOuvertes] = useState(() => new Set())
@@ -63,6 +67,14 @@ export default function Patrimoine() {
         <p className="patrimoine__alerte">
           {coursManquants.length} position{coursManquants.length > 1 ? 's' : ''} sans cours, exclue
           {coursManquants.length > 1 ? 's' : ''} du total
+        </p>
+      )}
+
+      {montantsNonConvertis.length > 0 && (
+        <p className="patrimoine__alerte">
+          Sans taux USD/EUR, {montantsNonConvertis.length} montant
+          {montantsNonConvertis.length > 1 ? 's sont exclus' : ' est exclu'} du total :{' '}
+          {montantsNonConvertis.map((m) => m.libelle).join(', ')}
         </p>
       )}
 
@@ -115,7 +127,20 @@ export default function Patrimoine() {
                   sousLibelle={institutionDe(compte.institutionId)?.nom ?? ''}
                 />
               ))}
-              {comptesCash.length === 0 && <p className="patrimoine__detail-vide">Aucun compte</p>}
+              {/* Le cash logé dans un PEA ou un CTO compte ici, mais reste
+                  distingué : il n'est pas mobilisable comme un compte courant. */}
+              {comptesEnveloppe.map(({ compte, montant, montantEur }) => (
+                <CompteLigne
+                  key={compte.id}
+                  compte={compte}
+                  montant={montant}
+                  montantEur={montantEur}
+                  sousLibelle={`${institutionDe(compte.institutionId)?.nom ?? ''} · cash non investi`}
+                />
+              ))}
+              {comptesCash.length === 0 && comptesEnveloppe.length === 0 && (
+                <p className="patrimoine__detail-vide">Aucun compte</p>
+              )}
             </div>
           )}
         </div>
@@ -148,21 +173,10 @@ export default function Patrimoine() {
           </Row>
           {classesOuvertes.has('titres') && (
             <div className="patrimoine__detail">
-              {comptesEnveloppe.map(({ compte, montant, montantEur }) => (
-                <CompteLigne
-                  key={compte.id}
-                  compte={compte}
-                  montant={montant}
-                  montantEur={montantEur}
-                  sousLibelle={`${institutionDe(compte.institutionId)?.nom ?? ''} · cash non investi`}
-                />
-              ))}
               {positionsTitres.map((ligne) => (
                 <PositionLigne key={ligne.position.id} {...ligne} cours={etat.quotes[ligne.position.ticker]} />
               ))}
-              {comptesEnveloppe.length === 0 && positionsTitres.length === 0 && (
-                <p className="patrimoine__detail-vide">Aucune position</p>
-              )}
+              {positionsTitres.length === 0 && <p className="patrimoine__detail-vide">Aucune position</p>}
             </div>
           )}
         </div>
@@ -175,8 +189,8 @@ export default function Patrimoine() {
         Enregistrer un instantané
       </button>
       <p className="patrimoine__dernier">
-        {dernierInstantane
-          ? `Dernier instantané : ${new Date(dernierInstantane.date).toLocaleString('fr-FR')}`
+        {dernier
+          ? `Dernier instantané : ${new Date(dernier.date).toLocaleString('fr-FR')}`
           : 'Aucun instantané enregistré'}
       </p>
     </Screen>
@@ -188,13 +202,20 @@ function CompteLigne({ compte, montant, montantEur, sousLibelle }) {
     <Row libelle={compte.libelle} sousLibelle={sousLibelle ?? LIBELLE_TYPE[compte.type]}>
       <span className="patrimoine__detail-valeur">
         <span className="num">{formatDevise(montant, compte.devise)}</span>
-        {compte.devise !== 'EUR' && <span className="num patrimoine__detail-eur">{formatEur(montantEur)}</span>}
+        {compte.devise !== 'EUR' &&
+          (montantEur === null ? (
+            // Surtout pas formatEur(null), qui afficherait « 0,00 € » pour un
+            // montant qu'on ne sait simplement pas convertir.
+            <span className="patrimoine__sans-cours">sans taux</span>
+          ) : (
+            <span className="num patrimoine__detail-eur">{formatEur(montantEur)}</span>
+          ))}
       </span>
     </Row>
   )
 }
 
-function PositionLigne({ position, compte, valeurEur, plusValueEur, coursManquant, cours }) {
+function PositionLigne({ position, compte, valeurEur, plusValueEur, coursManquant, nonConverti, cours }) {
   return (
     <Row
       libelle={cours?.nom ?? position.ticker}
@@ -211,8 +232,8 @@ function PositionLigne({ position, compte, valeurEur, plusValueEur, coursManquan
             ⚠ {cours.devise} ≠ {position.devise}
           </span>
         )}
-        {coursManquant ? (
-          <span className="patrimoine__sans-cours">sans cours</span>
+        {coursManquant || nonConverti ? (
+          <span className="patrimoine__sans-cours">{coursManquant ? 'sans cours' : 'sans taux'}</span>
         ) : (
           <>
             <span className="num">{formatEur(valeurEur)}</span>

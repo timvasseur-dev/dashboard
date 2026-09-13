@@ -40,7 +40,11 @@ aucun identifiant bancaire. Elle affiche, elle calcule, elle ne fait rien d'autr
 
 - **Vite** + **React 18** (JavaScript, pas TypeScript)
 - **CSS Modules** ou CSS simple. Pas de Tailwind, pas de CSS-in-JS.
-- **lightweight-charts** pour les graphiques financiers (léger, ~45 ko)
+- **Graphiques en SVG natif**, aucune bibliothèque : une courbe est une `polyline`,
+  un anneau un `circle` avec `stroke-dasharray`, une barre un `rect`. La donnée est une
+  série unique de clôtures journalières, ~250 points sur 390 px ; le zoom, le crosshair
+  au survol et les chandeliers — les seuls arguments en faveur d'une bibliothèque comme
+  `lightweight-charts` — n'ont pas de sens au doigt sur un téléphone.
 - **PWA** : manifest + service worker, installable sur iOS et Android
 - `base: '/dashboard/'` dans `vite.config.js` (contrainte GitHub Pages)
 - Routing par **hash** (`/dashboard/#/comptes`), sans dépendance : le fragment n'est
