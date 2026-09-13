@@ -7,6 +7,7 @@ import Age from '../components/Age.jsx'
 import { useEtat } from '../data/store.js'
 import { useModaleTitre, fermerTitre } from '../data/modaleTitre.js'
 import { useHistoriqueCours } from '../data/historiqueCours.js'
+import { PERIODES_TITRE } from '../lib/periode.js'
 import { valoriserPosition } from '../lib/portfolio.js'
 import { formatDevise } from '../lib/money.js'
 import './ModaleTitre.css'
@@ -62,7 +63,7 @@ function Contenu({ cible }) {
       )}
 
       <Graphique historique={historique} zone={zone} />
-      <SelecteurPeriode valeur={periode} onChange={setPeriode} />
+      <SelecteurPeriode periodes={PERIODES_TITRE} valeur={periode} onChange={setPeriode} />
 
       {cible.position && <DetailPosition position={cible.position} cours={cours} etat={etat} />}
       {cible.suivi && <DetailSuivi suivi={cible.suivi} />}

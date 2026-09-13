@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Montant from '../components/Montant.jsx'
 import Courbe from '../components/Courbe.jsx'
 import SelecteurPeriode from '../components/SelecteurPeriode.jsx'
-import { debutPeriode } from '../lib/periode.js'
+import { debutPeriode, PERIODES_PATRIMOINE } from '../lib/periode.js'
 import { serieHistorique, pointsSurPeriode, variationSurPeriode } from '../lib/historique.js'
 import './PatrimoineEnTete.css'
 
@@ -49,7 +49,7 @@ export default function PatrimoineEnTete({ totalEur, plusValueEur, historique })
         messageVide="La courbe se remplira d’elle-même, un point par jour"
       />
 
-      <SelecteurPeriode valeur={periode} onChange={setPeriode} />
+      <SelecteurPeriode periodes={PERIODES_PATRIMOINE} valeur={periode} onChange={setPeriode} />
 
       {/* La couleur porte sur le montant seul : le libellé reste en gris,
           sinon toute la ligne clignote en vert ou en rouge. */}

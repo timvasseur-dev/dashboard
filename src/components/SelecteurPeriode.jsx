@@ -1,13 +1,13 @@
-import { PERIODES } from '../lib/periode.js'
 import './SelecteurPeriode.css'
 
-/** Choix de la période d'une courbe. Composant pur : la liste vient de
- * `lib/periode.js`, seule source des clés — les mêmes que celles acceptées
- * par la route /historique du worker. */
-export default function SelecteurPeriode({ valeur, onChange }) {
+/** Choix de la période d'une courbe. Composant pur : la liste arrive en prop,
+ * parce que toutes les périodes n'ont pas de sens sur toutes les courbes —
+ * cf. PERIODES_PATRIMOINE et PERIODES_TITRE dans `lib/periode.js`, seule
+ * source des clés, les mêmes que celles acceptées par le worker. */
+export default function SelecteurPeriode({ periodes, valeur, onChange }) {
   return (
     <div className="periodes" role="group" aria-label="Période">
-      {PERIODES.map((periode) => (
+      {periodes.map((periode) => (
         <button
           key={periode.cle}
           className="periodes__choix"
