@@ -4,6 +4,7 @@ import { resolveRoute } from './routes.js'
 import TabBar from './components/TabBar.jsx'
 import { useEtat } from './data/store.js'
 import { rafraichirAuDemarrage } from './data/rafraichissement.js'
+import { enregistrerInstantaneAutomatique } from './data/instantaneAuto.js'
 import { verifierSynchronisation, programmerPush } from './data/sync.js'
 
 export default function App() {
@@ -13,8 +14,12 @@ export default function App() {
   const etat = useEtat()
   const monte = useRef(false)
 
+  // L'instantané du jour s'écrit après le rafraîchissement et seulement s'il a
+  // abouti : figer un total, c'est figer les cours qui l'ont produit.
   useEffect(() => {
-    rafraichirAuDemarrage()
+    rafraichirAuDemarrage().then((reussi) => {
+      if (reussi) enregistrerInstantaneAutomatique()
+    })
     verifierSynchronisation()
   }, [])
 

@@ -205,11 +205,39 @@ export function majTauxUsd(taux) {
 
 // --- Historique ---
 
-/** Ajoute un instantané. Ajout seul : rien d'autre n'écrit ce tableau, jamais réécrit. */
-export function enregistrerInstantane({ totalEur, tauxUsd }) {
+/** Ajoute un instantané. Ajout seul : rien d'autre n'écrit ce tableau, jamais
+ * réécrit.
+ *
+ * `origine` est volontairement facultative, et absente des entrées écrites
+ * avant la phase 6 : les ajouter après coup reviendrait à réécrire
+ * l'historique, ce que la règle interdit. Une entrée sans origine est lue
+ * comme 'manuel' (cf. lib/historique.js), ce qu'elle est — elle vient du
+ * bouton. Les nouvelles la portent : 'auto', 'manuel' ou 'saisi'. */
+export function enregistrerInstantane({ totalEur, tauxUsd, origine = 'manuel' }) {
   set({
     ...etat,
-    historique: [...etat.historique, { date: new Date().toISOString(), totalEur, tauxUsd }],
+    historique: [...etat.historique, { date: new Date().toISOString(), totalEur, tauxUsd, origine }],
+  })
+}
+
+/** Ajoute un instantané daté d'hier ou d'avant, saisi à la main pour amorcer
+ * la courbe à partir d'un vieux relevé. `tauxUsd` reste nul : le taux du jour
+ * n'a rien à voir avec celui qui valait à cette date, et l'inventer serait
+ * pire que de l'ignorer.
+ *
+ * `dateIso` est un jour (`AAAA-MM-JJ`), horodaté à midi heure locale : assez
+ * loin des deux bornes du jour pour qu'aucun décalage de fuseau ne le fasse
+ * basculer sur la veille ou le lendemain. */
+export function enregistrerInstantanePasse({ dateIso, totalEur }) {
+  const [annee, mois, jour] = dateIso.split('-').map(Number)
+  const date = new Date(annee, mois - 1, jour, 12, 0, 0)
+
+  set({
+    ...etat,
+    historique: [
+      ...etat.historique,
+      { date: date.toISOString(), totalEur: Number(totalEur), tauxUsd: null, origine: 'saisi' },
+    ],
   })
 }
 

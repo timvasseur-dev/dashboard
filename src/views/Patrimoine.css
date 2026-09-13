@@ -37,23 +37,6 @@
   margin-bottom: var(--space-4);
 }
 
-.patrimoine__instantane {
-  width: 100%;
-  background: var(--accent);
-  color: #fff;
-  border-radius: var(--radius-s);
-  padding: var(--space-3);
-  text-align: center;
-  font-weight: 600;
-}
-
-.patrimoine__dernier {
-  text-align: center;
-  color: var(--text-faint);
-  font-size: 12px;
-  margin-top: var(--space-2);
-}
-
 .patrimoine__groupe {
   border-bottom: 1px solid var(--border);
 }

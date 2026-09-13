@@ -2,10 +2,10 @@ import { useState } from 'react'
 import Screen from '../components/Screen.jsx'
 import Section from '../components/Section.jsx'
 import Row from '../components/Row.jsx'
-import { useEtat, enregistrerInstantane } from '../data/store.js'
+import { useEtat } from '../data/store.js'
 import { consolider } from '../lib/portfolio.js'
-import { dernierInstantane } from '../lib/historique.js'
 import { formatEur, formatDevise } from '../lib/money.js'
+import PatrimoineInstantanes from './PatrimoineInstantanes.jsx'
 import './Patrimoine.css'
 
 const LIBELLE_TYPE = { courant: 'Courant', epargne: 'Épargne', pea: 'PEA', cto: 'CTO' }
@@ -34,10 +34,6 @@ export default function Patrimoine() {
     quotes: etat.quotes,
     fx: etat.fx,
   })
-  // Le plus récent par date, jamais `historique.at(-1)` : l'ordre du tableau
-  // suit les ajouts, et un instantané passé s'y range en dernier.
-  const dernier = dernierInstantane(etat.historique)
-
   const [institutionsOuvertes, setInstitutionsOuvertes] = useState(() => new Set())
   const [classesOuvertes, setClassesOuvertes] = useState(() => new Set())
 
@@ -182,17 +178,7 @@ export default function Patrimoine() {
         </div>
       </Section>
 
-      <button
-        className="patrimoine__instantane"
-        onClick={() => enregistrerInstantane({ totalEur, tauxUsd: tauxUtilise })}
-      >
-        Enregistrer un instantané
-      </button>
-      <p className="patrimoine__dernier">
-        {dernier
-          ? `Dernier instantané : ${new Date(dernier.date).toLocaleString('fr-FR')}`
-          : 'Aucun instantané enregistré'}
-      </p>
+      <PatrimoineInstantanes totalEur={totalEur} tauxUsd={tauxUtilise} historique={etat.historique} />
     </Screen>
   )
 }

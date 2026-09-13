@@ -63,13 +63,19 @@ async function rafraichirMarche(force) {
   await Promise.all(appels)
 }
 
+/** Résout à `true` si le rafraîchissement a abouti, `false` sinon — jamais un
+ * rejet : un échec réseau est un cas normal ici, pas une exception. L'appelant
+ * qui en dépend (l'instantané automatique) a besoin de savoir si les cours
+ * qu'il s'apprête à figer viennent d'être confirmés ou datent d'avant. */
 async function executer(promesse) {
   debuterRafraichissement()
   try {
     await promesse
     terminerRafraichissement(null)
+    return true
   } catch (erreur) {
     terminerRafraichissement(erreur.message ?? 'échec du rafraîchissement')
+    return false
   }
 }
 
