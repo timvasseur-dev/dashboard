@@ -9,9 +9,11 @@
   margin: var(--space-3) 0 var(--space-2);
 }
 
+/* Une position sans cours ou un montant non converti est un problème, pas une
+   baisse : --alerte, jamais --negative (cf. theme.css, règle 1). */
 .patrimoine__alerte {
   text-align: center;
-  color: var(--negative);
+  color: var(--alerte);
   font-size: 13px;
   margin-bottom: var(--space-4);
 }

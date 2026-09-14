@@ -40,6 +40,17 @@ export function formatEur(montant) {
   return formatteurEur.format(montant)
 }
 
+/** Les mêmes chiffres que `formatEur`, mais découpés en parts typées.
+ *
+ * Sert au total en tête, dont le symbole € se colore à part (cf. theme.css,
+ * « LE TOTAL EN TÊTE ») : le CSS ne sait pas cibler un caractère dans une
+ * chaîne. Passer par `formatToParts` plutôt que par un découpage sur l'espace
+ * évite de dépendre de la forme du séparateur — `fr-FR` place ici une
+ * insécable fine (U+202F), qui n'est pas l'espace qu'on croit taper. */
+export function formatEurParts(montant) {
+  return formatteurEur.formatToParts(montant)
+}
+
 export function formatDevise(montant, devise) {
   const formatteur = formatteurs[devise]
   return formatteur ? formatteur.format(montant) : `${montant} ${devise}`

@@ -30,7 +30,7 @@ export default function PatrimoineEnTete({ totalEur, plusValueEur, historique })
 
   return (
     <div className="entete">
-      <Montant valeur={totalEur} className="entete__total" />
+      <Montant valeur={totalEur} deviseAPart className="entete__total" />
 
       <p className="entete__variation">
         {variation ? (

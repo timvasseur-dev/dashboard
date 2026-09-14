@@ -1,10 +1,18 @@
+/* Une action de liste, pas un repère d'interface : l'or est réservé à
+   l'onglet actif, au total et aux filets. Ici c'est la position en pied de
+   carte et le filet au-dessus qui disent que c'est tapable. */
 .instantanes__action {
   width: 100%;
+  min-height: var(--touch);
   padding: var(--space-3);
   text-align: center;
-  color: var(--accent);
+  color: var(--text);
   font-weight: 600;
   border-top: 1px solid var(--border);
+}
+
+.instantanes__action:active {
+  background: var(--bg-press);
 }
 
 .instantanes__vide,

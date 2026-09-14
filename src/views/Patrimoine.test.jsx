@@ -48,6 +48,22 @@ describe('écran Patrimoine', () => {
     expect(rendre()).toContain('1 630,00')
   })
 
+  /* Le symbole € du total sort dans son propre span pour être coloré et
+   * rapetissé (cf. theme.css, « LE TOTAL EN TÊTE »). L'assertion sur les
+   * chiffres seuls ci-dessus passerait sans lui : il faut le vérifier à part. */
+  it('sort le symbole € du total dans son propre span', () => {
+    expect(rendre()).toContain('<span class="montant__devise">€</span>')
+  })
+
+  it('ne laisse pas passer le symbole € quand l’œil est fermé', () => {
+    basculerMasquage()
+    try {
+      expect(rendre()).not.toContain('montant__devise')
+    } finally {
+      basculerMasquage()
+    }
+  })
+
   it('trace l’anneau de répartition avec un segment par classe servie', () => {
     const html = rendre()
     expect(html).toContain('stroke-dasharray')

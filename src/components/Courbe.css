@@ -3,9 +3,8 @@
   width: 100%;
 }
 
-.courbe__aire {
-  opacity: 0.14;
-}
+/* Pas d'opacité ici : elle est dans les arrêts du dégradé (cf. Courbe.jsx),
+   pour qu'elle s'éteigne vers le bas du cadre au lieu d'être uniforme. */
 
 .courbe__vide {
   color: var(--text-faint);

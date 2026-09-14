@@ -13,22 +13,27 @@
 
 .repartition__axe {
   flex: 1;
-  min-height: 34px;
+  min-height: var(--touch);
   padding: var(--space-2) 0;
   font-size: 13px;
   color: var(--text-dim);
   border-radius: var(--radius-s);
 }
 
+/* L'axe choisi se marque par une surface, pas par de l'or : ce n'est pas un
+   repère d'interface unique mais un état parmi deux. */
 .repartition__axe[aria-pressed='true'] {
-  background: var(--bg-press);
+  background: var(--border-fort);
   color: var(--text);
   font-weight: 600;
 }
 
-.repartition__centre-montant {
-  font-size: 16px;
-  font-weight: 650;
+/* Au centre de l'anneau, c'est un grand nombre : serif, comme le total en
+   tête. Classe doublée pour passer devant `.num`, qui impose la chasse fixe. */
+.repartition__centre-montant.num {
+  font-family: var(--font-affiche);
+  font-size: 18px;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 .repartition__centre-libelle {

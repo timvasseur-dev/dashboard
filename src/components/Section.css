@@ -6,8 +6,9 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin-bottom: var(--space-2);
-  padding: 0 var(--space-1);
+  margin-bottom: var(--space-3);
+  padding: 0 var(--space-1) var(--space-2);
+  border-bottom: 1px solid var(--border);
 }
 
 .section__pastille {
@@ -17,16 +18,20 @@
   flex-shrink: 0;
 }
 
+/* Un titre, donc la serif. Pas de graisse : à cette taille et avec cet
+   interlettrage, un faux gras sur une serif système empâte le tracé. */
 .section__titre {
-  font-size: 13px;
-  font-weight: 600;
+  font-family: var(--font-affiche);
+  font-size: 12px;
   color: var(--text-dim);
   text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.12em;
 }
 
+/* Une carte : fond surélevé et bordure fine, pas d'ombre. */
 .section__corps {
   background: var(--bg-elev);
+  border: 1px solid var(--border);
   border-radius: var(--radius-m);
   overflow: hidden;
 }

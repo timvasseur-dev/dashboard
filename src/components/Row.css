@@ -1,5 +1,9 @@
+/* 45 px sans sous-libellé, ce qui passait sous la cible tactile. Les lignes
+   qui en portent un dépassent déjà 48 px : le minimum ne joue que sur les
+   autres, il n'écrase aucune hiérarchie. */
 .row {
   width: 100%;
+  min-height: var(--touch);
   display: flex;
   align-items: center;
   justify-content: space-between;

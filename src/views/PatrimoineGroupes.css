@@ -29,9 +29,11 @@
   border-bottom: none;
 }
 
+/* Le détail déplié se referme sur un trait plus marqué que ceux qu'il
+   contient : --border-fort à 1px plutôt que --border doublé. */
 .groupes__detail {
   background: var(--bg-elev);
-  border-bottom: 2px solid var(--border);
+  border-bottom: 1px solid var(--border-fort);
 }
 
 .groupes__detail .row {
@@ -75,9 +77,10 @@
   font-size: 13px;
 }
 
+/* Devise du cours ≠ devise de la position : une alerte, pas une variation. */
 .groupes__devise-alerte {
   font-size: 12px;
-  color: var(--negative);
+  color: var(--alerte);
 }
 
 .groupes__detail-vide {
