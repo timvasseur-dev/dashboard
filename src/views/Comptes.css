@@ -1,19 +1,44 @@
+/* Le champ ouvert en édition. --accent-dim et non --accent : une bordure
+   d'input est une structure, pas un repère d'interface — l'or plein sur
+   quatre pourtours de champ le banaliserait. */
 .comptes__saisie {
   width: 120px;
+  min-height: var(--touch);
   text-align: right;
   background: var(--bg);
-  border: 1px solid var(--accent);
+  border: 1px solid var(--accent-dim);
   border-radius: var(--radius-s);
   padding: var(--space-1) var(--space-2);
   color: var(--text);
   font-size: 15px;
 }
 
+.comptes__saisie:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+/* Tapable : il ouvre la saisie du solde. */
 .comptes__solde {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  padding: 0 var(--space-1);
   font-size: 15px;
 }
 
+.comptes__solde:active {
+  background: var(--bg-press);
+  border-radius: var(--radius-s);
+}
+
+/* Le libellé ouvre les mouvements du compte. Même contrainte que
+   `.bourse__ouvrir` : la ligne porte déjà le solde et le « ⋯ », elle ne peut
+   donc pas être le bouton — un bouton dans un bouton n'est pas du HTML
+   valide. La cible plafonne à ~37 px plutôt que de doubler la hauteur des
+   lignes de compte. */
 .comptes__ouvrir {
+  padding: var(--space-2) 0;
   font-size: 15px;
   text-align: left;
 }
@@ -36,12 +61,19 @@
   border-radius: var(--radius-s);
 }
 
+/* Action de pied de carte : le filet du haut de la ligne et la position
+   disent qu'elle est tapable, l'or reste à l'onglet actif et au total. */
 .comptes__ajouter {
   width: 100%;
+  min-height: var(--touch);
   padding: var(--space-3) var(--space-4);
-  color: var(--accent);
+  color: var(--text);
   font-size: 14px;
   text-align: left;
+}
+
+.comptes__ajouter:active {
+  background: var(--bg-press);
 }
 
 .comptes__formulaire {
@@ -57,6 +89,7 @@
 }
 
 .comptes__champ-select select {
+  min-height: var(--touch);
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-s);
@@ -97,7 +130,8 @@
 }
 
 .comptes__annuler {
-  color: var(--text-dim);
+  min-height: var(--touch);
   padding: var(--space-3);
+  color: var(--text-dim);
   text-align: center;
 }

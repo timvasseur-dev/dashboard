@@ -2,14 +2,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /* 44 px : la cible tactile minimale, le tracé n'en occupe que 20 */
-  width: 44px;
-  height: 44px;
+  /* la cible tactile minimale ; le tracé n'en occupe que 20 px */
+  width: var(--touch);
+  height: var(--touch);
   color: var(--text-dim);
 }
 
+/* Œil fermé, montants masqués. Un état d'interface, donc pas d'or : c'est le
+   contraste qui le dit, comme dans la barre d'onglets. */
 .oeil[aria-pressed='true'] {
-  color: var(--accent);
+  color: var(--text);
 }
 
 .oeil:active {

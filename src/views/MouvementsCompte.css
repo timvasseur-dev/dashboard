@@ -8,6 +8,7 @@
 .mouvements__recherche {
   flex: 1;
   min-width: 0;
+  min-height: var(--touch);
   background: var(--bg-elev);
   border: 1px solid var(--border);
   border-radius: var(--radius-s);
@@ -17,10 +18,18 @@
   font-family: inherit;
 }
 
+/* Ouvrir l'import est une action ordinaire, pas un repère d'interface. */
 .mouvements__importer {
   flex-shrink: 0;
-  color: var(--accent);
+  min-height: var(--touch);
+  padding: 0 var(--space-2);
+  color: var(--text);
   font-size: 14px;
+}
+
+.mouvements__importer:active {
+  background: var(--bg-press);
+  border-radius: var(--radius-s);
 }
 
 .mouvements__vide {
@@ -28,6 +37,12 @@
   color: var(--text-dim);
   font-size: 14px;
   text-align: center;
+}
+
+/* Un mouvement signé est bien une variation : le vert et le rouge sont ici
+   à leur place. */
+.mouvements__montant {
+  font-variant-numeric: tabular-nums;
 }
 
 .mouvements__montant--positif {
