@@ -1,5 +1,7 @@
+/* Cours du BTC et taux USD/EUR : deux valeurs empilées sous leur âge. */
 .marche__valeur {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  font-variant-numeric: tabular-nums;
 }

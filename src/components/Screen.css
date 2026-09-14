@@ -25,10 +25,14 @@
   min-width: 0;
 }
 
+/* Un titre, donc la serif. La règle 3 la réserve aux grands nombres et aux
+   titres : elle l'autorise ici, elle ne l'impose pas — c'est un choix, et il
+   se défait en retirant ces deux lignes. Pas de graisse forcée : une serif
+   système faux-grassie à 22 px empâte le tracé. */
 .screen__title {
+  font-family: var(--font-affiche);
   font-size: 22px;
-  font-weight: 650;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 .screen__subtitle {

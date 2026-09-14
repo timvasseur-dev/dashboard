@@ -4,12 +4,17 @@
   margin-right: var(--space-3);
 }
 
+/* Colonne de chiffres : chasse tabulaire sur le conteneur, pour que le cours,
+   le pourcentage et son signe restent alignés d'une ligne à l'autre — quatre
+   indices empilés, c'est là que ça se voit. */
 .indicateur__valeur {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  font-variant-numeric: tabular-nums;
 }
 
+/* La variation du jour : le vert et le rouge sont ici à leur place. */
 .indicateur__hausse {
   color: var(--positive);
   font-size: 12px;
