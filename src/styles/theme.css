@@ -1,33 +1,90 @@
-/*
- * Le seul endroit où les couleurs sont définies.
- * Changer une valeur ici change toute l'application.
+/* Vasseur & Vasseur Investment — direction visuelle
+ *
+ * Les noms de variables sont ceux déjà utilisés dans le projet : seules les
+ * valeurs changent. Une refonte visuelle = ce fichier, et rien d'autre.
+ *
+ * Trois règles tiennent l'ensemble :
+ *   1. Le vert et le rouge ne disent qu'une chose : la variation. Jamais
+ *      l'identité d'une classe, d'un bouton ou d'un onglet.
+ *   2. L'or est rare. Il marque l'onglet actif, le total principal et les
+ *      filets de section. Ailleurs, il perd sa valeur.
+ *   3. La serif est réservée aux grands nombres et aux titres. Les tableaux
+ *      gardent une police à chasse tabulaire, sinon les colonnes dansent.
  */
 
 :root {
-  /* surfaces */
-  --bg: #0e1116;
-  --bg-elev: #161b22;
-  --bg-bar: #12171e;
-  --bg-press: #1c232d;
+  /* --- Surfaces ---------------------------------------------------------
+   * Bleu nuit plutôt que gris neutre : c'est ce qui distingue une app de
+   * patrimoine d'un outil de développement. Les trois niveaux sont proches
+   * volontairement — l'élévation se lit par la bordure, pas par l'écart.
+   */
+  --bg:       #0A1121;
+  --bg-elev:  #111A2E;
+  --bg-bar:   #0C1426;
 
-  /* texte */
-  --text: #e6edf3;
-  --text-dim: #8b949e;
-  --text-faint: #59636e;
+  /* État pressé d'une ligne ou d'un onglet. À ΔE 4,7 de --bg-elev et 10,0 de
+   * --bg : il se voit sous le doigt, pas au repos. Ce n'est pas --accent-pale,
+   * qui est un or de texte — ici il faut une surface. */
+  --bg-press: #18223A;
 
-  /* accents */
-  --accent: #4c8dff;
-  --positive: #3fb950;
-  --negative: #f85149;
+  /* --- Textes -----------------------------------------------------------
+   * Le blanc pur fatigue sur fond sombre. Un blanc légèrement bleuté
+   * s'assoit mieux sur la nuit.
+   */
+  --text:       #E8EDF5;
+  --text-dim:   #8A98AC;
+  --text-faint: #5C6A80;
 
-  /* classes d'actif — pour l'anneau de répartition et les barres de part.
-     Volontairement ni vertes ni rouges : une classe n'est pas un gain. */
-  --classe-cash: #58a6ff;
-  --classe-epargne: #a371f7;
-  --classe-titres: #f0a35e;
+  /* --- Accent -----------------------------------------------------------
+   * L'or de la marque. Usage parcimonieux : onglet actif, total, filets.
+   * La variante pâle sert aux états pressés et aux badges.
+   */
+  --accent:      #C9A05E;
+  --accent-pale: #DBC297;
+  --accent-dim:  #6B5433;
 
-  /* structure */
-  --border: #232a33;
+  /* --- Variation --------------------------------------------------------
+   * Désaturés par rapport aux verts et rouges d'interface habituels. Un
+   * patrimoine ne clignote pas : la hausse se lit sans crier.
+   *
+   * Ces deux couleurs ne disent QUE la variation d'un montant. Une erreur,
+   * une divergence de devise, un bouton de suppression n'en sont pas :
+   * cf. --alerte.
+   */
+  --positive: #3FA971;
+  --negative: #CF6355;
+
+  /* --- Alerte -----------------------------------------------------------
+   * Ce qui ne va pas : échec réseau, import refusé, divergence de devise,
+   * geste destructeur. Distinct du rouge de variation (ΔE 24) pour que
+   * « quelque chose est cassé » ne se lise pas « ça a baissé ».
+   *
+   * Sa marge sur l'or n'est que de ΔE 18,5 — les deux sont chaudes, et la
+   * bande disponible est étroite entre le rouge à 7° et l'or à 37°. En
+   * pratique elles ne se côtoient pas : l'alerte est un texte de 12-13 px et
+   * un bouton destructeur, l'or un onglet, un total et des filets.
+   */
+  --alerte: #B8763F;
+
+  /* --- Classes d'actif --------------------------------------------------
+   * Famille froide, volontairement éloignée du vert et du rouge : sur
+   * l'anneau, la couleur dit ce que c'est, jamais comment ça se porte.
+   * Les titres prennent l'or, parce que c'est le cœur du sujet.
+   *
+   * Les couleurs d'institution, elles, ne sont pas ici : elles vivent dans
+   * l'état (cf. src/data/schema.js), parce qu'une institution est une donnée.
+   * Les changer demande une migration, pas une retouche de ce fichier.
+   */
+  --classe-cash:    #5B7A9E;
+  --classe-epargne: #4A8A86;
+  --classe-titres:  #C9A05E;
+
+  /* --- Structure --------------------------------------------------------
+   * Bordure discrète mais présente : c'est elle qui porte l'élévation,
+   * à la place des ombres, moins coûteuses à peindre sur mobile.
+   */
+  --border:      #1E2B44;
+  --border-fort: #2C3D5C;
 
   --radius-s: 6px;
   --radius-m: 10px;
@@ -36,14 +93,90 @@
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 24px;
+  --space-4: 20px;
+  --space-5: 32px;
 
-  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  /* chiffres : tabulaires, pour que les montants s'alignent en colonne */
-  --font-num: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+  /* Cible tactile minimale, lignes de liste tapables comprises. Écrit une
+   * fois ici plutôt que répété en dur dans chaque composant. */
+  --touch: 48px;
 
-  /* gabarit */
-  --tab-height: 56px;
+  /* --- Typographie ------------------------------------------------------
+   * Aucune police téléchargée : tout est disponible sur le système.
+   * - ui      : l'interface courante
+   * - num     : les tableaux et les listes, chasse fixe pour que les
+   *             colonnes de montants restent alignées
+   * - affiche : le total en tête, les titres de section — c'est cette
+   *             serif qui donne le ton « maison de gestion » plutôt que
+   *             « application de finance personnelle »
+   */
+  --font-ui:      system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-num:     ui-monospace, "SF Mono", "Roboto Mono", Menlo, monospace;
+  --font-affiche: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+
+  /* --- Ombres -----------------------------------------------------------
+   * Une seule, pour les feuilles qui montent du bas. Les cartes n'en ont
+   * pas : la bordure suffit et le rendu reste net.
+   */
+  --shadow-sheet: 0 -8px 32px rgba(0, 0, 0, 0.5);
+
+  /* Voile derrière une feuille ouverte. Ici parce qu'une couleur écrite à la
+   * main dans un composant échappe à la prochaine refonte. */
+  --voile: rgba(0, 0, 0, 0.5);
+
+  /* --- Gabarit ----------------------------------------------------------
+   * Des mesures, pas des couleurs, mais du même ordre : une valeur unique
+   * dont dépendent plusieurs composants.
+   */
+  --tab-height:  56px;
   --content-max: 560px;
 }
+
+/* --- Notes d'application -------------------------------------------------
+ *
+ * LE TOTAL EN TÊTE
+ *   font-family: var(--font-affiche); font-size: 40px; color: var(--text);
+ *   Le symbole € en var(--accent), plus petit. C'est le seul endroit où le
+ *   nombre a le droit d'être grand.
+ *
+ * LES TITRES DE SECTION
+ *   font-family: var(--font-affiche); majuscules; letter-spacing: 0.12em;
+ *   font-size: 12px; color: var(--text-dim). Un filet var(--border) dessous.
+ *
+ * LES CARTES
+ *   background: var(--bg-elev); border: 1px solid var(--border);
+ *   border-radius: var(--radius-m); padding: var(--space-4). Pas d'ombre.
+ *
+ * LA BARRE D'ONGLETS
+ *   background: var(--bg-bar); filet var(--border) au-dessus.
+ *   Onglet actif : icône et libellé en var(--accent). Les autres en
+ *   var(--text-faint) — le contraste fait le travail, pas un fond coloré.
+ *
+ * LES MONTANTS EN LISTE
+ *   font-family: var(--font-num); font-variant-numeric: tabular-nums.
+ *   Positif en var(--positive), négatif en var(--negative), neutre en
+ *   var(--text).
+ *
+ * L'ANNEAU
+ *   Segments en var(--classe-*), fond de piste en var(--border).
+ *   Total au centre en var(--font-affiche).
+ *
+ * LES COURBES
+ *   Trait var(--accent) pour le patrimoine, 1.5px. Pour un titre, le trait
+ *   prend var(--positive) ou var(--negative) selon la variation de la
+ *   période affichée. Remplissage dégradé sous la courbe à 12 % d'opacité.
+ *
+ * CIBLES TACTILES
+ *   48px minimum, y compris pour les lignes de liste devenues tapables.
+ *
+ * --- Ce qui échappe encore à ce fichier ----------------------------------
+ *
+ * « Une refonte = ce fichier » n'est pas encore vrai :
+ *
+ *   - 93 `font-size` écrits en dur dans 26 fichiers CSS (13px 38 fois, 12px
+ *     19 fois, 14px 15 fois...). Aucune échelle typographique n'est tokenisée.
+ *   - les couleurs d'institution, dans src/data/schema.js — de la donnée,
+ *     donc hors de portée d'une feuille de style, par nature.
+ *   - sept espacements sous --space-1 (gap: 2px, padding: 3px), laissés tels
+ *     quels : un token pour sept filets d'ajustement coûterait plus qu'il ne
+ *     rapporte.
+ */

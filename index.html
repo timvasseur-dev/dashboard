@@ -9,8 +9,11 @@
     <title>V&amp;V Investment</title>
     <meta name="description" content="Suivi de patrimoine personnel" />
 
-    <!-- couleur de la barre système. La palette de theme.css suit dans un
-         second temps : ces deux valeurs divergent jusque-là. -->
+    <!-- couleur de la barre système, alignée sur --bg de src/styles/theme.css.
+         Elle ne peut pas s'écrire en var() : le navigateur lit cette balise
+         avant toute feuille de style, et le service worker sert le splash
+         ci-dessous hors de tout CSS. Ces trois valeurs se changent ensemble
+         (ici, le splash, et public/manifest.webmanifest). -->
     <meta name="theme-color" content="#0A1121" />
     <link rel="manifest" href="/dashboard/manifest.webmanifest" />
 
