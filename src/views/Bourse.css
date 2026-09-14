@@ -16,7 +16,7 @@
    mauvais instrument (CLAUDE.md § « Le ticker ne suffit pas »). C'est une
    alerte, pas une baisse — d'où --alerte et jamais --negative. */
 .bourse__devise-alerte {
-  font-size: 12px;
+  font-size: var(--fs-3);
   color: var(--alerte);
 }
 
@@ -30,12 +30,12 @@
 }
 
 .bourse__cours {
-  font-size: 12px;
+  font-size: var(--fs-3);
   color: var(--text-dim);
 }
 
 .bourse__pv {
-  font-size: 12px;
+  font-size: var(--fs-3);
   font-family: var(--font-num);
 }
 
@@ -49,7 +49,7 @@
 
 .bourse__sans-cours {
   color: var(--text-faint);
-  font-size: 13px;
+  font-size: var(--fs-4);
 }
 
 /* Action de pied de carte, pas repère d'interface : le filet du haut et la
@@ -59,7 +59,7 @@
   min-height: var(--touch);
   padding: var(--space-3) var(--space-4);
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--fs-5);
   text-align: left;
 }
 
@@ -71,7 +71,7 @@
   min-height: var(--touch);
   padding: 0 var(--space-2);
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: var(--fs-4);
 }
 
 .bourse__promouvoir:active {
@@ -97,7 +97,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2);
-  font-size: 13px;
+  font-size: var(--fs-4);
   color: var(--text-dim);
 }
 
@@ -107,7 +107,7 @@
   min-height: var(--touch);
   padding: 0 var(--space-2);
   color: var(--alerte);
-  font-size: 13px;
+  font-size: var(--fs-4);
   flex-shrink: 0;
 }
 
@@ -118,7 +118,7 @@
 }
 
 .bourse__zone-bornes {
-  font-size: 12px;
+  font-size: var(--fs-3);
   color: var(--text-dim);
 }
 
@@ -148,7 +148,7 @@
    lignes, elle plafonne ici à ~37 px. */
 .bourse__ouvrir {
   padding: var(--space-2) 0;
-  font-size: 15px;
+  font-size: var(--fs-6);
   text-align: left;
   color: inherit;
 }
@@ -165,6 +165,6 @@
   border-radius: var(--radius-s);
   padding: var(--space-2);
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--fs-5);
   font-family: inherit;
 }

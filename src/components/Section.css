@@ -22,7 +22,7 @@
    interlettrage, un faux gras sur une serif système empâte le tracé. */
 .section__titre {
   font-family: var(--font-affiche);
-  font-size: 12px;
+  font-size: var(--fs-section);
   color: var(--text-dim);
   text-transform: uppercase;
   letter-spacing: 0.12em;

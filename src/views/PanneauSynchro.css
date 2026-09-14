@@ -16,11 +16,11 @@
    réussit et celui qui échoue (cf. MESSAGES_TEST). --text, la phrase tranche. */
 .synchro__message {
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--fs-5);
 }
 
 .synchro__avertissement {
-  font-size: 13px;
+  font-size: var(--fs-4);
   color: var(--text-dim);
 }
 
@@ -28,7 +28,7 @@
 .synchro__erreur {
   padding: 0 var(--space-4) var(--space-4);
   color: var(--alerte);
-  font-size: 14px;
+  font-size: var(--fs-5);
 }
 
 .synchro__pleine-largeur {

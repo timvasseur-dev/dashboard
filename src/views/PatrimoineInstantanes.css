@@ -19,12 +19,12 @@
 .instantanes__compte {
   padding: var(--space-3) var(--space-4);
   color: var(--text-faint);
-  font-size: 13px;
+  font-size: var(--fs-4);
 }
 
 .instantanes__compte {
   text-align: center;
-  font-size: 12px;
+  font-size: var(--fs-3);
 }
 
 .instantanes__formulaire {
@@ -35,6 +35,6 @@
 
 .instantanes__note {
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: var(--fs-4);
   line-height: 1.4;
 }

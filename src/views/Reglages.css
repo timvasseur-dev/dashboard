@@ -1,6 +1,6 @@
 .reglages__note {
   padding: 0 var(--space-4) var(--space-4);
-  font-size: 13px;
+  font-size: var(--fs-4);
   color: var(--text-dim);
 }
 
@@ -14,7 +14,7 @@
 .reglages__fichier {
   min-height: var(--touch);
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: var(--fs-4);
 }
 
 .reglages__collage {
@@ -25,7 +25,7 @@
   padding: var(--space-3);
   color: var(--text);
   font-family: var(--font-num);
-  font-size: 13px;
+  font-size: var(--fs-4);
 }
 
 /* Un volume qui approche le seuil de surveillance est une alerte, pas une
@@ -42,5 +42,5 @@
 .reglages__message {
   padding: var(--space-3) var(--space-4);
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--fs-5);
 }

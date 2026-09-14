@@ -10,7 +10,7 @@
   min-height: var(--touch);
   padding: 0 var(--space-2);
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--fs-5);
 }
 
 .actualiser__bouton:active:not(:disabled) {
@@ -24,6 +24,6 @@
 
 /* Un rafraîchissement qui échoue est une alerte, pas une baisse. */
 .actualiser__erreur {
-  font-size: 13px;
+  font-size: var(--fs-4);
   color: var(--alerte);
 }

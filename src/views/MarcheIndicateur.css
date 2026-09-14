@@ -17,10 +17,10 @@
 /* La variation du jour : le vert et le rouge sont ici à leur place. */
 .indicateur__hausse {
   color: var(--positive);
-  font-size: 12px;
+  font-size: var(--fs-3);
 }
 
 .indicateur__baisse {
   color: var(--negative);
-  font-size: 12px;
+  font-size: var(--fs-3);
 }

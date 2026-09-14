@@ -23,7 +23,7 @@
   min-height: var(--touch);
   padding: var(--space-2) var(--space-3);
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--fs-5);
 }
 
 .chercheur__bouton:active:not(:disabled) {
@@ -36,14 +36,14 @@
 }
 
 .chercheur__statut {
-  font-size: 13px;
+  font-size: var(--fs-4);
   color: var(--text-dim);
   margin: 0;
 }
 
 /* Une recherche qui échoue est une alerte, pas une baisse. */
 .chercheur__erreur {
-  font-size: 13px;
+  font-size: var(--fs-4);
   color: var(--alerte);
   margin: 0;
 }
@@ -83,15 +83,15 @@
 .chercheur__resultat-ticker {
   font-family: var(--font-num);
   font-variant-numeric: tabular-nums;
-  font-size: 13px;
+  font-size: var(--fs-4);
 }
 
 .chercheur__resultat-nom {
-  font-size: 13px;
+  font-size: var(--fs-4);
   color: var(--text-dim);
 }
 
 .chercheur__resultat-detail {
-  font-size: 12px;
+  font-size: var(--fs-3);
   color: var(--text-faint);
 }

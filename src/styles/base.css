@@ -16,7 +16,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-ui);
-  font-size: 16px;
+  font-size: var(--fs-7);
   line-height: 1.4;
   /* pas de rebond élastique : on veut un ressenti d'application native */
   overscroll-behavior: none;
@@ -52,13 +52,13 @@ button {
 
 /* Âge d'une valeur horodatée (cours, taux) : cf. src/components/Age.jsx. */
 .age {
-  font-size: 11px;
+  font-size: var(--fs-2);
   color: var(--text-faint);
 }
 
 /* Valeur pas encore récupérée (cours, taux) : cf. src/views/Marche.jsx,
    src/views/Reglages.jsx. */
 .indisponible {
-  font-size: 13px;
+  font-size: var(--fs-4);
   color: var(--text-faint);
 }

@@ -100,6 +100,47 @@
    * fois ici plutôt que répété en dur dans chaque composant. */
   --touch: 48px;
 
+  /* --- Échelle typographique --------------------------------------------
+   * Deux familles, pour deux natures de besoin.
+   *
+   * L'échelle numérotée, d'abord : sept tailles d'interface, partagées par
+   * des rôles sans rapport entre eux. Le 13 px sert à la fois aux notes, aux
+   * sous-libellés, aux messages d'erreur et aux textes d'aide — leur donner
+   * un nom commun sémantique serait un mensonge pour la moitié d'entre eux.
+   * Numérotée comme --space-*, donc, et pour la même raison.
+   *
+   *   1  libellé d'onglet
+   *   2  âge d'une valeur, légende de l'anneau
+   *   3  détail secondaire : sous-montants, alertes en ligne, extraits
+   *   4  annexe : notes, sous-libellés, statuts, aides, erreurs
+   *   5  action : boutons de texte, messages, valeurs de fiche
+   *   6  libellé de ligne, saisie courte
+   *   7  champ de formulaire et corps de page — 16 px est un plancher, pas
+   *      un choix : en dessous, iOS zoome à la mise au point d'un champ
+   */
+  --fs-1: 10px;
+  --fs-2: 11px;
+  --fs-3: 12px;
+  --fs-4: 13px;
+  --fs-5: 14px;
+  --fs-6: 15px;
+  --fs-7: 16px;
+
+  /* Les tailles d'affichage ensuite, une par rôle. Trois valent 18 px et
+   * deux valent 22 px aujourd'hui, mais par coïncidence : le « ⋯ » d'une
+   * ligne, un titre de feuille et le total au centre de l'anneau n'ont rien
+   * à voir. Des tokens distincts à valeur égale, pour qu'ils puissent
+   * diverger sans se chercher l'un l'autre.
+   */
+  --fs-section:  12px; /* titre de section, en capitales */
+  --fs-glyphe:   18px; /* le « ⋯ » qui ouvre un formulaire */
+  --fs-feuille:  18px; /* titre d'une feuille */
+  --fs-anneau:   18px; /* total au centre de l'anneau */
+  --fs-ecran:    22px; /* titre d'écran */
+  --fs-compteur: 22px; /* compteurs de l'aperçu d'import */
+  --fs-cours:    24px; /* prix sur la fiche titre */
+  --fs-total:    40px; /* le total en tête, et lui seul */
+
   /* --- Typographie ------------------------------------------------------
    * Aucune police téléchargée : tout est disponible sur le système.
    * - ui      : l'interface courante
@@ -134,13 +175,14 @@
 /* --- Notes d'application -------------------------------------------------
  *
  * LE TOTAL EN TÊTE
- *   font-family: var(--font-affiche); font-size: 40px; color: var(--text);
+ *   font-family: var(--font-affiche); font-size: var(--fs-total);
  *   Le symbole € en var(--accent), plus petit. C'est le seul endroit où le
  *   nombre a le droit d'être grand.
  *
  * LES TITRES DE SECTION
  *   font-family: var(--font-affiche); majuscules; letter-spacing: 0.12em;
- *   font-size: 12px; color: var(--text-dim). Un filet var(--border) dessous.
+ *   font-size: var(--fs-section); color: var(--text-dim). Un filet
+ *   var(--border) dessous.
  *
  * LES CARTES
  *   background: var(--bg-elev); border: 1px solid var(--border);
@@ -170,13 +212,19 @@
  *
  * --- Ce qui échappe encore à ce fichier ----------------------------------
  *
- * « Une refonte = ce fichier » n'est pas encore vrai :
+ * Couleurs, espacements, rayons, familles et tailles de police : tout passe
+ * désormais par ici. Aucune couleur ni aucune taille n'est plus écrite à la
+ * main dans un composant. Restent deux exceptions, toutes deux assumées :
  *
- *   - 93 `font-size` écrits en dur dans 26 fichiers CSS (13px 38 fois, 12px
- *     19 fois, 14px 15 fois...). Aucune échelle typographique n'est tokenisée.
- *   - les couleurs d'institution, dans src/data/schema.js — de la donnée,
- *     donc hors de portée d'une feuille de style, par nature.
+ *   - les couleurs d'institution, dans src/data/schema.js. C'est de la
+ *     donnée, persistée dans l'état de l'utilisateur : une feuille de style
+ *     ne peut pas l'atteindre, et la changer demande une migration (cf.
+ *     migrations[5]). Angle mort structurel, pas un oubli.
  *   - sept espacements sous --space-1 (gap: 2px, padding: 3px), laissés tels
  *     quels : un token pour sept filets d'ajustement coûterait plus qu'il ne
  *     rapporte.
+ *
+ * Une valeur relative subsiste aussi, volontairement : le symbole € du total
+ * est à 0.55em, donc solidaire de --fs-total. La tokeniser le détacherait du
+ * nombre qu'il accompagne.
  */

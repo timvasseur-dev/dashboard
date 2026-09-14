@@ -8,7 +8,7 @@
 
 .courbe__vide {
   color: var(--text-faint);
-  font-size: 13px;
+  font-size: var(--fs-4);
   text-align: center;
   padding: var(--space-4) 0;
 }

@@ -17,7 +17,7 @@
    dépendrait de l'ordre d'assemblage des feuilles. */
 .entete__total.num {
   font-family: var(--font-affiche);
-  font-size: 40px;
+  font-size: var(--fs-total);
   /* Georgia sort des chiffres à hauteur variable par défaut : `lining-nums`
      les remet sur une ligne, `tabular-nums` garde la largeur stable pour que
      le total ne saute pas d'un rafraîchissement à l'autre. */
@@ -35,12 +35,12 @@
 
 .entete__variation {
   text-align: center;
-  font-size: 14px;
+  font-size: var(--fs-5);
 }
 
 .entete__pv {
   text-align: center;
-  font-size: 13px;
+  font-size: var(--fs-4);
   color: var(--text-dim);
   margin-top: var(--space-1);
 }
@@ -55,5 +55,5 @@
 
 .entete__indisponible {
   color: var(--text-faint);
-  font-size: 13px;
+  font-size: var(--fs-4);
 }

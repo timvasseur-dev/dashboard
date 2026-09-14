@@ -31,14 +31,14 @@
    système faux-grassie à 22 px empâte le tracé. */
 .screen__title {
   font-family: var(--font-affiche);
-  font-size: 22px;
+  font-size: var(--fs-ecran);
   letter-spacing: 0;
 }
 
 .screen__subtitle {
   margin-top: var(--space-1);
   color: var(--text-dim);
-  font-size: 13px;
+  font-size: var(--fs-4);
 }
 
 .screen__body {
@@ -60,6 +60,6 @@
   border-radius: var(--radius-l);
   background: var(--bg-elev);
   color: var(--text-faint);
-  font-size: 14px;
+  font-size: var(--fs-5);
   text-align: center;
 }

@@ -46,11 +46,11 @@
 }
 
 .groupes__detail .row__libelle {
-  font-size: 13px;
+  font-size: var(--fs-4);
 }
 
 .groupes__detail .row__sous-libelle {
-  font-size: 12px;
+  font-size: var(--fs-3);
 }
 
 .groupes__valeur {
@@ -61,7 +61,7 @@
 
 .groupes__secondaire,
 .groupes__pv {
-  font-size: 12px;
+  font-size: var(--fs-3);
 }
 
 .groupes__pv--pos {
@@ -74,17 +74,17 @@
 
 .groupes__sans-valeur {
   color: var(--text-faint);
-  font-size: 13px;
+  font-size: var(--fs-4);
 }
 
 /* Devise du cours ≠ devise de la position : une alerte, pas une variation. */
 .groupes__devise-alerte {
-  font-size: 12px;
+  font-size: var(--fs-3);
   color: var(--alerte);
 }
 
 .groupes__detail-vide {
   padding: var(--space-3) var(--space-4) var(--space-3) var(--space-5);
   color: var(--text-faint);
-  font-size: 13px;
+  font-size: var(--fs-4);
 }

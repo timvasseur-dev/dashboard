@@ -19,19 +19,19 @@
   border-radius: var(--radius-s);
   padding: var(--space-3);
   color: var(--text);
-  font-size: 15px;
+  font-size: var(--fs-6);
   font-family: inherit;
 }
 
 .import__aide {
-  font-size: 13px;
+  font-size: var(--fs-4);
   color: var(--text-dim);
 }
 
 /* Un fichier refusé est un problème, pas une baisse. */
 .import__erreur {
   color: var(--alerte);
-  font-size: 13px;
+  font-size: var(--fs-4);
 }
 
 /* L'action principale de cette étape, donc l'or plein — un seul par étape.

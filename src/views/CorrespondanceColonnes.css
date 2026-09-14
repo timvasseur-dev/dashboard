@@ -5,7 +5,7 @@
 }
 
 .correspondance__aide {
-  font-size: 13px;
+  font-size: var(--fs-4);
   color: var(--text-dim);
 }
 
@@ -28,7 +28,7 @@
   min-height: var(--touch);
   padding: var(--space-2) var(--space-3);
   font-family: var(--font-num);
-  font-size: 12px;
+  font-size: var(--fs-3);
   white-space: pre;
   text-align: left;
   border-bottom: 1px solid var(--border);
@@ -61,7 +61,7 @@
   border-radius: var(--radius-s);
   padding: var(--space-2) var(--space-3);
   color: var(--text);
-  font-size: 14px;
+  font-size: var(--fs-5);
 }
 
 /* Colonne retenue pour ce rôle : une sélection, donc une surface. */
@@ -86,7 +86,7 @@
   align-items: center;
   min-height: var(--touch);
   gap: var(--space-2);
-  font-size: 14px;
+  font-size: var(--fs-5);
 }
 
 /* L'action principale de cette étape. Texte sombre : 7,78:1 de contraste. */

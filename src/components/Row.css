@@ -28,11 +28,11 @@ button.row:active {
 }
 
 .row__libelle {
-  font-size: 15px;
+  font-size: var(--fs-6);
 }
 
 .row__sous-libelle {
-  font-size: 13px;
+  font-size: var(--fs-4);
   color: var(--text-dim);
 }
 

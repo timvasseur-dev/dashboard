@@ -13,7 +13,7 @@
   flex: 1;
   min-width: 0;
   padding: var(--space-2) 2px;
-  font-size: 12px;
+  font-size: var(--fs-3);
   white-space: nowrap;
   color: var(--text-dim);
   border-radius: var(--radius-s);
