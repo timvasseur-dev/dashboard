@@ -14,3 +14,9 @@ dist/
 *.local
 .DS_Store
 *.log
+
+# Exemplaire de référence de la palette, déposé à la racine le temps d'une
+# refonte : il fait doublon avec src/styles/theme.css une fois appliqué.
+# La barre oblique initiale ancre le motif à la racine — sans elle, le motif
+# couvrirait aussi src/styles/theme.css, qui est suivi.
+/theme.css
