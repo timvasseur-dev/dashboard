@@ -3,15 +3,18 @@ import { migrer } from './migrations.js'
 import { VERSION } from './schema.js'
 
 /*
- * Les migrations n'étaient couvertes par aucun test. Celle de la v5 réécrit de
- * la donnée déjà enregistrée sans qu'aucune saisie ne le déclenche, et son
- * erreur serait silencieuse : une couleur fausse ne lève pas d'exception, elle
- * s'affiche.
+ * Les migrations n'étaient couvertes par aucun test.
+ *
+ * Ce fichier vérifie la mécanique : appariement, conservation de l'ordre et
+ * des autres clés, chaînage des versions. Pas les règles visuelles — les
+ * couleurs que `migrations[5]` écrit ne sont plus lues depuis qu'elles sont
+ * passées dans theme.css, et ce sont les tokens qui sont désormais gardés,
+ * dans src/views/couleursInstitution.test.jsx.
+ *
+ * Les valeurs attendues ci-dessous restent vérifiées pour une autre raison :
+ * une migration est figée dans le temps, et personne ne doit la réécrire
+ * discrètement.
  */
-
-// L'or de la palette. Aucune institution ne doit le porter : il signifie
-// « repère d'interface », pas « cette institution-là ».
-const OR = '#c9a05e'
 
 /** État v5 minimal : les seules clés que les migrations traversent. */
 function etatV5(institutions) {
@@ -44,50 +47,6 @@ describe('migration v5 → v6 : couleurs d’institution', () => {
       '#3FA4AB',
       '#B2B1E2',
     ])
-  })
-
-  it('n’attribue l’or à aucune institution', () => {
-    const etat = migrer(etatV5(INSTITUTIONS_V5), 6)
-
-    for (const institution of etat.institutions) {
-      expect(institution.couleur.toLowerCase()).not.toBe(OR)
-    }
-  })
-
-  it('donne quatre couleurs distinctes', () => {
-    const etat = migrer(etatV5(INSTITUTIONS_V5), 6)
-    const couleurs = etat.institutions.map((institution) => institution.couleur)
-
-    expect(new Set(couleurs).size).toBe(couleurs.length)
-  })
-
-  /*
-   * Quatre hex différents ne suffisent pas : la première série en avait quatre,
-   * et ses segments étaient indistinguables sur l'anneau comme sur les
-   * pastilles de 8 px. Ce qui les séparait — la teinte seule — ne survit pas à
-   * une tache de 8 px. La clarté, si.
-   *
-   * Luminance relative WCAG, triée : chaque couleur doit être au moins 30 %
-   * plus claire que la précédente. La série rejetée donnait des rapports de
-   * 1,67, 1,08 et 1,06 ; celle-ci donne 1,80, 1,74 et 1,52.
-   */
-  it('écarte les clartés, pas seulement les teintes', () => {
-    const luminance = (hex) => {
-      const canal = (deux) => {
-        const c = parseInt(deux, 16) / 255
-        return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
-      }
-      return (
-        0.2126 * canal(hex.slice(1, 3)) + 0.7152 * canal(hex.slice(3, 5)) + 0.0722 * canal(hex.slice(5, 7))
-      )
-    }
-
-    const etat = migrer(etatV5(INSTITUTIONS_V5), 6)
-    const triees = etat.institutions.map((institution) => luminance(institution.couleur)).sort((a, b) => a - b)
-
-    for (let i = 1; i < triees.length; i += 1) {
-      expect(triees[i] / triees[i - 1]).toBeGreaterThan(1.3)
-    }
   })
 
   it('conserve les id, les noms et l’ordre', () => {

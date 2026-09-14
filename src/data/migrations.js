@@ -12,6 +12,13 @@ import { VERSION } from './schema.js'
 // s'appliquerait sur une base qu'elle n'attend pas. Le suffixe de version est
 // là pour qu'une table v7 ne puisse pas être confondue avec celle-ci.
 //
+// Ce qu'elle écrit n'est plus lu : les couleurs d'institution sont passées
+// dans theme.css (cf. src/views/couleursInstitution.js). La migration reste
+// en place parce qu'une migration ne se retire pas — un export v5 doit
+// continuer à traverser la chaîne — mais son effet est devenu vestigial.
+// C'est elle, justement, qui a montré la limite du procédé : un état déjà en
+// v6 ne la rejoue pas, donc ne reçoit aucune correction ultérieure.
+//
 // Une Map, pas un objet : `nom` vient de l'état, et une clé comme
 // « constructor » sur un objet littéral renverrait une fonction héritée du
 // prototype, donc une couleur invalide passée pour valide.

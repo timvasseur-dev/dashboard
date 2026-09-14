@@ -8,6 +8,7 @@ import { useEtat, ajouterCompte, modifierCompte, supprimerCompte, majSolde } fro
 import { TYPES_COMPTE, DEVISES } from '../data/schema.js'
 import Montant from '../components/Montant.jsx'
 import { navigate } from '../lib/router.js'
+import { couleurInstitution } from './couleursInstitution.js'
 import './Comptes.css'
 
 const LIBELLE_TYPE = { courant: 'Courant', epargne: 'Épargne', pea: 'PEA', cto: 'CTO' }
@@ -37,7 +38,7 @@ export default function Comptes() {
   return (
     <Screen title="Comptes" subtitle="BCI, Boursobank, Caisse d'Épargne, IBKR">
       {groupes.map(({ institution, comptes }) => (
-        <Section key={institution.id} titre={institution.nom} couleur={institution.couleur}>
+        <Section key={institution.id} titre={institution.nom} couleur={couleurInstitution(institution.nom)}>
           {comptes.map((compte) =>
             soldeEnEdition === compte.id ? (
               <Row key={compte.id} libelle={compte.libelle} sousLibelle={LIBELLE_TYPE[compte.type]}>

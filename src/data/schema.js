@@ -8,26 +8,27 @@ export const HORIZONS = ['court', 'moyen', 'long']
 // Institutions réelles, structure fixe (cf. CLAUDE.md § 3) : pas de gestion en
 // phase 2, seuls les comptes qu'elles contiennent se créent et se suppriment.
 //
-// Les couleurs vivent dans l'état parce qu'une institution est une donnée et
-// non un style : theme.css ne peut pas les atteindre, et les changer demande
-// donc une migration (cf. `migrations[5]`).
+// ATTENTION — `couleur` est OBSOLÈTE et n'est plus lu nulle part.
 //
-// Elles varient en teinte ET en clarté, pas seulement en teinte. Quatre bleus
-// de même luminosité se confondent : c'était le défaut de la première série
-// (rapports de luminance consécutifs de 1,67, 1,08 et 1,06 — les trois
-// derniers indistinguables). Ici les rapports valent 1,80, 1,74 et 1,52, et
-// l'écart tient jusqu'à la pastille de 8 px de l'en-tête de section, pas
-// seulement sur l'anneau. `migrations.test.js` garde ce contrat.
+// Les couleurs d'institution sont désormais des variables de theme.css,
+// appariées au nom dans src/views/couleursInstitution.js. La raison est
+// concrète : une couleur stockée dans l'état ne peut être changée que par une
+// migration, et un appareil déjà migré ne voit jamais la correction suivante.
+// C'est exactement ce qui s'est produit entre la deuxième et la troisième
+// série — un état passé en v6 avec l'ancienne famille ne pouvait plus rejouer
+// `migrations[5]`, donc n'a jamais reçu la série définitive.
 //
-// Deux couleurs restent interdites ici : le vert et le rouge, qui ne disent
-// que la variation, et l'or, qui signifie « repère d'interface » — onglet
-// actif, total principal, filets de section — et ne désigne jamais une
-// institution.
+// Le champ est conservé plutôt que supprimé : rien ne le lit, il ne gêne pas,
+// et une migration destructrice pour nettoyer un champ inerte ne vaut pas le
+// risque. À retirer en phase 7, quand le modèle bougera pour de vrai.
+//
+// Ne pas mettre ces valeurs à jour : elles ne s'affichent pas. La vérité est
+// dans theme.css.
 const INSTITUTIONS_PAR_DEFAUT = [
-  { nom: 'BCI', couleur: '#465977' }, // ardoise profond
-  { nom: 'Boursobank', couleur: '#995DAC' }, // violet
-  { nom: "Caisse d'Épargne", couleur: '#3FA4AB' }, // sarcelle
-  { nom: 'IBKR', couleur: '#B2B1E2' }, // bleu-lavande clair
+  { nom: 'BCI', couleur: '#465977' }, // obsolète, cf. --inst-bci
+  { nom: 'Boursobank', couleur: '#995DAC' }, // obsolète, cf. --inst-boursobank
+  { nom: "Caisse d'Épargne", couleur: '#3FA4AB' }, // obsolète, cf. --inst-caisse-epargne
+  { nom: 'IBKR', couleur: '#B2B1E2' }, // obsolète, cf. --inst-ibkr
 ]
 
 /** État vide de départ, institutions déjà en place. `appareilId` identifie ce

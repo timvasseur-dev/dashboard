@@ -70,14 +70,35 @@
    * Famille froide, volontairement éloignée du vert et du rouge : sur
    * l'anneau, la couleur dit ce que c'est, jamais comment ça se porte.
    * Les titres prennent l'or, parce que c'est le cœur du sujet.
-   *
-   * Les couleurs d'institution, elles, ne sont pas ici : elles vivent dans
-   * l'état (cf. src/data/schema.js), parce qu'une institution est une donnée.
-   * Les changer demande une migration, pas une retouche de ce fichier.
    */
   --classe-cash:    #5B7A9E;
   --classe-epargne: #4A8A86;
   --classe-titres:  #C9A05E;
+
+  /* --- Institutions -----------------------------------------------------
+   * Elles étaient stockées dans l'état, parce qu'une institution est une
+   * donnée. Mais une couleur est une décision visuelle, pas une donnée
+   * patrimoniale : la garder là-bas obligeait à une migration pour chaque
+   * retouche de teinte, et un appareil déjà migré ne voyait jamais la
+   * correction suivante. Elles sont ici désormais, et la correspondance avec
+   * les noms est dans src/views/couleursInstitution.js.
+   *
+   * Elles varient en teinte ET en clarté, de L* 37 à 74. Quatre bleus de même
+   * luminosité se confondent à 8 px — c'est le défaut qu'avait la première
+   * série. `couleursInstitution.test.jsx` garde ce contrat.
+   *
+   * Ni vert, ni rouge — ils ne disent que la variation — ni or, qui signifie
+   * « repère d'interface » et ne désigne jamais une institution.
+   */
+  --inst-bci:            #465977; /* ardoise profond */
+  --inst-boursobank:     #995DAC; /* violet */
+  --inst-caisse-epargne: #3FA4AB; /* sarcelle */
+  --inst-ibkr:           #B2B1E2; /* bleu-lavande clair */
+
+  /* Institution non reconnue — un nom renommé, par exemple. Gris neutre : il
+   * dit « pas d'identité attribuée » et ne se confond avec aucune des quatre
+   * (ΔE 21 de la plus proche, 43 du fond). */
+  --inst-autre:          #6E6E6E;
 
   /* --- Structure --------------------------------------------------------
    * Bordure discrète mais présente : c'est elle qui porte l'élévation,
@@ -213,13 +234,10 @@
  * --- Ce qui échappe encore à ce fichier ----------------------------------
  *
  * Couleurs, espacements, rayons, familles et tailles de police : tout passe
- * désormais par ici. Aucune couleur ni aucune taille n'est plus écrite à la
- * main dans un composant. Restent deux exceptions, toutes deux assumées :
+ * désormais par ici, couleurs d'institution comprises. Aucune couleur ni
+ * aucune taille n'est plus écrite à la main dans un composant, ni stockée
+ * dans l'état. Reste une exception, assumée :
  *
- *   - les couleurs d'institution, dans src/data/schema.js. C'est de la
- *     donnée, persistée dans l'état de l'utilisateur : une feuille de style
- *     ne peut pas l'atteindre, et la changer demande une migration (cf.
- *     migrations[5]). Angle mort structurel, pas un oubli.
  *   - sept espacements sous --space-1 (gap: 2px, padding: 3px), laissés tels
  *     quels : un token pour sept filets d'ajustement coûterait plus qu'il ne
  *     rapporte.

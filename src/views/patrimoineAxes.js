@@ -7,6 +7,8 @@
  * `consolider()`.
  */
 
+import { couleurInstitution } from './couleursInstitution.js'
+
 export const CLASSES = [
   { cle: 'cash', libelle: 'Cash', couleur: 'var(--classe-cash)' },
   { cle: 'epargne', libelle: 'Épargne', couleur: 'var(--classe-epargne)' },
@@ -19,15 +21,16 @@ export const AXES = [
 ]
 
 /** Segments de l'axe demandé : `[{ cle, libelle, valeur, couleur }]`, dans
- * l'ordre d'affichage. Les institutions gardent leur couleur propre, définie
- * avec elles dans l'état. */
+ * l'ordre d'affichage. Les deux axes tirent leur couleur du thème : les
+ * classes par constante, les institutions par leur nom — jamais de l'état
+ * (cf. couleursInstitution.js). */
 export function segmentsDe(axe, { parClasse, parInstitution, institutions }) {
   if (axe === 'institutions') {
     return institutions.map((institution) => ({
       cle: institution.id,
       libelle: institution.nom,
       valeur: parInstitution[institution.id] ?? 0,
-      couleur: institution.couleur,
+      couleur: couleurInstitution(institution.nom),
     }))
   }
 
@@ -54,7 +57,7 @@ export function groupesDe(axe, consolidation, institutions) {
     return institutions.map((institution) => ({
       cle: institution.id,
       libelle: institution.nom,
-      couleur: institution.couleur,
+      couleur: couleurInstitution(institution.nom),
       valeur: consolidation.parInstitution[institution.id] ?? 0,
       plusValue: consolidation.plusValueParInstitution[institution.id] ?? null,
       comptes: consolidation.comptesParInstitution[institution.id] ?? [],
