@@ -6,8 +6,16 @@
  * Trois règles tiennent l'ensemble :
  *   1. Le vert et le rouge ne disent qu'une chose : la variation. Jamais
  *      l'identité d'une classe, d'un bouton ou d'un onglet.
- *   2. L'or est rare. Il marque l'onglet actif, le total principal et les
- *      filets de section. Ailleurs, il perd sa valeur.
+ *   2. L'or est rare. Il marque l'onglet actif, le symbole du total, le
+ *      trait de la courbe de patrimoine, l'anneau de focus et l'unique
+ *      bouton de validation d'une feuille. Ailleurs, il perd sa valeur.
+ *
+ *      Les filets n'en font pas partie, titres de section compris : ils sont
+ *      en var(--border). Cette règle a d'abord listé « les filets de
+ *      section » parmi les emplois de l'or, ce que la note d'application
+ *      contredisait plus bas. Tranché en faveur de var(--border) : Section
+ *      sert huit vues, un filet doré sous chaque titre ferait de l'or une
+ *      couleur courante — l'inverse de ce que cette règle demande.
  *   3. La serif est réservée aux grands nombres et aux titres. Les tableaux
  *      gardent une police à chasse tabulaire, sinon les colonnes dansent.
  */
@@ -36,8 +44,10 @@
   --text-faint: #5C6A80;
 
   /* --- Accent -----------------------------------------------------------
-   * L'or de la marque. Usage parcimonieux : onglet actif, total, filets.
-   * La variante pâle sert aux états pressés et aux badges.
+   * L'or de la marque. Usage parcimonieux, et jamais sur un filet : onglet
+   * actif, symbole du total, trait de la courbe de patrimoine, anneau de
+   * focus, bouton de validation d'une feuille. La variante pâle sert aux
+   * états pressés et aux badges.
    */
   --accent:      #C9A05E;
   --accent-pale: #DBC297;
@@ -62,7 +72,8 @@
    * Sa marge sur l'or n'est que de ΔE 18,5 — les deux sont chaudes, et la
    * bande disponible est étroite entre le rouge à 7° et l'or à 37°. En
    * pratique elles ne se côtoient pas : l'alerte est un texte de 12-13 px et
-   * un bouton destructeur, l'or un onglet, un total et des filets.
+   * un bouton destructeur, l'or un onglet, un total et un bouton de
+   * validation.
    */
   --alerte: #B8763F;
 

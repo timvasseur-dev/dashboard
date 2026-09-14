@@ -1,6 +1,7 @@
 /* Une action de liste, pas un repère d'interface : l'or est réservé à
-   l'onglet actif, au total et aux filets. Ici c'est la position en pied de
-   carte et le filet au-dessus qui disent que c'est tapable. */
+   l'onglet actif, au total et au bouton de validation d'une feuille. Ici
+   c'est la position en pied de carte et le filet var(--border) au-dessus qui
+   disent que c'est tapable. */
 .instantanes__action {
   width: 100%;
   min-height: var(--touch);
