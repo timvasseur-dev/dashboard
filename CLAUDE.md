@@ -77,7 +77,7 @@ avec chaque valorisation, pour que l'historique reste juste rétroactivement.
 L'état est un objet unique, sérialisé sous une clé unique `vv.state` dans `localStorage` :
 
 ```
-Institution   { id, nom, couleur }
+Institution   { id, nom, couleur }                        // couleur obsolète, plus lu
 Account       { id, institutionId, libelle, type, devise }
 balances      { [accountId]: { montant, date } }         // solde courant, une map par compte
 Position      { id, accountId, ticker, isin, quantite, pru, devise }
@@ -87,6 +87,18 @@ quotes        { [ticker]: { prix, devise, nom, horodatage } }  // indexé par ti
 FxRate        { paire, taux, horodatage }
 historique    [{ date, totalEur, tauxUsd }]               // instantanés, ajout seul, jamais réécrit
 ```
+
+`Institution.couleur` est **obsolète** : le champ subsiste dans l'état mais plus rien ne
+le lit. Une couleur est une décision visuelle, pas une donnée patrimoniale ; la garder
+dans l'état obligeait à une migration pour chaque retouche de teinte, et un appareil
+déjà migré ne recevait jamais la correction suivante — ce qui s'est effectivement
+produit. Les couleurs d'institution sont désormais des variables de
+`src/styles/theme.css` (`--inst-*`), appariées au nom dans
+`src/views/couleursInstitution.js` ; une institution non reconnue prend un gris neutre.
+L'appariement par nom implique qu'un renommage fait perdre la couleur : accepté, les
+institutions étant une structure fixe en phase 2. Le champ n'est pas supprimé — il ne
+gêne pas, et une migration destructrice pour nettoyer une valeur inerte ne vaut pas le
+risque. À retirer en phase 7, quand le modèle bougera pour de vrai.
 
 `Account.type` ∈ `courant` | `epargne` | `pea` | `cto` — Livret A et LDD sont des comptes
 `epargne` comme les autres, distingués seulement par leur `libelle`.
