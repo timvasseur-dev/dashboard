@@ -18,10 +18,22 @@
   text-align: left;
 }
 
+/* Le « ⋯ » des lignes de position et de compte. Il tenait 29 px de haut :
+   sous la cible tactile, alors que c'est le seul accès au formulaire.
+   Utilisé aussi depuis l'écran Bourse (positions, watchlist, orphelines). */
 .comptes__gerer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--touch);
+  min-height: var(--touch);
   color: var(--text-dim);
-  padding: var(--space-1) var(--space-2);
   font-size: 18px;
+}
+
+.comptes__gerer:active {
+  background: var(--bg-press);
+  border-radius: var(--radius-s);
 }
 
 .comptes__ajouter {
@@ -54,24 +66,33 @@
   font-family: inherit;
 }
 
+/* L'or plein, un seul par feuille. Texte sombre et non blanc : 7,78:1 de
+   contraste contre 2,42:1, qui était illisible. Sert aussi aux feuilles de
+   BourseFormulaire, d'où sa correction dès la passe Bourse. */
 .comptes__valider {
+  min-height: var(--touch);
   background: var(--accent);
-  color: #fff;
+  color: var(--bg);
   border-radius: var(--radius-s);
   padding: var(--space-3);
   text-align: center;
   font-weight: 600;
 }
 
+/* Supprimer est un geste destructeur, donc --alerte : le rouge ne dit que la
+   variation d'un montant (cf. theme.css, règle 1). Sert aussi aux positions à
+   rattacher de l'écran Bourse et aux feuilles de BourseFormulaire. */
 .comptes__supprimer {
-  color: var(--negative);
+  min-height: var(--touch);
   padding: var(--space-3);
+  color: var(--alerte);
   text-align: center;
 }
 
+/* Texte sombre sur l'ocre : 5,11:1 de contraste, contre 3,68:1 en blanc. */
 .comptes__supprimer--confirme {
-  background: var(--negative);
-  color: #fff;
+  background: var(--alerte);
+  color: var(--bg);
   border-radius: var(--radius-s);
 }
 

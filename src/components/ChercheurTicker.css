@@ -18,10 +18,17 @@
   color: var(--text);
 }
 
+/* Lancer une recherche est une action ordinaire, pas un repère d'interface. */
 .chercheur__bouton {
+  min-height: var(--touch);
   padding: var(--space-2) var(--space-3);
-  color: var(--accent);
+  color: var(--text);
   font-size: 14px;
+}
+
+.chercheur__bouton:active:not(:disabled) {
+  background: var(--bg-press);
+  border-radius: var(--radius-s);
 }
 
 .chercheur__bouton:disabled {
@@ -34,9 +41,10 @@
   margin: 0;
 }
 
+/* Une recherche qui échoue est une alerte, pas une baisse. */
 .chercheur__erreur {
   font-size: 13px;
-  color: var(--negative);
+  color: var(--alerte);
   margin: 0;
 }
 
@@ -50,10 +58,14 @@
   border-radius: var(--radius-s);
 }
 
+/* Chaque résultat se choisit au doigt : c'est exactement la « ligne de liste
+   devenue tapable » qui doit tenir 48 px. */
 .chercheur__resultat {
   width: 100%;
+  min-height: var(--touch);
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 2px;
   padding: var(--space-2) var(--space-3);
   text-align: left;
@@ -70,6 +82,7 @@
 
 .chercheur__resultat-ticker {
   font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
   font-size: 13px;
 }
 

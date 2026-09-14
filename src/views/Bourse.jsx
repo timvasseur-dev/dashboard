@@ -203,7 +203,11 @@ function PositionOrpheline({ position, comptes }) {
     >
       {comptes.length > 0 && (
         <>
-          <select value={accountId} onChange={(e) => setAccountId(e.target.value)}>
+          <select
+            className="bourse__compte-cible"
+            value={accountId}
+            onChange={(e) => setAccountId(e.target.value)}
+          >
             {comptes.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.libelle}

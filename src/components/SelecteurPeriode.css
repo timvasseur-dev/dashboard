@@ -17,12 +17,14 @@
   white-space: nowrap;
   color: var(--text-dim);
   border-radius: var(--radius-s);
-  /* cible tactile : la hauteur du texte seule serait trop basse au doigt */
-  min-height: 34px;
+  /* cible tactile : la hauteur du texte seule serait trop basse au doigt.
+     À sept périodes sur 390 px, c'est la largeur qui se resserre, pas la
+     hauteur — 48 px passent sans déborder. */
+  min-height: var(--touch);
 }
 
 .periodes__choix[aria-pressed='true'] {
-  background: var(--bg-press);
+  background: var(--border-fort);
   color: var(--text);
   font-weight: 600;
 }

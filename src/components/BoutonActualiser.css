@@ -5,16 +5,25 @@
   padding: var(--space-3) var(--space-4);
 }
 
+/* Rafraîchir est une action courante, pas un repère d'interface. */
 .actualiser__bouton {
-  color: var(--accent);
+  min-height: var(--touch);
+  padding: 0 var(--space-2);
+  color: var(--text);
   font-size: 14px;
+}
+
+.actualiser__bouton:active:not(:disabled) {
+  background: var(--bg-press);
+  border-radius: var(--radius-s);
 }
 
 .actualiser__bouton:disabled {
   color: var(--text-faint);
 }
 
+/* Un rafraîchissement qui échoue est une alerte, pas une baisse. */
 .actualiser__erreur {
   font-size: 13px;
-  color: var(--negative);
+  color: var(--alerte);
 }

@@ -12,9 +12,21 @@
   align-items: flex-end;
 }
 
+/* Devise du cours ≠ devise de la position : le premier signal qu'on suit le
+   mauvais instrument (CLAUDE.md § « Le ticker ne suffit pas »). C'est une
+   alerte, pas une baisse — d'où --alerte et jamais --negative. */
 .bourse__devise-alerte {
   font-size: 12px;
-  color: var(--negative);
+  color: var(--alerte);
+}
+
+/* Les colonnes de chiffres gardent la chasse fixe et les chiffres tabulaires.
+   Posé sur le conteneur et pas seulement sur `.num` : le pourcentage et les
+   bornes de zone sont du texte libre autour du montant, ils danseraient. */
+.bourse__cours,
+.bourse__pv,
+.bourse__zone-bornes {
+  font-variant-numeric: tabular-nums;
 }
 
 .bourse__cours {
@@ -24,6 +36,7 @@
 
 .bourse__pv {
   font-size: 12px;
+  font-family: var(--font-num);
 }
 
 .bourse__pv--pos {
@@ -39,18 +52,31 @@
   font-size: 13px;
 }
 
+/* Action de pied de carte, pas repère d'interface : le filet du haut et la
+   position disent qu'elle est tapable, l'or reste à l'onglet et au total. */
 .bourse__ajouter {
   width: 100%;
+  min-height: var(--touch);
   padding: var(--space-3) var(--space-4);
-  color: var(--accent);
+  color: var(--text);
   font-size: 14px;
   text-align: left;
 }
 
+.bourse__ajouter:active {
+  background: var(--bg-press);
+}
+
 .bourse__promouvoir {
-  color: var(--accent);
+  min-height: var(--touch);
+  padding: 0 var(--space-2);
+  color: var(--text-dim);
   font-size: 13px;
-  padding: var(--space-1) var(--space-2);
+}
+
+.bourse__promouvoir:active {
+  background: var(--bg-press);
+  border-radius: var(--radius-s);
 }
 
 .bourse__formulaire {
@@ -62,6 +88,7 @@
 .bourse__champ-favori {
   display: flex;
   align-items: center;
+  min-height: var(--touch);
   gap: var(--space-2);
 }
 
@@ -74,8 +101,12 @@
   color: var(--text-dim);
 }
 
+/* Effacer un cours est un geste destructeur : --alerte, comme les erreurs,
+   pas --negative qui ne dit qu'une baisse de montant. */
 .bourse__effacer-cours {
-  color: var(--negative);
+  min-height: var(--touch);
+  padding: 0 var(--space-2);
+  color: var(--alerte);
   font-size: 13px;
   flex-shrink: 0;
 }
@@ -91,18 +122,49 @@
   color: var(--text-dim);
 }
 
+/* Cours entré dans la zone d'achat. C'est un état, pas une variation : le vert
+   est interdit ici (cf. theme.css, règle 1) et l'or est réservé aux repères
+   d'interface (règle 2). Reste la surface et le contraste — comme la barre
+   d'onglets, où « le contraste fait le travail, pas un fond coloré ». */
+.bourse__zone--dedans {
+  padding: var(--space-1) var(--space-2);
+  margin: calc(var(--space-1) * -1) calc(var(--space-2) * -1);
+  background: var(--bg-press);
+  border-radius: var(--radius-s);
+}
+
 .bourse__zone--dedans .num {
-  color: var(--positive);
+  font-weight: 600;
 }
 
 .bourse__zone--dedans .bourse__zone-bornes {
-  color: var(--positive);
+  color: var(--text);
 }
 
 /* Le nom de l'instrument ouvre sa modale. Bouton et non ligne entière : la
-   ligne porte déjà « Promouvoir » et « ⋯ », qu'on n'imbrique pas dedans. */
+   ligne porte déjà « Promouvoir » et « ⋯ », qu'on n'imbrique pas dedans — un
+   bouton dans un bouton n'est pas du HTML valide. Conséquence assumée : la
+   cible tactile ne peut pas atteindre 48 px sans doubler la hauteur des
+   lignes, elle plafonne ici à ~37 px. */
 .bourse__ouvrir {
+  padding: var(--space-2) 0;
   font-size: 15px;
   text-align: left;
   color: inherit;
+}
+
+/* Le compte de rattachement d'une position orpheline. Seul `<select>` du
+   projet posé directement dans une ligne, sans le libellé qui habille les
+   autres : il tombait sur le rendu par défaut du navigateur. Mêmes valeurs
+   que `.comptes__champ-select select`, pour que l'écran reste d'une pièce. */
+.bourse__compte-cible {
+  min-height: var(--touch);
+  max-width: 150px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  padding: var(--space-2);
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
 }
