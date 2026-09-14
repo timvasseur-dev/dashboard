@@ -19,9 +19,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '24'
           cache: npm
@@ -30,9 +30,12 @@ jobs:
 
       - run: npm run build
 
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
 
-      - uses: actions/upload-pages-artifact@v3
+      # v5 et non v4 : cette action est composite et appelle upload-artifact
+      # en interne. v4 l'épingle sur 4.6.2, encore en node20 — elle n'aurait
+      # donc pas levé la dépréciation. v5 épingle 7.0.0, en node24.
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
 
@@ -44,4 +47,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
