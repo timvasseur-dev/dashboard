@@ -13,6 +13,7 @@
 
 .import__champ-select select,
 .import__champ-select input[type='file'] {
+  min-height: var(--touch);
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-s);
@@ -27,14 +28,18 @@
   color: var(--text-dim);
 }
 
+/* Un fichier refusé est un problème, pas une baisse. */
 .import__erreur {
-  color: var(--negative);
+  color: var(--alerte);
   font-size: 13px;
 }
 
+/* L'action principale de cette étape, donc l'or plein — un seul par étape.
+   Texte sombre et non blanc : 7,78:1 contre 2,42:1, qui était illisible. */
 .import__analyser {
+  min-height: var(--touch);
   background: var(--accent);
-  color: #fff;
+  color: var(--bg);
   border-radius: var(--radius-s);
   padding: var(--space-3);
   text-align: center;
@@ -53,9 +58,11 @@
   padding: var(--space-5);
 }
 
+/* L'action principale de l'étape finale. */
 .import__termine button {
+  min-height: var(--touch);
   background: var(--accent);
-  color: #fff;
+  color: var(--bg);
   border-radius: var(--radius-s);
   padding: var(--space-3) var(--space-4);
   font-weight: 600;

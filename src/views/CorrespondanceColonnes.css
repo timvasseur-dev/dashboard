@@ -20,9 +20,12 @@
   overflow-y: auto;
 }
 
+/* Chaque ligne du fichier se choisit au doigt : cible tactile pleine. */
 .correspondance__ligne {
-  display: block;
+  display: flex;
+  align-items: center;
   width: 100%;
+  min-height: var(--touch);
   padding: var(--space-2) var(--space-3);
   font-family: var(--font-num);
   font-size: 12px;
@@ -31,9 +34,12 @@
   border-bottom: 1px solid var(--border);
 }
 
+/* La ligne retenue comme en-tête. C'est une sélection parmi N, pas un repère
+   d'interface unique : l'or y perdrait sa valeur (règle 2). Même traitement
+   que les axes de répartition et le sélecteur de période — une surface. */
 .correspondance__ligne--active {
-  background: var(--accent);
-  color: #fff;
+  background: var(--border-fort);
+  font-weight: 600;
 }
 
 .correspondance__champ-select {
@@ -49,6 +55,7 @@
 }
 
 .correspondance__choix-item {
+  min-height: var(--touch);
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-s);
@@ -57,10 +64,11 @@
   font-size: 14px;
 }
 
+/* Colonne retenue pour ce rôle : une sélection, donc une surface. */
 .correspondance__choix-item--actif {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
+  background: var(--border-fort);
+  border-color: var(--border-fort);
+  font-weight: 600;
 }
 
 .correspondance__format-date {
@@ -71,16 +79,21 @@
   padding: 0;
 }
 
+/* Les quatre choix à bouton radio du formulaire : la cible utile est le
+   libellé entier, pas le seul petit rond. */
 .correspondance__format-date label {
   display: flex;
   align-items: center;
+  min-height: var(--touch);
   gap: var(--space-2);
   font-size: 14px;
 }
 
+/* L'action principale de cette étape. Texte sombre : 7,78:1 de contraste. */
 .correspondance__valider {
+  min-height: var(--touch);
   background: var(--accent);
-  color: #fff;
+  color: var(--bg);
   border-radius: var(--radius-s);
   padding: var(--space-3);
   text-align: center;
@@ -92,7 +105,8 @@
 }
 
 .correspondance__annuler {
-  color: var(--text-dim);
+  min-height: var(--touch);
   padding: var(--space-3);
+  color: var(--text-dim);
   text-align: center;
 }

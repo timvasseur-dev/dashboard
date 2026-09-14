@@ -22,9 +22,12 @@
   flex: 1;
 }
 
+/* Les compteurs de l'aperçu : des grands nombres, donc la serif, avec des
+   chiffres alignés et à hauteur constante. */
 .apercu__valeur {
+  font-family: var(--font-affiche);
   font-size: 22px;
-  font-weight: 600;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 .apercu__libelle {
@@ -33,12 +36,13 @@
   text-align: center;
 }
 
+/* Les lignes refusées à l'analyse : une alerte, pas une baisse. */
 .apercu__erreurs {
   margin: 0;
   padding: var(--space-3);
   background: var(--bg-elev);
   border-radius: var(--radius-s);
-  color: var(--negative);
+  color: var(--alerte);
   font-size: 13px;
   max-height: 160px;
   overflow-y: auto;
@@ -64,6 +68,7 @@
   text-align: center;
 }
 
+/* Débit et crédit : le vert et le rouge sont ici à leur place. */
 .apercu__montant--positif {
   color: var(--positive);
 }
@@ -77,9 +82,11 @@
   color: var(--text-dim);
 }
 
+/* L'action principale de cette étape. */
 .apercu__confirmer {
+  min-height: var(--touch);
   background: var(--accent);
-  color: #fff;
+  color: var(--bg);
   border-radius: var(--radius-s);
   padding: var(--space-3);
   text-align: center;
@@ -91,7 +98,8 @@
 }
 
 .apercu__annuler {
-  color: var(--text-dim);
+  min-height: var(--touch);
   padding: var(--space-3);
+  color: var(--text-dim);
   text-align: center;
 }

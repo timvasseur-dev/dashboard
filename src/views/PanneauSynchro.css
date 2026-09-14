@@ -12,8 +12,10 @@
   flex-wrap: wrap;
 }
 
+/* Comme .reglages__message : la même classe porte le résultat d'un test qui
+   réussit et celui qui échoue (cf. MESSAGES_TEST). --text, la phrase tranche. */
 .synchro__message {
-  color: var(--accent);
+  color: var(--text);
   font-size: 14px;
 }
 
@@ -22,9 +24,10 @@
   color: var(--text-dim);
 }
 
+/* Un échec de synchronisation est un problème, pas une baisse. */
 .synchro__erreur {
   padding: 0 var(--space-4) var(--space-4);
-  color: var(--negative);
+  color: var(--alerte);
   font-size: 14px;
 }
 
@@ -32,8 +35,9 @@
   margin: var(--space-4);
 }
 
+/* Deux états qui divergent : une alerte, pas une variation de montant. */
 .synchro__divergence {
-  color: var(--negative);
+  color: var(--alerte);
   font-weight: 600;
 }
 

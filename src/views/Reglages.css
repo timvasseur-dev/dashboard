@@ -12,6 +12,7 @@
 }
 
 .reglages__fichier {
+  min-height: var(--touch);
   color: var(--text-dim);
   font-size: 13px;
 }
@@ -27,12 +28,19 @@
   font-size: 13px;
 }
 
+/* Un volume qui approche le seuil de surveillance est une alerte, pas une
+   baisse de montant. */
 .reglages__volume--alerte {
-  color: var(--negative);
+  color: var(--alerte);
 }
 
+/* Une même classe porte « JSON copié. » et « Format inattendu, import
+   refusé. » : elle ne peut donc être ni --alerte ni une couleur de succès,
+   et l'or est réservé aux repères d'interface. --text, et c'est la phrase qui
+   dit ce qui s'est passé. Signalé : distinguer les deux demanderait un état
+   de plus dans Reglages.jsx, ce qui n'est pas du ressort de cette passe. */
 .reglages__message {
   padding: var(--space-3) var(--space-4);
-  color: var(--accent);
+  color: var(--text);
   font-size: 14px;
 }
