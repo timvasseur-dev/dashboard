@@ -112,6 +112,10 @@
   font-weight: 600;
 }
 
+.comptes__valider:active:not(:disabled) {
+  background: var(--accent-pale);
+}
+
 /* Supprimer est un geste destructeur, donc --alerte : le rouge ne dit que la
    variation d'un montant (cf. theme.css, règle 1). Sert aussi aux positions à
    rattacher de l'écran Bourse et aux feuilles de BourseFormulaire. */

@@ -1,18 +1,22 @@
 .sheet__fond {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--voile);
   display: flex;
   align-items: flex-end;
   z-index: 100;
 }
 
+/* La seule ombre du projet. Les cartes s'en passent — bordure et fond
+   surélevé suffisent —, mais une feuille monte par-dessus le contenu : il
+   faut qu'on voie qu'elle le recouvre. */
 .sheet {
   width: 100%;
   max-width: var(--content-max);
   margin: 0 auto;
   background: var(--bg-elev);
   border-radius: var(--radius-l) var(--radius-l) 0 0;
+  box-shadow: var(--shadow-sheet);
   padding: var(--space-4);
   padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
   max-height: 85dvh;
@@ -26,15 +30,26 @@
   margin-bottom: var(--space-4);
 }
 
+/* Un titre, donc la serif, comme les titres d'écran et de section. */
 .sheet__titre {
+  font-family: var(--font-affiche);
   font-size: 18px;
-  font-weight: 600;
 }
 
+/* Il tenait 38 px. C'est le seul moyen de fermer une feuille verrouillée
+   par une confirmation en attente : il doit se toucher sans viser. */
 .sheet__fermer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--touch);
+  min-height: var(--touch);
   font-size: 16px;
   color: var(--text-dim);
-  padding: var(--space-2);
+}
+
+.sheet__fermer:disabled {
+  color: var(--text-faint);
 }
 
 .sheet__corps {

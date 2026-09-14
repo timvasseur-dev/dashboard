@@ -46,6 +46,10 @@
   font-weight: 600;
 }
 
+.import__analyser:active:not(:disabled) {
+  background: var(--accent-pale);
+}
+
 .import__analyser:disabled {
   opacity: 0.5;
 }
@@ -66,4 +70,8 @@
   border-radius: var(--radius-s);
   padding: var(--space-3) var(--space-4);
   font-weight: 600;
+}
+
+.import__termine button:active {
+  background: var(--accent-pale);
 }

@@ -10,6 +10,7 @@
 }
 
 .field__input {
+  min-height: var(--touch);
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-s);

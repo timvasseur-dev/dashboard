@@ -8,6 +8,7 @@
   color: var(--text-dim);
   font-size: 13px;
   font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
 }
 
 .titre__cours {
@@ -17,9 +18,12 @@
   gap: var(--space-2);
 }
 
-.titre__prix {
+/* Un grand nombre, donc la serif — classe doublée pour passer devant `.num`,
+   qui impose la chasse fixe sur tout montant. */
+.titre__prix.num {
+  font-family: var(--font-affiche);
   font-size: 24px;
-  font-weight: 650;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 .titre__hausse {
@@ -43,6 +47,8 @@
   border-top: 1px solid var(--border);
 }
 
+/* Une ligne de définition, pas un bouton : rien n'est tapable ici, la cible
+   de 48 px ne s'applique pas. */
 .titre__ligne {
   display: flex;
   align-items: baseline;
@@ -61,6 +67,7 @@
 .titre__valeur {
   text-align: right;
   font-size: 14px;
+  font-variant-numeric: tabular-nums;
   /* les thèses et les risques sont du texte libre : il doit pouvoir revenir
      à la ligne sans pousser le libellé hors de l'écran */
   min-width: 0;

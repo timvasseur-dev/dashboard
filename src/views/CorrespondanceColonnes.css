@@ -100,6 +100,10 @@
   font-weight: 600;
 }
 
+.correspondance__valider:active:not(:disabled) {
+  background: var(--accent-pale);
+}
+
 .correspondance__valider:disabled {
   opacity: 0.5;
 }

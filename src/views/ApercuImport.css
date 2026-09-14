@@ -93,6 +93,10 @@
   font-weight: 600;
 }
 
+.apercu__confirmer:active:not(:disabled) {
+  background: var(--accent-pale);
+}
+
 .apercu__confirmer:disabled {
   opacity: 0.5;
 }
