@@ -4,6 +4,24 @@ import { VERSION } from './schema.js'
  * Une entrée par numéro de version de départ : `migrations[1]` transforme un
  * état v1 en v2, etc.
  */
+
+// Recopiée depuis le semis de schema.js plutôt qu'importée, à dessein : une
+// migration est une transformation figée dans le temps. Si le semis change
+// encore, `migrations[5]` doit continuer à produire exactement un état v6, et
+// non le dernier semis en date — sans quoi une migration ultérieure
+// s'appliquerait sur une base qu'elle n'attend pas. Le suffixe de version est
+// là pour qu'une table v7 ne puisse pas être confondue avec celle-ci.
+//
+// Une Map, pas un objet : `nom` vient de l'état, et une clé comme
+// « constructor » sur un objet littéral renverrait une fonction héritée du
+// prototype, donc une couleur invalide passée pour valide.
+const COULEURS_INSTITUTION_V6 = new Map([
+  ['BCI', '#465977'],
+  ['Boursobank', '#995DAC'],
+  ["Caisse d'Épargne", '#3FA4AB'],
+  ['IBKR', '#B2B1E2'],
+])
+
 const migrations = {
   // v1 : watchlist { id, ticker, libelle, devise, note } — quasi-valorisable.
   // v2 : watchlist { id, ticker, libelle, conviction, horizon, zoneAchatMin,
@@ -63,6 +81,24 @@ const migrations = {
     ...etat,
     transactions: etat.transactions ?? [],
     profilsImport: etat.profilsImport ?? [],
+  }),
+
+  // v5 : la refonte visuelle remplace la famille de couleurs d'institution —
+  // bleu, orange, violet et turquoise laissent place à une famille froide
+  // accordée à la palette. Ces couleurs sont de la donnée, pas du style : sans
+  // migration, un état déjà enregistré garderait l'ancienne famille
+  // indéfiniment, puisque theme.css ne peut pas l'atteindre.
+  //
+  // Appariement par `nom` : les `id` sont des UUID tirés à la création de
+  // l'état, différents d'un appareil à l'autre. Une institution inconnue de la
+  // table garde sa couleur — on ne réattribue pas au hasard ce qu'on n'a pas
+  // reconnu.
+  5: (etat) => ({
+    ...etat,
+    institutions: etat.institutions.map((institution) => {
+      const couleur = COULEURS_INSTITUTION_V6.get(institution.nom)
+      return couleur ? { ...institution, couleur } : institution
+    }),
   }),
 }
 

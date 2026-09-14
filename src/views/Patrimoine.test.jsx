@@ -17,7 +17,7 @@ const lisible = (html) => html.replace(/[\u202f\u00a0]/g, ' ')
  * que les valeurs affichées sont les bonnes, pas la mise en page.
  */
 
-const INSTITUTION = { id: 'i1', nom: 'IBKR', couleur: '#20c997' }
+const INSTITUTION = { id: 'i1', nom: 'IBKR', couleur: '#B2B1E2' }
 
 function etatDeTest(surcharges = {}) {
   return {

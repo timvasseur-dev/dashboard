@@ -1,4 +1,4 @@
-export const VERSION = 5
+export const VERSION = 6
 
 export const TYPES_COMPTE = ['courant', 'epargne', 'pea', 'cto']
 export const DEVISES = ['EUR', 'USD', 'XPF']
@@ -7,11 +7,27 @@ export const HORIZONS = ['court', 'moyen', 'long']
 
 // Institutions réelles, structure fixe (cf. CLAUDE.md § 3) : pas de gestion en
 // phase 2, seuls les comptes qu'elles contiennent se créent et se suppriment.
+//
+// Les couleurs vivent dans l'état parce qu'une institution est une donnée et
+// non un style : theme.css ne peut pas les atteindre, et les changer demande
+// donc une migration (cf. `migrations[5]`).
+//
+// Elles varient en teinte ET en clarté, pas seulement en teinte. Quatre bleus
+// de même luminosité se confondent : c'était le défaut de la première série
+// (rapports de luminance consécutifs de 1,67, 1,08 et 1,06 — les trois
+// derniers indistinguables). Ici les rapports valent 1,80, 1,74 et 1,52, et
+// l'écart tient jusqu'à la pastille de 8 px de l'en-tête de section, pas
+// seulement sur l'anneau. `migrations.test.js` garde ce contrat.
+//
+// Deux couleurs restent interdites ici : le vert et le rouge, qui ne disent
+// que la variation, et l'or, qui signifie « repère d'interface » — onglet
+// actif, total principal, filets de section — et ne désigne jamais une
+// institution.
 const INSTITUTIONS_PAR_DEFAUT = [
-  { nom: 'BCI', couleur: '#4c8dff' },
-  { nom: 'Boursobank', couleur: '#ffa94d' },
-  { nom: "Caisse d'Épargne", couleur: '#845ef7' },
-  { nom: 'IBKR', couleur: '#20c997' },
+  { nom: 'BCI', couleur: '#465977' }, // ardoise profond
+  { nom: 'Boursobank', couleur: '#995DAC' }, // violet
+  { nom: "Caisse d'Épargne", couleur: '#3FA4AB' }, // sarcelle
+  { nom: 'IBKR', couleur: '#B2B1E2' }, // bleu-lavande clair
 ]
 
 /** État vide de départ, institutions déjà en place. `appareilId` identifie ce
