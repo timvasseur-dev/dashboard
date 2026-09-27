@@ -112,7 +112,34 @@ describe('chaîne complète des migrations', () => {
     expect(typeof etat.appareilId).toBe('string')
     // v4 : import bancaire
     expect(etat.transactions).toEqual([])
-    // v5 : couleur d'institution réécrite
-    expect(etat.institutions[0].couleur).toBe('#B2B1E2')
+    // v5 réécrit la couleur d'institution, v6 la retire
+    expect(etat.institutions[0]).toEqual({ id: 'd', nom: 'IBKR' })
+    // v6 : ordres exécutés
+    expect(etat.ordres).toEqual([])
+  })
+})
+
+describe('migration v6 → v7 : ordres, fin de la couleur d’institution', () => {
+  const etatV6 = () => ({ ...etatV5(INSTITUTIONS_V5), version: 6 })
+
+  it('retire `couleur` de chaque institution, sans toucher au reste', () => {
+    const etat = migrer(etatV6(), 7)
+
+    expect(etat.institutions).toEqual([
+      { id: 'a', nom: 'BCI' },
+      { id: 'b', nom: 'Boursobank' },
+      { id: 'c', nom: "Caisse d'Épargne" },
+      { id: 'd', nom: 'IBKR' },
+    ])
+    expect(etat.version).toBe(7)
+  })
+
+  it('ajoute une liste d’ordres vide', () => {
+    expect(migrer(etatV6(), 7).ordres).toEqual([])
+  })
+
+  it('garde des ordres déjà présents', () => {
+    const ordre = { id: 'o1', sens: 'achat' }
+    expect(migrer({ ...etatV6(), ordres: [ordre] }, 7).ordres).toEqual([ordre])
   })
 })

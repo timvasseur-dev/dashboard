@@ -13,9 +13,10 @@ import { VERSION } from './schema.js'
 // là pour qu'une table v7 ne puisse pas être confondue avec celle-ci.
 //
 // Ce qu'elle écrit n'est plus lu : les couleurs d'institution sont passées
-// dans theme.css (cf. src/views/couleursInstitution.js). La migration reste
-// en place parce qu'une migration ne se retire pas — un export v5 doit
-// continuer à traverser la chaîne — mais son effet est devenu vestigial.
+// dans theme.css (cf. src/views/couleursInstitution.js), et `migrations[6]`
+// retire le champ. La migration reste en place parce qu'une migration ne se
+// retire pas — un export v5 doit continuer à traverser la chaîne — mais son
+// effet est devenu vestigial.
 // C'est elle, justement, qui a montré la limite du procédé : un état déjà en
 // v6 ne la rejoue pas, donc ne reçoit aucune correction ultérieure.
 //
@@ -106,6 +107,18 @@ const migrations = {
       const couleur = COULEURS_INSTITUTION_V6.get(institution.nom)
       return couleur ? { ...institution, couleur } : institution
     }),
+  }),
+
+  // v7 : phase 7, historique des ordres exécutés — `ordres` (une entrée par
+  // achat ou vente saisi, cf. src/lib/ordres.js). Et `couleur` quitte les
+  // institutions : plus rien ne la lisait depuis que les couleurs sont dans
+  // theme.css. Retirée ici plutôt qu'au passage précédent parce que le modèle
+  // bouge de toute façon, et qu'une migration pour une valeur inerte seule ne
+  // valait pas le risque.
+  6: (etat) => ({
+    ...etat,
+    institutions: etat.institutions.map(({ couleur: _obsolete, ...institution }) => institution),
+    ordres: etat.ordres ?? [],
   }),
 }
 

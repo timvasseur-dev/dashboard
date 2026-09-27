@@ -2,9 +2,9 @@
  * Couleur d'une institution : pastille de section, segment d'anneau, barre de
  * part.
  *
- * Elle ne vient plus de l'état. `institution.couleur` y subsiste mais n'est
- * plus lu (cf. src/data/schema.js) : une couleur est une décision visuelle,
- * pas une donnée patrimoniale. La stocker obligeait à une migration pour
+ * Elle ne vient pas de l'état, dont le champ `institution.couleur` a été
+ * retiré en v7 (cf. src/data/migrations.js) : une couleur est une décision
+ * visuelle, pas une donnée patrimoniale. La stocker obligeait à une migration pour
  * chaque retouche de teinte, et un appareil déjà migré ne voyait jamais la
  * correction suivante — c'est exactement ce qui est arrivé entre la deuxième
  * et la troisième série. Les valeurs sont dans src/styles/theme.css.
