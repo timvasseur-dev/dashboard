@@ -1,0 +1,29 @@
+/* Montant de l'ordre au-dessus, geste d'annulation dessous, calés à droite
+   comme les valeurs des positions. */
+.ordres__colonne {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.ordres__montant {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Une plus-value réalisée est la variation d'un montant : le vert et le rouge
+   y ont leur place (cf. theme.css, règle 1). */
+.ordres__pv--pos {
+  color: var(--positive);
+}
+
+.ordres__pv--neg {
+  color: var(--negative);
+}
+
+/* Un total qu'on ne peut pas convertir n'est pas un total nul : le dire. */
+.ordres__sans-taux {
+  color: var(--text-faint);
+  font-size: var(--fs-4);
+}
