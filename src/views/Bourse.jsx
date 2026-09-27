@@ -13,6 +13,7 @@ import { formatDevise } from '../lib/money.js'
 import Montant from '../components/Montant.jsx'
 import FormulaireBourse from './BourseFormulaire.jsx'
 import FormulaireOrdre from './OrdreFormulaire.jsx'
+import BourseOrdres from './BourseOrdres.jsx'
 import './Bourse.css'
 
 const formatteurPourcentage = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 })
@@ -135,6 +136,8 @@ export default function Bourse() {
           ))}
         </Section>
       )}
+
+      <BourseOrdres etat={etat} />
 
       <Section titre="Ma watchlist">
         {etat.watchlist.map((suivi) => (

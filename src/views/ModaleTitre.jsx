@@ -10,6 +10,7 @@ import { useHistoriqueCours } from '../data/historiqueCours.js'
 import { PERIODES_TITRE } from '../lib/periode.js'
 import { valoriserPosition } from '../lib/portfolio.js'
 import { formatDevise } from '../lib/money.js'
+import { OrdresTitre } from './BourseOrdres.jsx'
 import './ModaleTitre.css'
 
 const formatteurPourcentage = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 })
@@ -121,6 +122,7 @@ function DetailPosition({ position, cours, etat }) {
           )}
         </Ligne>
       )}
+      <OrdresTitre position={position} ordres={etat.ordres} />
     </dl>
   )
 }
