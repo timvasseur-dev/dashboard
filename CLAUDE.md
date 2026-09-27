@@ -77,7 +77,7 @@ avec chaque valorisation, pour que l'historique reste juste rétroactivement.
 L'état est un objet unique, sérialisé sous une clé unique `vv.state` dans `localStorage` :
 
 ```
-Institution   { id, nom, couleur }                        // couleur obsolète, plus lu
+Institution   { id, nom }
 Account       { id, institutionId, libelle, type, devise }
 balances      { [accountId]: { montant, date } }         // solde courant, une map par compte
 Position      { id, accountId, ticker, isin, quantite, pru, devise }
@@ -86,19 +86,21 @@ Watchlist     { id, ticker, libelle, conviction, horizon, zoneAchatMin,
 quotes        { [ticker]: { prix, devise, nom, horodatage } }  // indexé par ticker, jamais commité
 FxRate        { paire, taux, horodatage }
 historique    [{ date, totalEur, tauxUsd }]               // instantanés, ajout seul, jamais réécrit
+transactions  [{ id, accountId, date, libelle, montant, devise }]  // import bancaire, ajout seul
+profilsImport [{ id, institutionId, nom, ignorerLignesAvant, formatDate, colonnes }]
+Ordre         { id, positionId, accountId, ticker, isin, sens, date, quantite, cours,
+                frais, devise, quantiteAvant, pruAvant }  // ordre exécuté, saisi à la main
 ```
 
-`Institution.couleur` est **obsolète** : le champ subsiste dans l'état mais plus rien ne
-le lit. Une couleur est une décision visuelle, pas une donnée patrimoniale ; la garder
-dans l'état obligeait à une migration pour chaque retouche de teinte, et un appareil
-déjà migré ne recevait jamais la correction suivante — ce qui s'est effectivement
-produit. Les couleurs d'institution sont désormais des variables de
-`src/styles/theme.css` (`--inst-*`), appariées au nom dans
+Une institution n'a **pas de couleur dans l'état**. Une couleur est une décision
+visuelle, pas une donnée patrimoniale ; la garder dans l'état obligeait à une migration
+pour chaque retouche de teinte, et un appareil déjà migré ne recevait jamais la
+correction suivante — ce qui s'est effectivement produit. Les couleurs d'institution
+sont des variables de `src/styles/theme.css` (`--inst-*`), appariées au nom dans
 `src/views/couleursInstitution.js` ; une institution non reconnue prend un gris neutre.
 L'appariement par nom implique qu'un renommage fait perdre la couleur : accepté, les
-institutions étant une structure fixe en phase 2. Le champ n'est pas supprimé — il ne
-gêne pas, et une migration destructrice pour nettoyer une valeur inerte ne vaut pas le
-risque. À retirer en phase 7, quand le modèle bougera pour de vrai.
+institutions étant une structure fixe. L'ancien champ `couleur`, inerte depuis la
+phase 6, a été retiré par la migration v7.
 
 `Account.type` ∈ `courant` | `epargne` | `pea` | `cto` — Livret A et LDD sont des comptes
 `epargne` comme les autres, distingués seulement par leur `libelle`.
@@ -135,9 +137,9 @@ En conséquence : `quotes[ticker].nom`, renvoyé par Yahoo, est affiché à côt
 position (Bourse, détail Patrimoine) — c'est le premier signal qu'on a le mauvais
 instrument. La devise renvoyée par Yahoo est comparée à celle de la position ; une
 divergence est une alerte visible, jamais une conversion silencieuse. À la saisie
-(position ou idée de suivi), la route `/recherche` du worker (recherche Yahoo par nom
-ou ISIN) permet de choisir l'instrument dans une liste plutôt que de taper un ticker à
-l'aveugle.
+(position, idée de suivi ou ordre ouvrant une ligne), la route `/recherche` du worker
+(recherche Yahoo par nom ou ISIN) permet de choisir l'instrument dans une liste plutôt
+que de taper un ticker à l'aveugle.
 
 ### Structure réelle des comptes
 
@@ -150,9 +152,36 @@ l'aveugle.
 
 ### Règle de saisie
 - **Comptes espèces** : le solde est saisi ou importé. Il n'est pas calculé.
-- **PEA et CTO** : les positions (ticker, quantité, PRU) sont saisies à la main.
-  Elles ne changent que lors d'un ordre, quelques fois par an. La **valorisation**
-  est recalculée à partir des cours, jamais saisie.
+- **PEA et CTO** : les positions (ticker, quantité, PRU) sont saisies à la main, ou
+  mises à jour par la saisie d'un ordre (ci-dessous). Elles ne changent que lors d'un
+  ordre, quelques fois par an. La **valorisation** est recalculée à partir des cours,
+  jamais saisie.
+
+### Ordres et plus-values réalisées (phase 7)
+
+Un `Ordre` est un achat ou une vente exécuté, saisi à la main depuis l'écran Bourse. Il
+**met à jour sa ligne** au moment de la saisie : les positions saisies avant la phase 7
+restent valables telles quelles, sans historique d'ordres à reconstituer, et
+`consolider()` continue de ne lire que les positions.
+
+- **Méthode : prix moyen pondéré (PMP), dans la devise de la ligne.** Un achat fond son
+  coût dans le PRU, frais compris : `(q0 × pru0 + q × cours + frais) / (q0 + q)`. Une
+  vente laisse le PRU inchangé et réalise `q × (cours − pru) − frais`. Une vente au-delà
+  de la quantité détenue est refusée ; une ligne vendue en totalité est retirée, ses
+  ordres restent.
+- **Pas de conversion historique.** La plus-value d'une ligne en dollars reste en
+  dollars. Le total annuel en euros les convertit au taux du jour : c'est un repère,
+  **pas un calcul fiscal** — la règle fiscale française demanderait le taux USD/EUR du
+  jour de chaque ordre. Sans taux, le total n'est pas affiché plutôt qu'amputé.
+- **Ordre de saisie, pas ordre des dates.** Chaque ordre photographie la ligne juste
+  avant lui (`quantiteAvant`, `pruAvant`) ; la plus-value se recalcule à partir de
+  l'ordre seul, elle n'est jamais stockée. Un ordre antidaté prend donc le PRU du moment
+  de la saisie, pas celui qui valait à sa date. Limite assumée.
+- **Annulation** du seul dernier ordre d'une ligne, et seulement si la ligne est encore
+  dans l'état qu'il a produit : sinon, annuler écraserait une correction faite à la main
+  entre-temps.
+- **Le solde espèces n'est pas touché** : il reste saisi ou importé (règle ci-dessus).
+  L'écran rappelle de le mettre à jour après chaque ordre.
 
 ---
 
