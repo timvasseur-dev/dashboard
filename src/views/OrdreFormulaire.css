@@ -1,0 +1,52 @@
+/* Rappel et détenu : du texte d'accompagnement, pas une donnée à lire en
+   premier. */
+.ordre__note {
+  color: var(--text-dim);
+  font-size: var(--fs-4);
+  line-height: 1.4;
+}
+
+/* Un ordre refusé est une alerte de saisie, pas une baisse : --alerte, jamais
+   --negative (cf. theme.css, règle 1). */
+.ordre__erreur {
+  color: var(--alerte);
+  font-size: var(--fs-4);
+}
+
+/* Aperçu de ce que l'ordre fera à la ligne. Des lignes de définition : rien
+   n'y est tapable, pas de cible tactile à tenir. */
+.ordre__apercu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  font-size: var(--fs-4);
+}
+
+.ordre__ligne {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.ordre__ligne dt {
+  color: var(--text-dim);
+}
+
+.ordre__ligne dd {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* Une plus-value réalisée est la variation d'un montant : le vert et le rouge
+   y ont leur place, et nulle part ailleurs dans ce formulaire. */
+.ordre__pv--pos {
+  color: var(--positive);
+}
+
+.ordre__pv--neg {
+  color: var(--negative);
+}
