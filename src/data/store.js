@@ -35,7 +35,9 @@ function set(prochainEtat) {
  * l'information utile pour la prochaine comparaison, pas « maintenant » sur
  * cet appareil. N'appeler que depuis src/data/sync.js. */
 export function appliquerEtatDistant(etatDistant) {
-  etat = etatDistant
+  // Migré comme un état lu au démarrage : un appareil pas encore mis à jour
+  // peut pousser un état d'une version antérieure, sans les clés récentes.
+  etat = migrer(etatDistant, VERSION)
   sauvegarder(etat)
   emit()
 }
@@ -49,7 +51,6 @@ export function useEtat() {
 export function etatCourant() {
   return etat
 }
-
 /** Remplace tout l'état (import JSON), en le faisant remonter à la version
  * courante. L'identité d'appareil reste celle de ce navigateur, pas celle du
  * fichier importé (qui peut venir d'un autre appareil) : `appareilId`
@@ -71,6 +72,7 @@ export function chargerDemo() {
     quotes,
     fx,
     transactions: [],
+    ordres: [],
   })
 }
 

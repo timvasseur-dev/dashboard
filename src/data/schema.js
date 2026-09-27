@@ -1,35 +1,16 @@
-export const VERSION = 6
+export const VERSION = 7
 
 export const TYPES_COMPTE = ['courant', 'epargne', 'pea', 'cto']
 export const DEVISES = ['EUR', 'USD', 'XPF']
 export const CONVICTIONS = ['faible', 'moyenne', 'forte']
 export const HORIZONS = ['court', 'moyen', 'long']
+export const SENS_ORDRE = ['achat', 'vente']
 
 // Institutions réelles, structure fixe (cf. CLAUDE.md § 3) : pas de gestion en
 // phase 2, seuls les comptes qu'elles contiennent se créent et se suppriment.
-//
-// ATTENTION — `couleur` est OBSOLÈTE et n'est plus lu nulle part.
-//
-// Les couleurs d'institution sont désormais des variables de theme.css,
-// appariées au nom dans src/views/couleursInstitution.js. La raison est
-// concrète : une couleur stockée dans l'état ne peut être changée que par une
-// migration, et un appareil déjà migré ne voit jamais la correction suivante.
-// C'est exactement ce qui s'est produit entre la deuxième et la troisième
-// série — un état passé en v6 avec l'ancienne famille ne pouvait plus rejouer
-// `migrations[5]`, donc n'a jamais reçu la série définitive.
-//
-// Le champ est conservé plutôt que supprimé : rien ne le lit, il ne gêne pas,
-// et une migration destructrice pour nettoyer un champ inerte ne vaut pas le
-// risque. À retirer en phase 7, quand le modèle bougera pour de vrai.
-//
-// Ne pas mettre ces valeurs à jour : elles ne s'affichent pas. La vérité est
-// dans theme.css.
-const INSTITUTIONS_PAR_DEFAUT = [
-  { nom: 'BCI', couleur: '#465977' }, // obsolète, cf. --inst-bci
-  { nom: 'Boursobank', couleur: '#995DAC' }, // obsolète, cf. --inst-boursobank
-  { nom: "Caisse d'Épargne", couleur: '#3FA4AB' }, // obsolète, cf. --inst-caisse-epargne
-  { nom: 'IBKR', couleur: '#B2B1E2' }, // obsolète, cf. --inst-ibkr
-]
+// Leur couleur n'est pas ici : c'est une décision visuelle, dans theme.css,
+// appariée au nom dans src/views/couleursInstitution.js.
+const INSTITUTIONS_PAR_DEFAUT = [{ nom: 'BCI' }, { nom: 'Boursobank' }, { nom: "Caisse d'Épargne" }, { nom: 'IBKR' }]
 
 /** État vide de départ, institutions déjà en place. `appareilId` identifie ce
  * navigateur pour la synchronisation (phase 4) : assigné une fois, jamais
@@ -51,6 +32,7 @@ export function etatVide() {
     historique: [],
     transactions: [],
     profilsImport: [],
+    ordres: [],
     dernierModification: null,
     appareilId: crypto.randomUUID(),
   }
@@ -82,6 +64,47 @@ export function creerTransaction({ id, accountId, date, libelle, montant, devise
   if (!id) throw new Error('creerTransaction : id requis')
   if (!accountId) throw new Error('creerTransaction : accountId requis')
   return { id, accountId, date, libelle, montant: Number(montant), devise }
+}
+
+/** Un ordre exécuté, saisi à la main (phase 7). Il a mis à jour la position
+ * `positionId` au moment de sa saisie : `quantiteAvant` et `pruAvant` sont la
+ * photo de cette position juste avant. L'ordre se suffit ainsi à lui-même —
+ * la plus-value d'une vente se recalcule à partir de lui seul, elle n'est
+ * jamais stockée (cf. `lib/ordres.js`). `ticker`, `isin` et `devise` sont
+ * recopiés de la position : une vente totale la retire, l'ordre doit encore
+ * dire sur quoi il portait. `date` est un jour, `AAAA-MM-JJ`. */
+export function creerOrdre({
+  positionId,
+  accountId,
+  ticker,
+  isin,
+  sens,
+  date,
+  quantite,
+  cours,
+  frais,
+  devise,
+  quantiteAvant,
+  pruAvant,
+}) {
+  if (!positionId) throw new Error('creerOrdre : positionId requis')
+  if (!accountId) throw new Error('creerOrdre : accountId requis')
+  if (!SENS_ORDRE.includes(sens)) throw new Error(`creerOrdre : sens inconnu (${sens})`)
+  return {
+    id: crypto.randomUUID(),
+    positionId,
+    accountId,
+    ticker,
+    isin: isin ?? '',
+    sens,
+    date,
+    quantite: Number(quantite),
+    cours: Number(cours),
+    frais: Number(frais ?? 0),
+    devise,
+    quantiteAvant: Number(quantiteAvant),
+    pruAvant: Number(pruAvant),
+  }
 }
 
 /** Un profil de correspondance CSV, réglé une fois par forme de fichier
