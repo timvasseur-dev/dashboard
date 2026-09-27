@@ -51,6 +51,13 @@ export function useEtat() {
 export function etatCourant() {
   return etat
 }
+
+/** Mutation locale déléguée, pour les modules qui prolongent ce store sans le
+ * faire dépasser 300 lignes (cf. storeOrdres.js). Même effet que les
+ * mutations ci-dessous. N'appeler que depuis src/data/store*.js. */
+export function modifierEtat(transformation) {
+  set(transformation(etat))
+}
 /** Remplace tout l'état (import JSON), en le faisant remonter à la version
  * courante. L'identité d'appareil reste celle de ce navigateur, pas celle du
  * fichier importé (qui peut venir d'un autre appareil) : `appareilId`

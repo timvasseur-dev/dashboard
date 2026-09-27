@@ -12,6 +12,7 @@ import { valoriserPosition } from '../lib/portfolio.js'
 import { formatDevise } from '../lib/money.js'
 import Montant from '../components/Montant.jsx'
 import FormulaireBourse from './BourseFormulaire.jsx'
+import FormulaireOrdre from './OrdreFormulaire.jsx'
 import './Bourse.css'
 
 const formatteurPourcentage = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 })
@@ -22,6 +23,7 @@ const TITRES_SHEET = {
   'nouveau-suivi': 'Ajouter à la watchlist',
   suivi: 'Modifier le suivi',
   promotion: 'Promouvoir en position',
+  ordre: 'Saisir un ordre',
 }
 
 export default function Bourse() {
@@ -113,9 +115,14 @@ export default function Bourse() {
             }),
         )}
         {comptesTitres.length > 0 ? (
-          <button className="bourse__ajouter" onClick={() => ouvrirSheet({ mode: 'nouvelle-position' })}>
-            + Ajouter une position
-          </button>
+          <>
+            <button className="bourse__ajouter" onClick={() => ouvrirSheet({ mode: 'ordre' })}>
+              + Saisir un ordre
+            </button>
+            <button className="bourse__ajouter" onClick={() => ouvrirSheet({ mode: 'nouvelle-position' })}>
+              + Ajouter une position
+            </button>
+          </>
         ) : (
           <p className="screen__empty">Créez d'abord un compte PEA ou CTO dans Comptes.</p>
         )}
@@ -170,7 +177,10 @@ export default function Bourse() {
         onFermer={fermerSheet}
         verrouille={confirmationSuppression}
       >
-        {sheet && (
+        {sheet?.mode === 'ordre' && (
+          <FormulaireOrdre comptes={comptesTitres} positions={etat.positions} quotes={etat.quotes} onFermer={fermerSheet} />
+        )}
+        {sheet && sheet.mode !== 'ordre' && (
           <FormulaireBourse
             sheet={sheet}
             comptes={comptesTitres}
